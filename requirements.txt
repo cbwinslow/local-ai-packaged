@@ -1,0 +1,12 @@
+# Requirements for enhanced start_services.py orchestration script
+# These are only needed for the enhanced functionality
+# The basic Docker and Docker Compose functionality requires no additional Python packages
+
+# No additional packages required - using only Python standard library
+# This keeps the script lightweight and avoids dependency management issues
+
+# If you need to add packages in the future, uncomment and modify as needed:
+# requests>=2.25.0       # For HTTP connectivity tests
+# paramiko>=2.7.0        # For enhanced SSH functionality  
+# pyyaml>=5.4.0          # For YAML configuration parsing
+# click>=8.0.0           # For enhanced CLI functionality

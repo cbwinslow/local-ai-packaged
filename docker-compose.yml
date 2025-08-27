@@ -1,5 +1,6 @@
-include:
-  - ./supabase/docker/docker-compose.yml
+# Supabase services are included via the orchestration script
+# include:
+#   - ./supabase/docker/docker-compose.yml
 
 volumes:
   n8n_storage:
@@ -42,6 +43,12 @@ x-ollama: &service-ollama
     - OLLAMA_MAX_LOADED_MODELS=2
   volumes:
     - ollama_storage:/root/.ollama
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:11434/api/version"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 30s
 
 x-init-ollama: &init-ollama
   image: ollama/ollama:latest
@@ -69,6 +76,12 @@ services:
     volumes:
         - ~/.flowise:/root/.flowise
     entrypoint: /bin/sh -c "sleep 3; flowise start"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -80,6 +93,12 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - open-webui:/app/backend/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   n8n-import:
     <<: *service-n8n
@@ -104,6 +123,12 @@ services:
     depends_on:
       n8n-import:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   qdrant:
     image: qdrant/qdrant
@@ -114,6 +139,12 @@ services:
       - 6334/tcp
     volumes:
       - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   neo4j:
     image: neo4j:latest
@@ -129,6 +160,12 @@ services:
     environment:
         - NEO4J_AUTH=${NEO4J_AUTH:-"neo4j/your_password"}
     restart: always
+    healthcheck:
+      test: ["CMD", "cypher-shell", "MATCH () RETURN count(*) as count"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   caddy:
     container_name: caddy
@@ -170,7 +207,7 @@ services:
   langfuse-worker:
     image: langfuse/langfuse-worker:3
     restart: always
-    depends_on: &langfuse-depends-on
+    depends_on:
       postgres:
         condition: service_healthy
       minio:
@@ -224,11 +261,25 @@ services:
       REDIS_TLS_CA: ${REDIS_TLS_CA:-/certs/ca.crt}
       REDIS_TLS_CERT: ${REDIS_TLS_CERT:-/certs/redis.crt}
       REDIS_TLS_KEY: ${REDIS_TLS_KEY:-/certs/redis.key}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   langfuse-web:
     image: langfuse/langfuse:3
     restart: always
-    depends_on: *langfuse-depends-on
+    depends_on: 
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
     expose:
       - 3000/tcp
     environment:
@@ -244,6 +295,12 @@ services:
       LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-}
       LANGFUSE_INIT_USER_NAME: ${LANGFUSE_INIT_USER_NAME:-}
       LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   clickhouse:
     image: clickhouse/clickhouse-server
@@ -382,17 +439,20 @@ services:
     profiles: ["cpu"]
     <<: *init-ollama
     depends_on:
-      - ollama-cpu
+      ollama-cpu:
+        condition: service_healthy
 
   ollama-pull-llama-gpu:
     profiles: ["gpu-nvidia"]
     <<: *init-ollama
     depends_on:
-      - ollama-gpu
+      ollama-gpu:
+        condition: service_healthy
 
   ollama-pull-llama-gpu-amd:
     profiles: [gpu-amd]
     <<: *init-ollama
     image: ollama/ollama:rocm
     depends_on:
-     - ollama-gpu-amd
+     ollama-gpu-amd:
+       condition: service_healthy

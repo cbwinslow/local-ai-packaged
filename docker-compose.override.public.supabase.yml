@@ -6,4 +6,5 @@ services:
     ports: !reset null
 
   supavisor:
+    image: supabase/supavisor:2.5.7
     ports: !reset null

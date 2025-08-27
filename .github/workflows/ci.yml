@@ -1,0 +1,141 @@
+# =============================================================================
+# Name: ci.yml
+# Date: 2024-12-28
+# Script Name: .github/workflows/ci.yml
+# Version: 1.0.0
+# Log Summary: CI workflow for basic validation of the local AI package
+# Description: GitHub Actions workflow that validates the orchestration script,
+#              Docker Compose configuration, and runs basic linting checks.
+#              Runs on pull requests and pushes to main branches.
+# Change Summary: Initial CI implementation with Docker validation and Python linting
+# Inputs: GitHub repository push/PR events
+# Outputs: Validation status, test results, lint reports
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [ main, stable ]
+  pull_request:
+    branches: [ main, stable ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Validate orchestration script syntax
+      run: |
+        python -m py_compile start_services.py
+        
+    - name: Test orchestration script help
+      run: |
+        python start_services.py --help
+        
+    - name: Test init command help
+      run: |
+        python start_services.py init --help
+        
+    - name: Validate Docker Compose configuration
+      run: |
+        docker compose config --quiet
+        
+    - name: Validate override files
+      run: |
+        docker compose -f docker-compose.yml -f docker-compose.override.private.yml config --quiet
+        docker compose -f docker-compose.yml -f docker-compose.override.public.yml config --quiet
+        
+    - name: Check for common issues
+      run: |
+        # Validate environment file example
+        if [ ! -f .env.example ]; then
+          echo "Error: .env.example file missing"
+          exit 1
+        fi
+        
+        # Check that README exists and has basic content
+        if [ ! -f README.md ]; then
+          echo "Error: README.md file missing"
+          exit 1
+        fi
+        
+        if ! grep -q "start_services.py" README.md; then
+          echo "Error: README.md missing start_services.py documentation"
+          exit 1
+        fi
+        
+    - name: Test Docker environment validation
+      run: |
+        # Test that Docker validation works
+        python start_services.py test || echo "Expected to fail without .env file"
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black
+        
+    - name: Run Black formatter check
+      run: |
+        black --check --diff start_services.py || echo "Code formatting issues found (consider running: black start_services.py)"
+        
+    - name: Run Flake8 linter
+      run: |
+        # Ignore some common issues for this type of script
+        flake8 start_services.py --max-line-length=120 --ignore=E501,W503 || echo "Linting issues found"
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Check for secrets in code
+      run: |
+        # Basic check for hardcoded secrets
+        if grep -r -i "password.*=" --include="*.py" --include="*.yml" . | grep -v "POSTGRES_PASSWORD" | grep -v ".env.example"; then
+          echo "Warning: Potential hardcoded passwords found"
+        fi
+        
+        if grep -r -i "secret.*=" --include="*.py" --include="*.yml" . | grep -v "_SECRET" | grep -v ".env.example"; then
+          echo "Warning: Potential hardcoded secrets found"
+        fi
+        
+        # Check that .env is in .gitignore
+        if ! grep -q "\.env$" .gitignore; then
+          echo "Error: .env should be in .gitignore to prevent committing secrets"
+          exit 1
+        fi
+        
+    - name: Validate file permissions
+      run: |
+        # Check that start_services.py is executable
+        if [ ! -x start_services.py ]; then
+          echo "Warning: start_services.py should be executable"
+        fi

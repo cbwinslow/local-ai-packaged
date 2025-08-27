@@ -1,0 +1,81 @@
+# Traefik dynamic configuration
+# This file configures middleware and additional routing rules
+
+http:
+  middlewares:
+    # Security headers
+    secure-headers:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+          - POST
+          - DELETE
+          - PATCH
+        accessControlMaxAge: 100
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        referrerPolicy: "same-origin"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+        customResponseHeaders:
+          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
+          server: ""
+        sslProxyHeaders:
+          X-Forwarded-Proto: "https"
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        frameDeny: true
+    
+    # Rate limiting
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+        period: "1m"
+    
+    # Authentication for admin services
+    auth:
+      basicAuth:
+        users:
+          - "admin:$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"  # admin:changeme
+    
+    # CORS for API services  
+    cors:
+      headers:
+        accessControlAllowOriginList:
+          - "http://localhost"
+          - "https://localhost"
+        accessControlAllowMethods:
+          - "GET"
+          - "POST"
+          - "PUT"
+          - "DELETE"
+          - "OPTIONS"
+        accessControlAllowHeaders:
+          - "Content-Type"
+          - "Authorization"
+          - "X-Requested-With"
+        accessControlExposeHeaders:
+          - "Content-Length"
+          - "Content-Range"
+        accessControlAllowCredentials: true
+        accessControlMaxAge: 86400
+
+  # Services for health checks and monitoring
+  services:
+    ping:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1/"
+
+  routers:
+    # Health check endpoint
+    ping:
+      rule: "Path(`/ping`)"
+      service: "ping"

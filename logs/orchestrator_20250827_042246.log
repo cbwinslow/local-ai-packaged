@@ -1,0 +1,22 @@
+2025-08-27 04:22:46,883 - __main__ - INFO - Stopping services for project 'localai'...
+2025-08-27 04:22:46,883 - __main__ - INFO - Executing: docker compose -p localai -f docker-compose.yml down
+2025-08-27 04:22:46,884 - __main__ - INFO - [DRY RUN] Deploying to root@127.0.0.1
+2025-08-27 04:22:46,884 - __main__ - INFO - Dry run mode - no actual changes will be made
+2025-08-27 04:22:46,884 - __main__ - INFO - SSH connectivity verified
+2025-08-27 04:22:46,885 - __main__ - INFO - Docker found on remote server
+2025-08-27 04:22:46,885 - __main__ - INFO - Docker Compose found on remote server
+2025-08-27 04:22:46,885 - __main__ - INFO - Copying files to remote server...
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied docker-compose.yml
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied docker-compose.override.private.yml
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied docker-compose.override.public.yml
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied docker-compose.override.public.supabase.yml
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied start_services.py
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied .env
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied Caddyfile
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied searxng/
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied n8n/
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied caddy-addon/
+2025-08-27 04:22:46,885 - __main__ - INFO - Copied flowise/
+2025-08-27 04:22:46,885 - __main__ - INFO - Starting services on remote server...
+2025-08-27 04:22:46,885 - __main__ - INFO - Remote deployment completed successfully
+2025-08-27 04:22:46,998 - __main__ - INFO - Services stopped successfully

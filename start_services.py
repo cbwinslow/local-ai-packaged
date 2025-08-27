@@ -262,6 +262,9 @@ class ServiceOrchestrator:
                 "ENCRYPTION_KEY": self.generate_hex_secret(32)
             }
             
+            # Set default email for Let's Encrypt
+            content = content.replace("# LETSENCRYPT_EMAIL=blaine.winslow@gmail.com", "LETSENCRYPT_EMAIL=blaine.winslow@gmail.com")
+            
             # Replace placeholder values
             for key, value in secrets_map.items():
                 if key == "NEO4J_AUTH":
@@ -663,6 +666,21 @@ class ServiceOrchestrator:
                         else:
                             self.run_command(["scp"] + (["-i", ssh_key] if ssh_key else []) + [file_path, f"{user}@{host}:{remote_dir}/"])
                     self.logger.info(f"Copied {file_path}")
+                    
+            # Configure domain and hostnames for remote deployment
+            if domain and not dry_run:
+                self.logger.info(f"Configuring domain {domain} for remote deployment...")
+                env_config_cmd = ssh_cmd + [f'''cd {remote_dir} && 
+                    sed -i 's/^# N8N_HOSTNAME=.*/N8N_HOSTNAME=n8n.{domain}/' .env &&
+                    sed -i 's/^# WEBUI_HOSTNAME=.*/WEBUI_HOSTNAME=openwebui.{domain}/' .env &&
+                    sed -i 's/^# FLOWISE_HOSTNAME=.*/FLOWISE_HOSTNAME=flowise.{domain}/' .env &&
+                    sed -i 's/^# SUPABASE_HOSTNAME=.*/SUPABASE_HOSTNAME=supabase.{domain}/' .env &&
+                    sed -i 's/^# LANGFUSE_HOSTNAME=.*/LANGFUSE_HOSTNAME=langfuse.{domain}/' .env &&
+                    sed -i 's/^# NEO4J_HOSTNAME=.*/NEO4J_HOSTNAME=neo4j.{domain}/' .env &&
+                    sed -i 's/^LETSENCRYPT_EMAIL=.*/LETSENCRYPT_EMAIL=blaine.winslow@gmail.com/' .env
+                ''']
+                self.run_command(env_config_cmd)
+                self.logger.info("Domain configuration completed")
                     
             # Run deployment on remote
             self.logger.info("Starting services on remote server...")

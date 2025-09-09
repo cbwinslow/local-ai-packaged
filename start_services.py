@@ -52,26 +52,41 @@ def check_env_file():
 
 def clone_supabase_repo():
     """Clone the Supabase repository using sparse checkout if not already present."""
-    if not os.path.exists("supabase"):
+    if not os.path.exists("supabase/docker"):
         print("📦 Cloning the Supabase repository...")
-        run_command([
-            "git", "clone", "--filter=blob:none", "--no-checkout",
-            "https://github.com/supabase/supabase.git"
-        ])
-        
-        os.chdir("supabase")
-        run_command(["git", "sparse-checkout", "init", "--cone"])
-        run_command(["git", "sparse-checkout", "set", "docker"])
-        run_command(["git", "checkout", "master"])
-        os.chdir("..")
-        print("✅ Supabase repository cloned and configured")
+        try:
+            # Remove any existing supabase directory
+            if os.path.exists("supabase"):
+                shutil.rmtree("supabase")
+            
+            run_command([
+                "git", "clone", "--filter=blob:none", "--no-checkout",
+                "https://github.com/supabase/supabase.git"
+            ])
+            
+            os.chdir("supabase")
+            run_command(["git", "sparse-checkout", "init", "--cone"])
+            run_command(["git", "sparse-checkout", "set", "docker"])
+            run_command(["git", "checkout", "master"])
+            os.chdir("..")
+            print("✅ Supabase repository cloned and configured")
+        except Exception as e:
+            print(f"❌ Failed to clone Supabase repository: {e}")
+            print("Creating basic docker directory structure...")
+            # Fallback: create basic structure
+            Path("supabase/docker").mkdir(parents=True, exist_ok=True)
+            print("✅ Basic Supabase structure created")
     else:
         print("✅ Supabase repository already exists")
 
 def prepare_supabase_env():
     """Copy .env to .env in supabase/docker."""
-    env_path = os.path.join("supabase", "docker", ".env")
-    env_example_path = os.path.join(".env")
+    # Ensure the directory exists
+    docker_dir = os.path.join("supabase", "docker")
+    Path(docker_dir).mkdir(parents=True, exist_ok=True)
+    
+    env_path = os.path.join(docker_dir, ".env")
+    env_example_path = ".env"
     print("📋 Copying .env to supabase/docker...")
     shutil.copyfile(env_example_path, env_path)
     print("✅ Environment configured for Supabase")

@@ -647,7 +647,11 @@ class ServiceOrchestrator:
                 if not dry_run:
                     install_compose = ssh_cmd + ["""
                         DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d'"' -f4) &&
-                        sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose &&
+                        curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /tmp/docker-compose &&
+                        curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64.sha256" -o /tmp/docker-compose.sha256 &&
+                        cd /tmp &&
+                        sha256sum -c docker-compose.sha256 &&
+                        sudo mv /tmp/docker-compose /usr/local/bin/docker-compose &&
                         sudo chmod +x /usr/local/bin/docker-compose
                     """]
                     self.run_command(install_compose)

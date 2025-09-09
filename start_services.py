@@ -262,10 +262,17 @@ class ServiceOrchestrator:
                 "ENCRYPTION_KEY": self.generate_hex_secret(32)
             }
             
-            # Set default email for Let's Encrypt
-            content = content.replace("# LETSENCRYPT_EMAIL=blaine.winslow@gmail.com", "LETSENCRYPT_EMAIL=blaine.winslow@gmail.com")
-            
-            # Replace placeholder values
+            # Set Let's Encrypt email (prompt user or use env/arg)
+            letsencrypt_email = os.environ.get("LETSENCRYPT_EMAIL")
+            if not letsencrypt_email:
+                # Prompt user for email, allow blank (will comment out in .env)
+                print("Enter your email address for Let's Encrypt certificate notifications (leave blank to skip):")
+                letsencrypt_email = input("LETSENCRYPT_EMAIL: ").strip()
+            if letsencrypt_email:
+                content = content.replace("# LETSENCRYPT_EMAIL=blaine.winslow@gmail.com", f"LETSENCRYPT_EMAIL={letsencrypt_email}")
+            else:
+                # Leave commented out, remind user to update
+                content = content.replace("# LETSENCRYPT_EMAIL=blaine.winslow@gmail.com", "# LETSENCRYPT_EMAIL=your@email.com  # <-- Please update before deployment")
             for key, value in secrets_map.items():
                 if key == "NEO4J_AUTH":
                     content = content.replace("NEO4J_AUTH=neo4j/password", f"NEO4J_AUTH={value}")

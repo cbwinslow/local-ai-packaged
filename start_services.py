@@ -273,25 +273,34 @@ class ServiceOrchestrator:
             else:
                 # Leave commented out, remind user to update
                 content = content.replace("# LETSENCRYPT_EMAIL=blaine.winslow@gmail.com", "# LETSENCRYPT_EMAIL=your@email.com  # <-- Please update before deployment")
+            # Map each key to its possible placeholder(s)
+            placeholder_map = {
+                "NEO4J_AUTH": ["NEO4J_AUTH=neo4j/password"],
+                "SUPABASE_SERVICE_ROLE_KEY": [
+                    "super-secret-key",
+                    "generate-with-openssl",
+                    "your-super-secret-jwt-token-with-at-least-32-characters-long"
+                ],
+                "POSTGRES_PASSWORD": [
+                    "your-super-secret-and-long-postgres-password",
+                    "this_password_is_insecure_and_should_be_updated"
+                ],
+                "SUPABASE_JWT_SECRET": [
+                    "super-secret-key",
+                    "generate-with-openssl",
+                    "your-super-secret-jwt-token-with-at-least-32-characters-long"
+                ],
+                "SUPABASE_TENANT_ID": [
+                    "your-tenant-id"
+                ],
+                # Add other keys and their placeholders as needed
+            }
             for key, value in secrets_map.items():
-                if key == "NEO4J_AUTH":
-                    content = content.replace("NEO4J_AUTH=neo4j/password", f"NEO4J_AUTH={value}")
-                elif "super-secret-key" in content:
-                    content = content.replace("super-secret-key", value, 1)
-                elif "generate-with-openssl" in content:
-                    content = content.replace("generate-with-openssl", value)
-                elif "your-super-secret-and-long-postgres-password" in content:
-                    content = content.replace("your-super-secret-and-long-postgres-password", value)
-                elif "your-super-secret-jwt-token-with-at-least-32-characters-long" in content:
-                    content = content.replace("your-super-secret-jwt-token-with-at-least-32-characters-long", value)
-                elif "this_password_is_insecure_and_should_be_updated" in content:
-                    content = content.replace("this_password_is_insecure_and_should_be_updated", value)
-                elif "your-tenant-id" in content:
-                    content = content.replace("your-tenant-id", value)
-                else:
-                    # Generic replacement for any remaining placeholder
-                    content = content.replace(f"{key}=", f"{key}={value}")
-                    
+                # Replace all known placeholders for this key
+                for placeholder in placeholder_map.get(key, []):
+                    content = content.replace(placeholder, value)
+                # Also replace generic key= lines if present
+                content = content.replace(f"{key}=", f"{key}={value}")
             with open(env_file, 'w') as f:
                 f.write(content)
                 

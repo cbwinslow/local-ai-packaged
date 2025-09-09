@@ -683,8 +683,7 @@ class ServiceOrchestrator:
                     sed -i 's/^# FLOWISE_HOSTNAME=.*/FLOWISE_HOSTNAME=flowise.{domain}/' .env &&
                     sed -i 's/^# SUPABASE_HOSTNAME=.*/SUPABASE_HOSTNAME=supabase.{domain}/' .env &&
                     sed -i 's/^# LANGFUSE_HOSTNAME=.*/LANGFUSE_HOSTNAME=langfuse.{domain}/' .env &&
-                    sed -i 's/^# NEO4J_HOSTNAME=.*/NEO4J_HOSTNAME=neo4j.{domain}/' .env &&
-                    sed -i 's/^LETSENCRYPT_EMAIL=.*/LETSENCRYPT_EMAIL=blaine.winslow@gmail.com/' .env
+                    sed -i 's/^# NEO4J_HOSTNAME=.*/NEO4J_HOSTNAME=neo4j.{domain}/' .env
                 ''']
                 self.run_command(env_config_cmd)
                 self.logger.info("Domain configuration completed")

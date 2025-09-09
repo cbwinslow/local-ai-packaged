@@ -71,6 +71,49 @@ def generate_jwt_secret():
     raw_secret = secrets.token_bytes(32)
     return base64.urlsafe_b64encode(raw_secret).decode('utf-8').rstrip('=')
 
+def generate_jwt_keys(jwt_secret):
+    """Generate ANON_KEY and SERVICE_ROLE_KEY based on JWT_SECRET"""
+    import base64
+    import json
+    import hmac
+    import hashlib
+    
+    header = {
+        'alg': 'HS256',
+        'typ': 'JWT'
+    }
+    
+    anon_payload = {
+        'role': 'anon',
+        'iss': 'supabase',
+        'iat': 1641769200,
+        'exp': 1799535600
+    }
+    
+    service_payload = {
+        'role': 'service_role', 
+        'iss': 'supabase',
+        'iat': 1641769200,
+        'exp': 1799535600
+    }
+    
+    def encode_jwt(payload, secret):
+        # Encode header and payload
+        header_encoded = base64.urlsafe_b64encode(json.dumps(header, separators=(',', ':')).encode()).decode().rstrip('=')
+        payload_encoded = base64.urlsafe_b64encode(json.dumps(payload, separators=(',', ':')).encode()).decode().rstrip('=')
+        
+        # Create signature
+        message = f'{header_encoded}.{payload_encoded}'
+        signature = hmac.new(secret.encode(), message.encode(), hashlib.sha256).digest()
+        signature_encoded = base64.urlsafe_b64encode(signature).decode().rstrip('=')
+        
+        return f'{header_encoded}.{payload_encoded}.{signature_encoded}'
+    
+    anon_key = encode_jwt(anon_payload, jwt_secret)
+    service_key = encode_jwt(service_payload, jwt_secret)
+    
+    return anon_key, service_key
+
 def get_user_input(prompt, default=None, required=True):
     """Get user input with optional default"""
     if default:
@@ -89,7 +132,7 @@ def get_user_input(prompt, default=None, required=True):
         else:
             print("This field is required. Please enter a value.")
 
-def setup_environment():
+def setup_environment(args=None):
     """Setup environment configuration"""
     print("\n📝 Setting up environment configuration...")
     
@@ -97,6 +140,9 @@ def setup_environment():
     env_example_path = ".env.example"
     
     if os.path.exists(env_path):
+        if args and args.non_interactive:
+            print("✅ Using existing .env file")
+            return env_path
         overwrite = input(f"\n⚠️  {env_path} already exists. Overwrite? (y/N): ").lower()
         if overwrite != 'y':
             print("Keeping existing .env file. You may need to update it manually.")
@@ -112,12 +158,18 @@ def setup_environment():
     
     print("\n🔐 Generating secure secrets...")
     
+    # Generate JWT secret first
+    jwt_secret = generate_jwt_secret()
+    anon_key, service_role_key = generate_jwt_keys(jwt_secret)
+    
     # Generate secrets
     secrets_map = {
         'N8N_ENCRYPTION_KEY': generate_hex_secret(32),
         'N8N_USER_MANAGEMENT_JWT_SECRET': generate_hex_secret(32),
         'POSTGRES_PASSWORD': generate_secret(32),
-        'JWT_SECRET': generate_jwt_secret(),
+        'JWT_SECRET': jwt_secret,
+        'ANON_KEY': anon_key,
+        'SERVICE_ROLE_KEY': service_role_key,
         'DASHBOARD_USERNAME': 'admin',
         'DASHBOARD_PASSWORD': generate_secret(20),
         'POOLER_TENANT_ID': '1000',
@@ -129,6 +181,11 @@ def setup_environment():
         'ENCRYPTION_KEY': generate_hex_secret(32),
         'SECRET_KEY_BASE': generate_hex_secret(64),
         'VAULT_ENC_KEY': generate_hex_secret(32),
+        'FLOWISE_USERNAME': 'admin',
+        'FLOWISE_PASSWORD': generate_secret(20),
+        'SEARXNG_SECRET_KEY': generate_secret(32),
+        'KONG_DB_PASSWORD': generate_secret(32),
+        'KONG_TOKEN_SECRET': generate_secret(64),
     }
     
     # Replace secrets in env content
@@ -142,15 +199,27 @@ def setup_environment():
                     break
             env_content = '\n'.join(lines)
     
-    # Ask for optional configurations
-    print("\n🌐 Optional configurations (press Enter to skip):")
-    
-    # Domain configurations for production
-    production_setup = input("Are you setting up for production with custom domains? (y/N): ").lower() == 'y'
+    # Handle production setup
+    if args and (args.production or args.domain):
+        production_setup = True
+        email = args.email or "admin@example.com"
+        base_domain = args.domain or "localhost"
+    elif args and args.non_interactive:
+        production_setup = False
+        email = None
+        base_domain = None
+    else:
+        # Ask for optional configurations
+        print("\n🌐 Optional configurations (press Enter to skip):")
+        production_setup = input("Are you setting up for production with custom domains? (y/N): ").lower() == 'y'
+        email = None
+        base_domain = None
     
     if production_setup:
-        email = get_user_input("Email for Let's Encrypt SSL certificates", required=True)
-        base_domain = get_user_input("Base domain (e.g., yourdomain.com)", required=True)
+        if not email:
+            email = get_user_input("Email for Let's Encrypt SSL certificates", required=True)
+        if not base_domain:
+            base_domain = get_user_input("Base domain (e.g., yourdomain.com)", required=True)
         
         domain_configs = {
             'N8N_HOSTNAME': f'n8n.{base_domain}',
@@ -159,6 +228,7 @@ def setup_environment():
             'SUPABASE_HOSTNAME': f'supabase.{base_domain}',
             'LANGFUSE_HOSTNAME': f'langfuse.{base_domain}',
             'NEO4J_HOSTNAME': f'neo4j.{base_domain}',
+            'GRAPHITE_HOSTNAME': f'graphite.{base_domain}',
             'LETSENCRYPT_EMAIL': email,
         }
         
@@ -172,21 +242,22 @@ def setup_environment():
             env_content = '\n'.join(lines)
     
     # Optional Google OAuth
-    google_oauth = input("Configure Google OAuth for Supabase? (y/N): ").lower() == 'y'
-    if google_oauth:
-        google_client_id = get_user_input("Google Client ID", required=True)
-        google_client_secret = get_user_input("Google Client Secret", required=True)
-        google_redirect_uri = get_user_input("Google Redirect URI", f"http://localhost:8000/auth/v1/callback", required=True)
-        
-        google_configs = {
-            'ENABLE_GOOGLE_SIGNUP': 'true',
-            'GOOGLE_CLIENT_ID': google_client_id,
-            'GOOGLE_CLIENT_SECRET': google_client_secret,
-            'GOOGLE_REDIRECT_URI': google_redirect_uri,
-        }
-        
-        for key, value in google_configs.items():
-            env_content = env_content.replace(f'# {key}=', f'{key}={value}')
+    if not (args and args.non_interactive):
+        google_oauth = input("Configure Google OAuth for Supabase? (y/N): ").lower() == 'y'
+        if google_oauth:
+            google_client_id = get_user_input("Google Client ID", required=True)
+            google_client_secret = get_user_input("Google Client Secret", required=True)
+            google_redirect_uri = get_user_input("Google Redirect URI", f"http://localhost:8000/auth/v1/callback", required=True)
+            
+            google_configs = {
+                'ENABLE_GOOGLE_SIGNUP': 'true',
+                'GOOGLE_CLIENT_ID': google_client_id,
+                'GOOGLE_CLIENT_SECRET': google_client_secret,
+                'GOOGLE_REDIRECT_URI': google_redirect_uri,
+            }
+            
+            for key, value in google_configs.items():
+                env_content = env_content.replace(f'# {key}=', f'{key}={value}')
     
     # Write the .env file
     with open(env_path, 'w') as f:
@@ -277,6 +348,18 @@ def install_dependencies():
 
 def main():
     """Main installation function"""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Install Local AI Package')
+    parser.add_argument('--non-interactive', action='store_true',
+                       help='Run in non-interactive mode with defaults')
+    parser.add_argument('--production', action='store_true',
+                       help='Set up for production with SSL')
+    parser.add_argument('--domain', help='Base domain for production setup')
+    parser.add_argument('--email', help='Email for Let\'s Encrypt certificates')
+    
+    args = parser.parse_args()
+    
     print_banner()
     
     # Check if we're in the right directory
@@ -288,7 +371,7 @@ def main():
         check_requirements()
         install_dependencies()
         setup_directories()
-        env_path = setup_environment()
+        env_path = setup_environment(args)
         clone_agentic_rag()
         
         print(f"""
@@ -300,12 +383,13 @@ def main():
         3. Access the web interface at http://localhost (or your configured domain)
         
         📚 Services will be available at:
-        - N8N: http://localhost:8001 (or your configured domain)
-        - Open WebUI: http://localhost:8002
-        - Flowise: http://localhost:8003  
-        - Supabase: http://localhost:8005
-        - Langfuse: http://localhost:8007
-        - Neo4j: http://localhost:8008
+        - N8N: http://localhost/n8n
+        - Open WebUI: http://localhost/openwebui
+        - Flowise: http://localhost/flowise
+        - Supabase: http://localhost/supabase
+        - Langfuse: http://localhost/langfuse
+        - Neo4j: http://localhost/neo4j
+        - Graphite: http://localhost/graphite
         
         🔐 Important: Save your generated secrets in a secure location!
         """)

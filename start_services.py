@@ -139,6 +139,15 @@ def stop_existing_containers(profile=None):
     except subprocess.CalledProcessError:
         print("⚠️  Some containers may not have been running")
 
+def start_kong():
+    """Start Kong API Gateway"""
+    print("🦍 Starting Kong API Gateway...")
+    cmd = ["docker", "compose", "-p", "localai", "-f", "docker-compose.kong.yml", "up", "-d"]
+    run_command(cmd)
+    
+    # Wait for Kong to be ready
+    wait_for_service("http://localhost:8001/", "Kong Admin", max_attempts=15, delay=5)
+
 def start_traefik():
     """Start Traefik reverse proxy"""
     print("🚦 Starting Traefik reverse proxy...")
@@ -290,6 +299,7 @@ def show_service_urls():
     print("   🔍 SearXNG:            http://localhost/searxng")
     print("   📈 Neo4j Browser:      http://localhost/neo4j")
     print("   🧠 Agentic RAG:        http://localhost/agentic")
+    print("   📊 Graphite:           http://localhost/graphite")
     print("   🚦 Traefik Dashboard:  http://localhost:8080")
     print("\n🔧 System Information:")
     print("   📊 All services are managed through Traefik")
@@ -309,6 +319,8 @@ def main():
                       help='Profile to use for Docker Compose (default: cpu)')
     parser.add_argument('--environment', choices=['private', 'public'], default='private',
                       help='Environment to use for Docker Compose (default: private)')
+    parser.add_argument('--api-gateway', choices=['traefik', 'kong'], default='traefik',
+                      help='API Gateway to use (default: traefik)')
     parser.add_argument('--skip-build', action='store_true',
                       help='Skip building frontend and agentic services')
     args = parser.parse_args()
@@ -316,6 +328,7 @@ def main():
     print("🚀 Starting Local AI Package...")
     print(f"   Profile: {args.profile}")
     print(f"   Environment: {args.environment}")
+    print(f"   API Gateway: {args.api_gateway}")
     
     # Pre-flight checks
     if not check_docker():
@@ -341,8 +354,12 @@ def main():
         stop_existing_containers(args.profile)
 
         # Start services in order
-        start_traefik()
-        time.sleep(5)  # Give Traefik time to initialize
+        if args.api_gateway == "kong":
+            start_kong()
+            time.sleep(10)  # Give Kong time to initialize
+        else:
+            start_traefik()
+            time.sleep(5)  # Give Traefik time to initialize
 
         start_supabase(args.environment)
         time.sleep(15)  # Give Supabase more time to initialize

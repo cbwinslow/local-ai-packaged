@@ -14,6 +14,8 @@ volumes:
   langfuse_clickhouse_logs:
   langfuse_minio_data:
   agentic_data:
+  graphite_storage:
+  graphite_config:
 
 networks:
   default:
@@ -435,6 +437,39 @@ services:
       - "traefik.http.services.agentic.loadbalancer.server.port=8000"
       - "traefik.http.middlewares.agentic-stripprefix.stripprefix.prefixes=/agentic"
       - "traefik.http.routers.agentic.middlewares=agentic-stripprefix@docker"
+
+  # Graphite monitoring stack
+  graphite:
+    image: graphiteapp/graphite-statsd:latest
+    container_name: graphite
+    restart: unless-stopped
+    expose:
+      - 80/tcp
+      - 2003/tcp
+      - 2004/tcp
+      - 7002/tcp
+      - 8125/udp
+      - 8126/tcp
+    environment:
+      - GRAPHITE_TIME_ZONE=UTC
+      - GRAPHITE_LOG_ROTATION=true
+      - GRAPHITE_LOG_CARBON_ENABLED=true
+      - GRAPHITE_LOG_WEBAPP_ENABLED=true
+      - GRAPHITE_LOG_RENDERING_ENABLED=true
+    volumes:
+      - graphite_storage:/opt/graphite/storage
+      - graphite_config:/opt/graphite/conf
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.graphite.rule=Host(`${GRAPHITE_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/graphite`)"
+      - "traefik.http.routers.graphite.entrypoints=websecure"
+      - "traefik.http.routers.graphite.tls=true"
+      - "traefik.http.routers.graphite.tls.certresolver=letsencrypt"
+      - "traefik.http.services.graphite.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.graphite-stripprefix.stripprefix.prefixes=/graphite"
+      - "traefik.http.routers.graphite.middlewares=graphite-stripprefix@docker"
 
   # Frontend Next.js application
   frontend:

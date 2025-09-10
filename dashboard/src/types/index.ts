@@ -4,6 +4,7 @@ export interface ServiceStatus {
   cpu?: number
   memory?: number
   lastUpdated: Date
+  ariaLabel?: string
 }
 
 export interface Vulnerability {

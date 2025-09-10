@@ -1,0 +1,85 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "disabled": false
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/cbwinslow/local-ai-packaged"],
+      "disabled": false
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git", "--repository", "/home/cbwinslow/local-ai-packaged"],
+      "disabled": false
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "/home/cbwinslow/local-ai-packaged/data/analytics.db"],
+      "disabled": false
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-docker"],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      },
+      "disabled": false
+    },
+    "trivy": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-trivy"],
+      "disabled": false
+    },
+    "context7-upstash": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "disabled": false
+    },
+    "elasticsearch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-elasticsearch"],
+      "env": {
+        "ELASTICSEARCH_URL": "http://localhost:9200"
+      },
+      "disabled": false
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      },
+      "disabled": true
+    },
+    "weather": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-weather"],
+      "disabled": false
+    },
+    "everywhere": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everywhere"],
+      "env": {
+        "EVERYWHERE_API_KEY": "${EVERYWHERE_API_KEY}"
+      },
+      "disabled": true
+    },
+    "github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "disabled": false
+    }
+  },
+  "logging": {
+    "level": "info",
+    "directory": "/home/cbwinslow/local-ai-packaged/logs"
+  },
+  "timeout": 30000
+}

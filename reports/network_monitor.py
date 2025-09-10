@@ -37,9 +37,9 @@ class NetworkMonitor:
                     interfaces[name].append({
                         'family': str(addr.family).split('.')[-1],
                         'address': addr.address,
-                        'netmask': attr.ntmask,
-                        'broadcast': attr.broadcast if hasattr(addr, 'broadcast') else None,
-                        'ptp': attr.ptp if hasattr(addr, 'ptp') else None
+                        'netmask': addr.netmask,
+                        'broadcast': addr.broadcast if hasattr(addr, 'broadcast') else None,
+                        'ptp': addr.ptp if hasattr(addr, 'ptp') else None
                     })
         except Exception as e:
             self.report['security_analysis'].setdefault('alerts', []).append(f"Failed to collect network interfaces: {e}")
@@ -184,9 +184,8 @@ class NetworkMonitor:
         }
 
         try:
-            # Load Docker Compose configuration
             import yaml
-            with open('docker-compose.yml', 'r') as f:
+            with open('config/docker-compose.yml', 'r') as f:
                 compose_data = yaml.safe_load(f)
 
             declared_ports = []
@@ -218,7 +217,9 @@ class NetworkMonitor:
                     seen_ports[port] = service
 
             # Check against listening ports
-            listening_ports = self.collect_listening_ports()
+            if not self.listening_ports:
+                self.listening_ports = self.collect_listening_ports()
+            listening_ports = self.listening_ports
             for declared_port, service, container_port in declared_ports:
                 if declared_port in listening_ports:
                     existing_process = listening_ports[declared_port]['process']

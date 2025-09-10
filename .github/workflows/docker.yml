@@ -1,0 +1,140 @@
+name: Docker CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docker-compose*.yml'
+      - 'supabase/docker/docker-compose.yml'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docker-compose*.yml'
+      - 'supabase/docker/docker-compose.yml'
+      - '.github/workflows/docker.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Lint Docker Compose files
+        run: |
+          docker compose -f docker-compose.yml config
+          docker compose -f docker-compose.override.private.yml config
+          docker compose -f docker-compose.override.public.yml config
+          docker compose -f docker-compose.override.ai-tools.yml config
+          docker compose -f supabase/docker/docker-compose.yml config
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        run: |
+          IMAGES=(
+            "n8nio/n8n:1.62.0"
+            "ollama/ollama:0.3.12"
+            "flowiseai/flowise:1.5.4"
+            "qdrant/qdrant:v1.10.1"
+            "neo4j:5.20.0"
+            "caddy:2-alpine"
+            "langfuse/langfuse-worker:3.0.0"
+            "langfuse/langfuse:3.0.0"
+            "clickhouse/clickhouse-server:24.8"
+            "minio/minio:RELEASE.2024-08-03T15-22-10Z"
+            "postgres:16-alpine"
+            "valkey/valkey:8-alpine"
+            "searxng/searxng:2024.9.10-1"
+            "supabase/gotrue:v2.178.0"
+            "postgrest/postgrest:v12.2.13"
+            "supabase/realtime:v2.35.0"
+            "supabase/storage-api:v1.26.0"
+            "darthsim/imgproxy:v3.8.1"
+            "supabase/postgres-meta:v0.92.0"
+            "supabase/edge-runtime:v1.70.0"
+            "supabase/logflare:1.15.0"
+            "supabase/postgres:16.4.0.118"
+            "timberio/vector:0.35.0-alpine"
+            "supabase/supavisor:2.6.0"
+          )
+          for image in "${IMAGES[@]}"; do
+            trivy image --exit-code 0 --no-progress --format sarif --output "trivy-${image//:/-}.sarif" --severity CRITICAL,HIGH "$image"
+          done
+          # Combine SARIF files if needed
+          echo "Trivy scans completed for all images."
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-*.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate YAML files
+        run: |
+          python3 -c "import yaml; yaml.safe_load(open('docker-compose.yml'))"
+          python3 -c "import yaml; yaml.safe_load(open('supabase/docker/docker-compose.yml'))"
+        env:
+          POSTGRES_PASSWORD: postgres
+
+  deploy:
+    needs: [lint, security-scan, test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/ai-stack:latest
+            ghcr.io/${{ github.repository }}/ai-stack:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add deployment script here (e.g., ssh to server, docker compose pull && up)
+          # Example: ssh user@staging-server 'cd /path/to/project && docker compose pull && docker compose up -d'
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}

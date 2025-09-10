@@ -56,6 +56,28 @@ results from up to 229 search services. Users are neither tracked nor profiled, 
 
 ✅ [**Langfuse**](https://langfuse.com/) - Open source LLM engineering platform for agent observability
 
+## What's New
+
+### AI Tools Integration (New!)
+- **Graphite**: Metrics and monitoring dashboard
+- **mcp-memory-libsql**: High-performance SQL database for agent memory
+- **Neo4j Agent Memory**: Graph-based memory system for AI agents
+- **CrewAI**: Framework for orchestrating AI agents
+- **Letta**: Memory system for AI agents
+- **Falkor**: High-performance database for AI applications
+- **GraphRAG-SDK**: Graph-based retrieval augmented generation
+- **Llama Stack**: Framework for building LLM applications
+- **MCP Crawl4AI RAG**: Web crawling and RAG pipeline
+
+### Existing Features
+- **Supabase Integration**: Authentication, database, and vector storage
+- **Open WebUI**: Chat interface for local LLMs
+- **Flowise**: Visual tool for building LLM workflows
+- **Neo4j**: Graph database for advanced data relationships
+- **Langfuse**: LLM observability and analytics
+- **SearXNG**: Privacy-focused metasearch engine
+- **Caddy**: Modern web server with automatic HTTPS
+
 ## Prerequisites
 
 Before you begin, make sure you have the following software installed:
@@ -74,44 +96,36 @@ cd local-ai-packaged
 
 Before running the services, you need to set up your environment variables for Supabase following their [self-hosting guide](https://supabase.com/docs/guides/self-hosting/docker#securing-your-services).
 
+## Secure Secret Generation
+
+Use the following commands to generate secure secrets. Run `fix-supabase-env.sh` for automated generation of Supabase-specific keys.
+
+### N8N Secrets
+```bash
+N8N_ENCRYPTION_KEY=$(openssl rand -hex 32)
+N8N_USER_MANAGEMENT_JWT_SECRET=$(openssl rand -hex 32)
+```
+
+### Supabase Secrets
+- POSTGRES_PASSWORD: Use a strong password (e.g., `openssl rand -base64 32`)
+- JWT_SECRET: `openssl rand -hex 32`
+- ANON_KEY and SERVICE_ROLE_KEY: Generated automatically by `fix-supabase-env.sh` with current timestamps
+- DASHBOARD_USERNAME/PASSWORD: Random strings (e.g., `openssl rand -hex 16`)
+- POOLER_TENANT_ID: Any unique ID (e.g., `1000`)
+
+### Other Services
+- NEO4J_AUTH: `neo4j/$(openssl rand -base64 24)`
+- Langfuse: Use `openssl rand -hex 32` for each key
+
+### Full Generation Script
+Run `./fix-supabase-env.sh` to generate and update all critical secrets automatically.
+
 1. Make a copy of `.env.example` and rename it to `.env` in the root directory of the project
-2. Set the following required environment variables:
-   ```bash
-   ############
-   # N8N Configuration
-   ############
-   N8N_ENCRYPTION_KEY=
-   N8N_USER_MANAGEMENT_JWT_SECRET=
-
-   ############
-   # Supabase Secrets
-   ############
-   POSTGRES_PASSWORD=
-   JWT_SECRET=
-   ANON_KEY=
-   SERVICE_ROLE_KEY=
-   DASHBOARD_USERNAME=
-   DASHBOARD_PASSWORD=
-   POOLER_TENANT_ID=
-
-   ############
-   # Neo4j Secrets
-   ############   
-   NEO4J_AUTH=
-
-   ############
-   # Langfuse credentials
-   ############
-
-   CLICKHOUSE_PASSWORD=
-   MINIO_ROOT_PASSWORD=
-   LANGFUSE_SALT=
-   NEXTAUTH_SECRET=
-   ENCRYPTION_KEY=  
-   ```
+2. Run `./fix-supabase-env.sh` to populate all required secrets
+3. Verify with `grep -E '^(N8N_|POSTGRES_|JWT_|ANON_|SERVICE_|DASHBOARD_|POOLER_|NEO4J_|CLICKHOUSE_|MINIO_|LANGFUSE_|NEXTAUTH_|ENCRYPTION_)' .env`
 
 > [!IMPORTANT]
-> Make sure to generate secure random values for all secrets. Never use the example values in production.
+> Always generate secure random values for all secrets using openssl or equivalent. The `fix-supabase-env.sh` script now handles proper JWT key generation with current timestamps to prevent expiration issues.
 
 3. Set the following environment variables if deploying to production, otherwise leave commented:
    ```bash
@@ -401,7 +415,59 @@ interact with the local filesystem.
 - [Local File Trigger](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.localfiletrigger/)
 - [Execute Command](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.executecommand/)
 
-## 📜 License
+## AI Tools Integration
+
+This project includes several AI tools and services that can be managed through the AI Tools Manager. For detailed information about each tool, configuration options, and usage examples, see the [AI Tools Documentation](AI_TOOLS_README.md).
+
+### Key Features:
+
+- **Unified Management**: Control all AI services through a single interface
+- **Scalable Architecture**: Services are containerized and can be scaled independently
+- **Persistent Storage**: All data is persisted in Docker volumes
+- **Easy Configuration**: Environment-based configuration with sensible defaults
+- **Monitoring**: Built-in monitoring with Graphite
+
+## Management
+
+### AI Tools Management
+
+Use the included `ai_tools_manager.sh` script to manage AI services:
+
+```bash
+# Start all AI services
+./ai_tools_manager.sh start
+
+# Start a specific service (e.g., neo4j)
+./ai_tools_manager.sh start neo4j
+
+# Show status of all services
+./ai_tools_manager.sh status
+
+# View logs
+./ai_tools_manager.sh logs
+
+# Run initial setup
+./ai_tools_manager.sh setup
+```
+
+For more details, see [AI_TOOLS_README.md](AI_TOOLS_README.md)
+
+### Service Management
+
+Use the included `service-manager.py` script to manage core services:
+
+```bash
+# Start all services
+python3 service-manager.py start
+
+# Stop all services
+python3 service-manager.py stop
+
+# Check service status
+python3 service-manager.py status
+```
+
+## 📜 License
 
 This project (originally created by the n8n team, link at the top of the README) is licensed under the Apache License 2.0 - see the
 [LICENSE](LICENSE) file for details.

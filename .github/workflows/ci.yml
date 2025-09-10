@@ -1,0 +1,279 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    branches: [ main, develop ]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+jobs:
+  # Code Quality Checks
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort mypy
+
+      - name: Check Python code quality
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Check Python formatting
+        run: |
+          black --check --diff .
+          isort --check-only --diff .
+
+      - name: MyPy type checking
+        run: mypy . --ignore-missing-imports
+
+  # Security Checks
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Secret scanning with TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  # Docker and Container Checks
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Lint Docker Compose files
+        run: |
+          docker compose -f docker-compose.yml config -q
+          docker compose -f docker-compose.override.private.yml config -q
+          docker compose -f docker-compose.override.public.yml config -q
+          docker compose -f supabase/docker/docker-compose.yml config -q
+
+      - name: Validate Docker Compose schemas
+        run: |
+          pip install docker-compose-schema
+          python -c "import yaml; from compose_schema import validate; validate(yaml.safe_load(open('docker-compose.yml')))"
+
+  # Test Infrastructure
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install test dependencies
+        run: |
+          pip install pytest pytest-asyncio requests pyyaml docker
+
+      - name: Run Python tests
+        run: |
+          python -m pytest reports/ -v --tb=short
+          python -c "import service_manager; print('Service manager import successful')"
+
+      - name: Test configuration validation
+        run: |
+          python config-manager.py
+          python port-manager.py --check
+
+  # Generate reports
+  reports:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Generate system reports
+        run: |
+          mkdir -p reports/generated
+          python reports/docker_status.py > reports/generated/docker-status-$(date +%Y%m%d).txt
+          python reports/yaml_validate.py docker-compose.yml > reports/generated/yaml-validation-$(date +%Y%m%d).txt
+
+      - name: Archive reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: system-reports
+          path: reports/generated/
+
+  # Docker Build and Vulnerability Scan
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, security, docker]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and scan custom images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.custom
+          push: false
+          load: true
+          tags: local-ai-stack:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan built image
+        run: |
+          trivy image --exit-code 0 --format table local-ai-stack:test > trivy-image-scan.txt
+          cat trivy-image-scan.txt
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: vulnerability-scan
+          path: trivy-image-scan.txt
+
+  # Deploy to Static Site (Documentation)
+  deploy-docs:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install -g @11ty/eleventy
+          npm install -g markdown-it
+
+      - name: Build documentation site
+        run: |
+          mkdir -p docs-site
+          cd docs-site
+          echo "# AI Stack Documentation" > index.md
+          echo "" >> index.md
+          cat ../docs/COMPREHENSIVE-REPOSITORY-DOCUMENTATION.md >> index.md
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-site
+          cname: docs.ai-stack.local
+
+  # Deploy to Docker Environment
+  deploy-docker:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [build, reports]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/local-ai-stack
+            git pull origin main
+            docker compose pull
+            docker compose up -d
+            docker compose logs --tail=50
+
+      - name: Health check
+        run: |
+          sleep 30
+          curl -f http://localhost:8080/health || echo "Health check failed"
+
+  # Notification
+  notify:
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [deploy-docs, deploy-docker]
+    steps:
+      - name: Slack notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: |
+            CI/CD Pipeline completed
+            Status: ${{ job.status }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

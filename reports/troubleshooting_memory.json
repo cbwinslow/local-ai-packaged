@@ -1,0 +1,137 @@
+{
+  "created": "2025-09-10T14:08:44.262640",
+  "last_updated": "2025-09-10T14:08:44.264694",
+  "version": "1.0",
+  "incidents": {
+    "ccbb2fc7de4b0fc7d6ec4e53756e178b": {
+      "id": "ccbb2fc7de4b0fc7d6ec4e53756e178b",
+      "description": "Cannot start n8n service due to port 5678 already in use",
+      "category": "Docker",
+      "services_affected": [
+        "n8n"
+      ],
+      "severity": "High",
+      "symptoms": [
+        "Port already allocated error",
+        "Service startup failure",
+        "n8n container exits immediately"
+      ],
+      "reported_at": "2025-09-10T14:08:44.262726",
+      "status": "Resolved",
+      "troubleshooting_attempts": [
+        {
+          "timestamp": "2025-09-10T14:08:44.263137",
+          "description": "Check for existing n8n process",
+          "actions_taken": [
+            "Ran 'docker ps' to check running containers",
+            "Ran 'lsof -i :5678' to identify process using port",
+            "Found existing n8n container still running"
+          ],
+          "expected_outcome": "Identify conflicting process",
+          "actual_outcome": "Found old n8n container from previous session",
+          "success": true,
+          "duration_minutes": 5,
+          "notes": "Previous container wasn't properly stopped",
+          "tools_used": [
+            "docker",
+            "lsof"
+          ]
+        }
+      ],
+      "resolution": "Stopped conflicting n8n container and restarted services",
+      "resolution_time_hours": 1.1416666666666668e-07,
+      "environment_context": {
+        "os": "Linux",
+        "docker_version": "24.0"
+      },
+      "similar_incidents": [],
+      "prevention_recommendations": [
+        "Always run 'docker compose down -v' before switching environments",
+        "Implement cleanup scripts for existing containers"
+      ]
+    },
+    "ddf13699ab9214d3483775703e990c39": {
+      "id": "ddf13699ab9214d3483775703e990c39",
+      "description": "Ollama fails to download qwen2.5 model",
+      "category": "AI Models",
+      "services_affected": [
+        "ollama"
+      ],
+      "severity": "Medium",
+      "symptoms": [
+        "Model download times out",
+        "Ollama logs show connection errors",
+        "qwen2.5:7b model not available after service start"
+      ],
+      "reported_at": "2025-09-10T14:08:44.264096",
+      "status": "Resolved",
+      "troubleshooting_attempts": [
+        {
+          "timestamp": "2025-09-10T14:08:44.264365",
+          "description": "Check network connectivity and disk space",
+          "actions_taken": [
+            "Verified internet connection",
+            "Ran 'df -h' to check disk space (had only 2GB free)",
+            "Checked Ollama logs for specific error messages"
+          ],
+          "expected_outcome": "Identify disk space or network issues",
+          "actual_outcome": "Found disk space issue - only 1GB free, needed ~4GB",
+          "success": true,
+          "duration_minutes": 10,
+          "notes": "",
+          "tools_used": [
+            "df",
+            "ping",
+            "docker logs"
+          ]
+        }
+      ],
+      "resolution": "Cleaned up disk space and restarted Ollama service",
+      "resolution_time_hours": 7.472222222222221e-08,
+      "environment_context": {},
+      "similar_incidents": [],
+      "prevention_recommendations": [
+        "Monitor disk usage regularly",
+        "Set up automatic cleanup of old Docker images",
+        "Use external model storage if running low on space"
+      ]
+    }
+  },
+  "solutions": {
+    "40d62c9a996e5e5bbfa2f9a63ea76bcf": {
+      "pattern": "Use 'docker compose down' before starting new session",
+      "category": "Docker",
+      "successful_actions": [
+        "Ran 'docker ps' to check running containers",
+        "Ran 'lsof -i :5678' to identify process using port",
+        "Found existing n8n container still running"
+      ],
+      "created_from_incident": "ccbb2fc7de4b0fc7d6ec4e53756e178b"
+    },
+    "b954ed30910f4996d1c15f4576a18615": {
+      "pattern": "Ensure at least 5GB free space for model downloads",
+      "category": "AI Models",
+      "successful_actions": [
+        "Verified internet connection",
+        "Ran 'df -h' to check disk space (had only 2GB free)",
+        "Checked Ollama logs for specific error messages"
+      ],
+      "created_from_incident": "ddf13699ab9214d3483775703e990c39"
+    }
+  },
+  "patterns": {},
+  "statistics": {
+    "total_incidents": 2,
+    "successful_resolutions": 1,
+    " avg_resolution_time_hours": 0,
+    "most_common_categories": [
+      "Docker"
+    ],
+    "resolution_success_rate": 100.0,
+    "avg_resolution_time_hours": 0.0
+  },
+  "metadata": {
+    "system_info": {},
+    "environment": "local-ai-packaged"
+  }
+}

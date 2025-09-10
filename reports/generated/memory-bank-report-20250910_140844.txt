@@ -1,0 +1,22 @@
+
+TROUBLESHOOTING MEMORY BANK REPORT
+Generated: 2025-09-10T14:08:44.265057
+
+=== OVERVIEW ===
+Total Incidents: 2
+Successful Resolutions: 2
+Resolution Success Rate: 100.0%
+Average Resolution Time: 0.0 hours
+Most Common Categories: Docker, AI Models
+
+=== LEARNED SOLUTIONS ===
+
+1. AI Models: 'Ollama fails to download qwen2.5 model...'
+   Solution: Cleaned up disk space and restarted Ollama service...
+   Resolution Time: 0.0 hours
+   Prevention: Monitor disk usage regularly
+
+2. Docker: 'Cannot start n8n service due to port 5678 already ...'
+   Solution: Stopped conflicting n8n container and restarted services...
+   Resolution Time: 0.0 hours
+   Prevention: Always run 'docker compose down -v' before switching environments

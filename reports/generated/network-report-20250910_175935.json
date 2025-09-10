@@ -1,0 +1,3153 @@
+{
+  "timestamp": "2025-09-10T17:59:35.109258",
+  "network_interfaces": {
+    "lo": [
+      {
+        "family": "2",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "00:00:00:00:00:00",
+        "netmask": null,
+        "broadcast": null,
+        "ptp": null
+      }
+    ],
+    "eno1": [
+      {
+        "family": "2",
+        "address": "192.168.6.108",
+        "netmask": "255.255.252.0",
+        "broadcast": "192.168.7.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::86a9:3eff:fe8f:1895%eno1",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "84:a9:3e:8f:18:95",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "ztt6jxripk": [
+      {
+        "family": "2",
+        "address": "172.28.142.111",
+        "netmask": "255.255.0.0",
+        "broadcast": "172.28.255.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::4c7b:8fff:fecb:9f51%ztt6jxripk",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "4e:7b:8f:cb:9f:51",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "docker0": [
+      {
+        "family": "2",
+        "address": "172.17.0.1",
+        "netmask": "255.255.0.0",
+        "broadcast": "172.17.255.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::5c9a:c0ff:feb3:3eda%docker0",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "5e:9a:c0:b3:3e:da",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "br-af7db7024ae8": [
+      {
+        "family": "2",
+        "address": "172.20.0.1",
+        "netmask": "255.255.0.0",
+        "broadcast": "172.20.255.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::44aa:ccff:fe1f:13e5%br-af7db7024ae8",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "46:aa:cc:1f:13:e5",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "br-b90a1da802e5": [
+      {
+        "family": "2",
+        "address": "172.19.0.1",
+        "netmask": "255.255.0.0",
+        "broadcast": "172.19.255.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::c449:e5ff:fe01:9f3e%br-b90a1da802e5",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "c6:49:e5:01:9f:3e",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "br-7755d3c08dbb": [
+      {
+        "family": "2",
+        "address": "172.22.0.1",
+        "netmask": "255.255.0.0",
+        "broadcast": "172.22.255.255",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::d0e1:daff:fe16:9d2f%br-7755d3c08dbb",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "d2:e1:da:16:9d:2f",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "vxlan.calico": [
+      {
+        "family": "2",
+        "address": "10.1.40.192",
+        "netmask": "255.255.255.255",
+        "broadcast": "10.1.40.192",
+        "ptp": null
+      },
+      {
+        "family": "10",
+        "address": "fe80::646f:7eff:fedb:6da0%vxlan.calico",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "66:6f:7e:db:6d:a0",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "veth03948b7": [
+      {
+        "family": "10",
+        "address": "fe80::a4fb:daff:fe4e:ada4%veth03948b7",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "a6:fb:da:4e:ad:a4",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "vethdde618d": [
+      {
+        "family": "10",
+        "address": "fe80::a421:d8ff:fead:239b%vethdde618d",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "a6:21:d8:ad:23:9b",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "vethe002c92": [
+      {
+        "family": "10",
+        "address": "fe80::847f:5fff:fe74:de6a%vethe002c92",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "86:7f:5f:74:de:6a",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "veth5cf4894": [
+      {
+        "family": "10",
+        "address": "fe80::7cab:2dff:fe09:47dd%veth5cf4894",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "7e:ab:2d:09:47:dd",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "veth3aaf697": [
+      {
+        "family": "10",
+        "address": "fe80::f4ed:52ff:fe19:22b3%veth3aaf697",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "f6:ed:52:19:22:b3",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "calibcc83bb2f2f": [
+      {
+        "family": "10",
+        "address": "fe80::ecee:eeff:feee:eeee%calibcc83bb2f2f",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "ee:ee:ee:ee:ee:ee",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "cali5c8cd140191": [
+      {
+        "family": "10",
+        "address": "fe80::ecee:eeff:feee:eeee%cali5c8cd140191",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "broadcast": null,
+        "ptp": null
+      },
+      {
+        "family": "17",
+        "address": "ee:ee:ee:ee:ee:ee",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ],
+    "enp4s0f2np2": [
+      {
+        "family": "17",
+        "address": "84:a9:3e:8f:18:98",
+        "netmask": null,
+        "broadcast": "ff:ff:ff:ff:ff:ff",
+        "ptp": null
+      }
+    ]
+  },
+  "listening_ports": {
+    "631": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "43863": {
+      "address": "127.0.0.1",
+      "process": "node",
+      "pid": 1298078,
+      "protocol": "TCP"
+    },
+    "11434": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "53": {
+      "address": "127.0.0.54",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "7860": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "8080": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "6554": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "9080": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "54112": {
+      "address": "0.0.0.0",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "9993": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "3000": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "49159": {
+      "address": "127.0.0.1",
+      "process": "datadog-static-analyzer-server",
+      "pid": 1118845,
+      "protocol": "TCP"
+    },
+    "43029": {
+      "address": "127.0.0.1",
+      "process": "code",
+      "pid": 1525453,
+      "protocol": "TCP"
+    },
+    "9050": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "42385": {
+      "address": "127.0.0.1",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "10248": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "50051": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "8829": {
+      "address": "127.0.0.1",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "10256": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "3683": {
+      "address": "::",
+      "process": "code",
+      "pid": 1529974,
+      "protocol": "TCP"
+    },
+    "9098": {
+      "address": "127.0.0.1",
+      "process": "refact-lsp",
+      "pid": 1116914,
+      "protocol": "TCP"
+    },
+    "19001": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "7474": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "64120": {
+      "address": "::ffff:127.0.0.1",
+      "process": "java",
+      "pid": 1117644,
+      "protocol": "TCP"
+    },
+    "8070": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "16443": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "54113": {
+      "address": "::",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "7687": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "1338": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "7070": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "33681": {
+      "address": "127.0.0.1",
+      "process": "language_server_linux_x64",
+      "pid": 1119225,
+      "protocol": "TCP"
+    },
+    "10250": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "35351": {
+      "address": "127.0.0.1",
+      "process": "language_server_linux_x64",
+      "pid": 1119225,
+      "protocol": "TCP"
+    },
+    "9099": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "8090": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "80": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "41207": {
+      "address": "127.0.0.1",
+      "process": "code",
+      "pid": 1521196,
+      "protocol": "TCP"
+    },
+    "25672": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "35675": {
+      "address": "127.0.0.1",
+      "process": "windsurf",
+      "pid": 1118452,
+      "protocol": "TCP"
+    },
+    "1716": {
+      "address": "::",
+      "process": "kdeconnectd",
+      "pid": 5077,
+      "protocol": "TCP"
+    },
+    "25": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "54114": {
+      "address": "::",
+      "process": "code",
+      "pid": 1521196,
+      "protocol": "TCP"
+    },
+    "10257": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "3145": {
+      "address": "::",
+      "process": "code",
+      "pid": 1521196,
+      "protocol": "TCP"
+    },
+    "42247": {
+      "address": "127.0.0.1",
+      "process": "code",
+      "pid": 1527014,
+      "protocol": "TCP"
+    },
+    "42533": {
+      "address": "127.0.0.1",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "25000": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "22": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "42747": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "35949": {
+      "address": "127.0.0.1",
+      "process": "publisher",
+      "pid": 1116442,
+      "protocol": "TCP"
+    },
+    "9100": {
+      "address": "0.0.0.0",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "5672": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "26155": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "5432": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "4369": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "7700": {
+      "address": "127.0.0.1",
+      "process": "code",
+      "pid": 1521196,
+      "protocol": "TCP"
+    },
+    "10249": {
+      "address": "127.0.0.1",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "443": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "8828": {
+      "address": "127.0.0.1",
+      "process": "next-server (v15.3.3)",
+      "pid": 1113471,
+      "protocol": "TCP"
+    },
+    "10259": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "9090": {
+      "address": "::",
+      "process": "Unknown",
+      "pid": null,
+      "protocol": "TCP"
+    },
+    "56964": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "58803": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "60051": {
+      "address": "10.1.40.192",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "123": {
+      "address": "10.1.40.192",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "4789": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "5353": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "23567": {
+      "address": "10.1.40.192",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "36184": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "40817": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "41134": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "43007": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "43927": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "46579": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "48731": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "51761": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "52028": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "53272": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "55617": {
+      "address": "0.0.0.0",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    },
+    "37939": {
+      "address": "",
+      "process": "UDP Service",
+      "protocol": "UDP"
+    }
+  },
+  "established_connections": {
+    "active": [
+      {
+        "local": "127.0.0.1:47618",
+        "remote": "127.0.0.1:5672",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:19001",
+        "remote": "127.0.0.1:47786",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:39914",
+        "remote": "127.0.0.1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:35351",
+        "remote": "127.0.0.1:56020",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:55190",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "127.0.0.1:9098",
+        "remote": "127.0.0.1:59890",
+        "process": "refact-lsp",
+        "pid": 1116914
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:52426",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:47978",
+        "remote": "40.71.11.167:443",
+        "process": "code",
+        "pid": 1520834
+      },
+      {
+        "local": "192.168.6.108:43952",
+        "remote": "34.120.208.123:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:52432",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:42380",
+        "remote": "146.75.29.91:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:59112",
+        "remote": "216.24.57.251:443",
+        "process": "code",
+        "pid": 1521196
+      },
+      {
+        "local": "127.0.0.1:39798",
+        "remote": "127.0.0.1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:55228",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "::1:16443",
+        "remote": "::1:43680",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:192.168.6.108:16443",
+        "remote": "::ffff:192.168.6.108:39201",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:46360",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:46620",
+        "remote": "127.0.0.1:33681",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "::ffff:127.0.0.1:5672",
+        "remote": "::ffff:127.0.0.1:47618",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:52876",
+        "remote": "10.152.183.1:443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:49720",
+        "remote": "18.140.169.24:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:51794",
+        "remote": "146.75.29.91:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:36824",
+        "remote": "172.253.115.19:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:47668",
+        "remote": "172.65.251.78:443",
+        "process": "windsurf",
+        "pid": 1118452
+      },
+      {
+        "local": "192.168.6.108:49814",
+        "remote": "34.49.14.144:443",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "::ffff:192.168.6.108:16443",
+        "remote": "::ffff:10.1.40.193:47394",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:39524",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "192.168.6.108:36722",
+        "remote": "216.150.1.193:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:35949",
+        "remote": "127.0.0.1:58312",
+        "process": "publisher",
+        "pid": 1116442
+      },
+      {
+        "local": "192.168.6.108:53868",
+        "remote": "207.244.110.211:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:51418",
+        "remote": "66.33.60.67:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:46620",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "::ffff:127.0.0.1:16443",
+        "remote": "::ffff:127.0.0.1:39820",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:19001",
+        "remote": "127.0.0.1:38738",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:127.0.0.1:5672",
+        "remote": "::ffff:127.0.0.1:47638",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:37044",
+        "remote": "54.90.36.212:443",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "::1:43680",
+        "remote": "::1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:60670",
+        "remote": "35.186.247.105:443",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "127.0.0.1:44790",
+        "remote": "127.0.0.1:5672",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:34664",
+        "remote": "127.0.0.1:43029",
+        "process": "code",
+        "pid": 1521196
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:52432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:192.168.6.108:16443",
+        "remote": "::ffff:192.168.6.108:60103",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:39906",
+        "remote": "127.0.0.1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:59128",
+        "remote": "216.24.57.251:443",
+        "process": "code",
+        "pid": 1521196
+      },
+      {
+        "local": "192.168.6.108:56814",
+        "remote": "162.19.226.112:443",
+        "process": "code",
+        "pid": 1520834
+      },
+      {
+        "local": "192.168.6.108:43618",
+        "remote": "185.199.109.133:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:43029",
+        "remote": "127.0.0.1:34664",
+        "process": "code",
+        "pid": 1525453
+      },
+      {
+        "local": "::ffff:127.0.0.1:5672",
+        "remote": "::ffff:127.0.0.1:44790",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:46268",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "127.0.0.1:47638",
+        "remote": "127.0.0.1:5672",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:192.168.6.108:16443",
+        "remote": "::ffff:10.1.40.194:55150",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:34086",
+        "remote": "35.223.238.178:443",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:46268",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "::ffff:127.0.0.1:16443",
+        "remote": "::ffff:127.0.0.1:39914",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:39524",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "192.168.6.108:40566",
+        "remote": "172.66.149.246:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:40518",
+        "remote": "172.66.149.246:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:46296",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "192.168.6.108:35356",
+        "remote": "54.174.166.37:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:35342",
+        "remote": "104.18.38.10:443",
+        "process": "code",
+        "pid": 1521196
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:47076",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:47634",
+        "remote": "127.0.0.1:5672",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:40732",
+        "remote": "34.107.243.93:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:53096",
+        "remote": "35.223.238.178:443",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "192.168.6.108:53104",
+        "remote": "35.223.238.178:443",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "192.168.6.108:42124",
+        "remote": "3.88.247.34:443",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "192.168.6.108:52880",
+        "remote": "10.152.183.1:443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:45104",
+        "remote": "3.162.125.20:443",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:46296",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "::ffff:192.168.6.108:16443",
+        "remote": "::ffff:192.168.6.108:43495",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:39890",
+        "remote": "127.0.0.1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:53860",
+        "remote": "207.244.110.211:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "::ffff:127.0.0.1:16443",
+        "remote": "::ffff:127.0.0.1:39906",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:52448",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:48966",
+        "remote": "185.199.108.133:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:52110",
+        "remote": "18.160.18.35:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:39820",
+        "remote": "127.0.0.1:16443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:58312",
+        "remote": "127.0.0.1:35949",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "192.168.6.108:45902",
+        "remote": "66.33.60.67:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:58338",
+        "remote": "127.0.0.1:4369",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:52448",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:38596",
+        "remote": "172.253.62.97:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:52426",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:127.0.0.1:5672",
+        "remote": "::ffff:127.0.0.1:47634",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:56020",
+        "remote": "127.0.0.1:35351",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:55228",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:47056",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:36646",
+        "remote": "172.253.62.95:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "::ffff:127.0.0.1:16443",
+        "remote": "::ffff:127.0.0.1:39798",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:47446",
+        "remote": "140.82.112.26:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:5432",
+        "remote": "127.0.0.1:47066",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:47492",
+        "remote": "142.251.163.94:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:38738",
+        "remote": "127.0.0.1:19001",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:47056",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:38944",
+        "remote": "98.87.201.11:443",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "::ffff:127.0.0.1:4369",
+        "remote": "::ffff:127.0.0.1:58338",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:52868",
+        "remote": "10.152.183.1:443",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:36680",
+        "remote": "44.202.169.102:443",
+        "process": "code",
+        "pid": 1520834
+      },
+      {
+        "local": "::ffff:127.0.0.1:5672",
+        "remote": "::ffff:127.0.0.1:47636",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "::ffff:127.0.0.1:16443",
+        "remote": "::ffff:127.0.0.1:39890",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:51788",
+        "remote": "146.75.29.91:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "127.0.0.1:46360",
+        "remote": "127.0.0.1:33681",
+        "process": "windsurf",
+        "pid": 543821
+      },
+      {
+        "local": "127.0.0.1:47786",
+        "remote": "127.0.0.1:19001",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:34096",
+        "remote": "35.223.238.178:443",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:33681",
+        "remote": "127.0.0.1:55190",
+        "process": "language_server_linux_x64",
+        "pid": 1119225
+      },
+      {
+        "local": "127.0.0.1:47636",
+        "remote": "127.0.0.1:5672",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:41474",
+        "remote": "34.198.57.224:443",
+        "process": "firefox",
+        "pid": 6313
+      },
+      {
+        "local": "192.168.6.108:53388",
+        "remote": "13.89.178.26:443",
+        "process": "code",
+        "pid": 1520834
+      },
+      {
+        "local": "127.0.0.1:47076",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "127.0.0.1:47066",
+        "remote": "127.0.0.1:5432",
+        "process": "Unknown",
+        "pid": null
+      },
+      {
+        "local": "192.168.6.108:38284",
+        "remote": "34.49.14.144:443",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      },
+      {
+        "local": "127.0.0.1:59890",
+        "remote": "127.0.0.1:9098",
+        "process": "next-server (v15.3.3)",
+        "pid": 1113471
+      }
+    ],
+    "by_process": {
+      "Unknown": [
+        {
+          "local": "127.0.0.1:47618",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:19001",
+          "remote": "127.0.0.1:47786",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39914",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52426",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52432",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39798",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::1:16443",
+          "remote": "::1:43680",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:39201",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47618",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "192.168.6.108:52876",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:10.1.40.193:47394",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39820",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:19001",
+          "remote": "127.0.0.1:38738",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47638",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::1:43680",
+          "remote": "::1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:44790",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:60103",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39906",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:44790",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47638",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:10.1.40.194:55150",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39914",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47076",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47634",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "192.168.6.108:52880",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:43495",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39890",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39906",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52448",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39820",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:58338",
+          "remote": "127.0.0.1:4369",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52448",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52426",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47634",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47056",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39798",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47066",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:38738",
+          "remote": "127.0.0.1:19001",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47056",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:4369",
+          "remote": "::ffff:127.0.0.1:58338",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "192.168.6.108:52868",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47636",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39890",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47786",
+          "remote": "127.0.0.1:19001",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47636",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47076",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47066",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "language_server_linux_x64": [
+        {
+          "local": "127.0.0.1:35351",
+          "remote": "127.0.0.1:56020",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46360",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:46620",
+          "remote": "127.0.0.1:33681",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "192.168.6.108:49814",
+          "remote": "34.49.14.144:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:39524",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46620",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "192.168.6.108:34086",
+          "remote": "35.223.238.178:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46268",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46296",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:55228",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "192.168.6.108:34096",
+          "remote": "35.223.238.178:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:55190",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        }
+      ],
+      "windsurf": [
+        {
+          "local": "127.0.0.1:55190",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:55228",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:47668",
+          "remote": "172.65.251.78:443",
+          "process": "windsurf",
+          "pid": 1118452
+        },
+        {
+          "local": "127.0.0.1:46268",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:39524",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:46296",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:53096",
+          "remote": "35.223.238.178:443",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:53104",
+          "remote": "35.223.238.178:443",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:38944",
+          "remote": "98.87.201.11:443",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:46360",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        }
+      ],
+      "refact-lsp": [
+        {
+          "local": "127.0.0.1:9098",
+          "remote": "127.0.0.1:59890",
+          "process": "refact-lsp",
+          "pid": 1116914
+        }
+      ],
+      "code": [
+        {
+          "local": "192.168.6.108:47978",
+          "remote": "40.71.11.167:443",
+          "process": "code",
+          "pid": 1520834
+        },
+        {
+          "local": "192.168.6.108:59112",
+          "remote": "216.24.57.251:443",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "127.0.0.1:34664",
+          "remote": "127.0.0.1:43029",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "192.168.6.108:59128",
+          "remote": "216.24.57.251:443",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "192.168.6.108:56814",
+          "remote": "162.19.226.112:443",
+          "process": "code",
+          "pid": 1520834
+        },
+        {
+          "local": "127.0.0.1:43029",
+          "remote": "127.0.0.1:34664",
+          "process": "code",
+          "pid": 1525453
+        },
+        {
+          "local": "192.168.6.108:35342",
+          "remote": "104.18.38.10:443",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "192.168.6.108:36680",
+          "remote": "44.202.169.102:443",
+          "process": "code",
+          "pid": 1520834
+        },
+        {
+          "local": "192.168.6.108:53388",
+          "remote": "13.89.178.26:443",
+          "process": "code",
+          "pid": 1520834
+        }
+      ],
+      "firefox": [
+        {
+          "local": "192.168.6.108:43952",
+          "remote": "34.120.208.123:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:42380",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:49720",
+          "remote": "18.140.169.24:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:51794",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:36824",
+          "remote": "172.253.115.19:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:36722",
+          "remote": "216.150.1.193:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:53868",
+          "remote": "207.244.110.211:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:51418",
+          "remote": "66.33.60.67:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:43618",
+          "remote": "185.199.109.133:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:40566",
+          "remote": "172.66.149.246:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:40518",
+          "remote": "172.66.149.246:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:35356",
+          "remote": "54.174.166.37:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:40732",
+          "remote": "34.107.243.93:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:53860",
+          "remote": "207.244.110.211:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:48966",
+          "remote": "185.199.108.133:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:52110",
+          "remote": "18.160.18.35:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:45902",
+          "remote": "66.33.60.67:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:38596",
+          "remote": "172.253.62.97:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:36646",
+          "remote": "172.253.62.95:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:47446",
+          "remote": "140.82.112.26:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:47492",
+          "remote": "142.251.163.94:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:51788",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:41474",
+          "remote": "34.198.57.224:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "publisher": [
+        {
+          "local": "127.0.0.1:35949",
+          "remote": "127.0.0.1:58312",
+          "process": "publisher",
+          "pid": 1116442
+        }
+      ],
+      "next-server (v15.3.3)": [
+        {
+          "local": "192.168.6.108:37044",
+          "remote": "54.90.36.212:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "192.168.6.108:60670",
+          "remote": "35.186.247.105:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "192.168.6.108:42124",
+          "remote": "3.88.247.34:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "192.168.6.108:45104",
+          "remote": "3.162.125.20:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "127.0.0.1:58312",
+          "remote": "127.0.0.1:35949",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "127.0.0.1:56020",
+          "remote": "127.0.0.1:35351",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "192.168.6.108:38284",
+          "remote": "34.49.14.144:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "127.0.0.1:59890",
+          "remote": "127.0.0.1:9098",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ]
+    },
+    "by_remote_ip": {
+      "127.0.0.1": [
+        {
+          "local": "127.0.0.1:47618",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:19001",
+          "remote": "127.0.0.1:47786",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39914",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:35351",
+          "remote": "127.0.0.1:56020",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:55190",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:9098",
+          "remote": "127.0.0.1:59890",
+          "process": "refact-lsp",
+          "pid": 1116914
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52426",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52432",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39798",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:55228",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46360",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:46620",
+          "remote": "127.0.0.1:33681",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:39524",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:35949",
+          "remote": "127.0.0.1:58312",
+          "process": "publisher",
+          "pid": 1116442
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46620",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:19001",
+          "remote": "127.0.0.1:38738",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:44790",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:34664",
+          "remote": "127.0.0.1:43029",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39906",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:43029",
+          "remote": "127.0.0.1:34664",
+          "process": "code",
+          "pid": 1525453
+        },
+        {
+          "local": "127.0.0.1:46268",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:47638",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46268",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:39524",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:46296",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47076",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47634",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:46296",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:39890",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52448",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:39820",
+          "remote": "127.0.0.1:16443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:58312",
+          "remote": "127.0.0.1:35949",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "127.0.0.1:58338",
+          "remote": "127.0.0.1:4369",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:52448",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:52426",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:56020",
+          "remote": "127.0.0.1:35351",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:55228",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47056",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:5432",
+          "remote": "127.0.0.1:47066",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:38738",
+          "remote": "127.0.0.1:19001",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47056",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:46360",
+          "remote": "127.0.0.1:33681",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "127.0.0.1:47786",
+          "remote": "127.0.0.1:19001",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:33681",
+          "remote": "127.0.0.1:55190",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "127.0.0.1:47636",
+          "remote": "127.0.0.1:5672",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47076",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:47066",
+          "remote": "127.0.0.1:5432",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "127.0.0.1:59890",
+          "remote": "127.0.0.1:9098",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "40.71.11.167": [
+        {
+          "local": "192.168.6.108:47978",
+          "remote": "40.71.11.167:443",
+          "process": "code",
+          "pid": 1520834
+        }
+      ],
+      "34.120.208.123": [
+        {
+          "local": "192.168.6.108:43952",
+          "remote": "34.120.208.123:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "146.75.29.91": [
+        {
+          "local": "192.168.6.108:42380",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:51794",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:51788",
+          "remote": "146.75.29.91:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "216.24.57.251": [
+        {
+          "local": "192.168.6.108:59112",
+          "remote": "216.24.57.251:443",
+          "process": "code",
+          "pid": 1521196
+        },
+        {
+          "local": "192.168.6.108:59128",
+          "remote": "216.24.57.251:443",
+          "process": "code",
+          "pid": 1521196
+        }
+      ],
+      "::1": [
+        {
+          "local": "::1:16443",
+          "remote": "::1:43680",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::1:43680",
+          "remote": "::1:16443",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "::ffff:192.168.6.108": [
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:39201",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:60103",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:192.168.6.108:43495",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "::ffff:127.0.0.1": [
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47618",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39820",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47638",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:44790",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39914",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39906",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47634",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39798",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:4369",
+          "remote": "::ffff:127.0.0.1:58338",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:5672",
+          "remote": "::ffff:127.0.0.1:47636",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "::ffff:127.0.0.1:16443",
+          "remote": "::ffff:127.0.0.1:39890",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "10.152.183.1": [
+        {
+          "local": "192.168.6.108:52876",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "192.168.6.108:52880",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        },
+        {
+          "local": "192.168.6.108:52868",
+          "remote": "10.152.183.1:443",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "18.140.169.24": [
+        {
+          "local": "192.168.6.108:49720",
+          "remote": "18.140.169.24:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "172.253.115.19": [
+        {
+          "local": "192.168.6.108:36824",
+          "remote": "172.253.115.19:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "172.65.251.78": [
+        {
+          "local": "192.168.6.108:47668",
+          "remote": "172.65.251.78:443",
+          "process": "windsurf",
+          "pid": 1118452
+        }
+      ],
+      "34.49.14.144": [
+        {
+          "local": "192.168.6.108:49814",
+          "remote": "34.49.14.144:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "192.168.6.108:38284",
+          "remote": "34.49.14.144:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "::ffff:10.1.40.193": [
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:10.1.40.193:47394",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "216.150.1.193": [
+        {
+          "local": "192.168.6.108:36722",
+          "remote": "216.150.1.193:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "207.244.110.211": [
+        {
+          "local": "192.168.6.108:53868",
+          "remote": "207.244.110.211:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:53860",
+          "remote": "207.244.110.211:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "66.33.60.67": [
+        {
+          "local": "192.168.6.108:51418",
+          "remote": "66.33.60.67:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:45902",
+          "remote": "66.33.60.67:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "54.90.36.212": [
+        {
+          "local": "192.168.6.108:37044",
+          "remote": "54.90.36.212:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "35.186.247.105": [
+        {
+          "local": "192.168.6.108:60670",
+          "remote": "35.186.247.105:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "162.19.226.112": [
+        {
+          "local": "192.168.6.108:56814",
+          "remote": "162.19.226.112:443",
+          "process": "code",
+          "pid": 1520834
+        }
+      ],
+      "185.199.109.133": [
+        {
+          "local": "192.168.6.108:43618",
+          "remote": "185.199.109.133:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "::ffff:10.1.40.194": [
+        {
+          "local": "::ffff:192.168.6.108:16443",
+          "remote": "::ffff:10.1.40.194:55150",
+          "process": "Unknown",
+          "pid": null
+        }
+      ],
+      "35.223.238.178": [
+        {
+          "local": "192.168.6.108:34086",
+          "remote": "35.223.238.178:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        },
+        {
+          "local": "192.168.6.108:53096",
+          "remote": "35.223.238.178:443",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:53104",
+          "remote": "35.223.238.178:443",
+          "process": "windsurf",
+          "pid": 543821
+        },
+        {
+          "local": "192.168.6.108:34096",
+          "remote": "35.223.238.178:443",
+          "process": "language_server_linux_x64",
+          "pid": 1119225
+        }
+      ],
+      "172.66.149.246": [
+        {
+          "local": "192.168.6.108:40566",
+          "remote": "172.66.149.246:443",
+          "process": "firefox",
+          "pid": 6313
+        },
+        {
+          "local": "192.168.6.108:40518",
+          "remote": "172.66.149.246:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "54.174.166.37": [
+        {
+          "local": "192.168.6.108:35356",
+          "remote": "54.174.166.37:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "104.18.38.10": [
+        {
+          "local": "192.168.6.108:35342",
+          "remote": "104.18.38.10:443",
+          "process": "code",
+          "pid": 1521196
+        }
+      ],
+      "34.107.243.93": [
+        {
+          "local": "192.168.6.108:40732",
+          "remote": "34.107.243.93:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "3.88.247.34": [
+        {
+          "local": "192.168.6.108:42124",
+          "remote": "3.88.247.34:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "3.162.125.20": [
+        {
+          "local": "192.168.6.108:45104",
+          "remote": "3.162.125.20:443",
+          "process": "next-server (v15.3.3)",
+          "pid": 1113471
+        }
+      ],
+      "185.199.108.133": [
+        {
+          "local": "192.168.6.108:48966",
+          "remote": "185.199.108.133:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "18.160.18.35": [
+        {
+          "local": "192.168.6.108:52110",
+          "remote": "18.160.18.35:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "172.253.62.97": [
+        {
+          "local": "192.168.6.108:38596",
+          "remote": "172.253.62.97:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "172.253.62.95": [
+        {
+          "local": "192.168.6.108:36646",
+          "remote": "172.253.62.95:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "140.82.112.26": [
+        {
+          "local": "192.168.6.108:47446",
+          "remote": "140.82.112.26:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "142.251.163.94": [
+        {
+          "local": "192.168.6.108:47492",
+          "remote": "142.251.163.94:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "98.87.201.11": [
+        {
+          "local": "192.168.6.108:38944",
+          "remote": "98.87.201.11:443",
+          "process": "windsurf",
+          "pid": 543821
+        }
+      ],
+      "44.202.169.102": [
+        {
+          "local": "192.168.6.108:36680",
+          "remote": "44.202.169.102:443",
+          "process": "code",
+          "pid": 1520834
+        }
+      ],
+      "34.198.57.224": [
+        {
+          "local": "192.168.6.108:41474",
+          "remote": "34.198.57.224:443",
+          "process": "firefox",
+          "pid": 6313
+        }
+      ],
+      "13.89.178.26": [
+        {
+          "local": "192.168.6.108:53388",
+          "remote": "13.89.178.26:443",
+          "process": "code",
+          "pid": 1520834
+        }
+      ]
+    },
+    "recent_connections": []
+  },
+  "docker_networks": {
+    "bridge": {
+      "id": "e268c01449fa",
+      "driver": "bridge",
+      "scope": "local",
+      "containers": 1
+    }
+  },
+  "port_conflicts": {
+    "docker_vs_host": [],
+    "internal_conflicts": [],
+    "security_risks": []
+  },
+  "security_analysis": {
+    "alerts": [
+      "Failed to collect Docker networks: 'Config'",
+      "Failed to analyze port conflicts: [Errno 2] No such file or directory: 'docker-compose.yml'"
+    ]
+  },
+  "performance_metrics": {
+    "interface_stats": {
+      "lo": {
+        "bytes_sent": 1285286676,
+        "bytes_recv": 1285286676,
+        "packets_sent": 2009454,
+        "packets_recv": 2009454,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "enp4s0f2np2": {
+        "bytes_sent": 813356,
+        "bytes_recv": 0,
+        "packets_sent": 4762,
+        "packets_recv": 0,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "eno1": {
+        "bytes_sent": 647200955,
+        "bytes_recv": 20116925179,
+        "packets_sent": 4517997,
+        "packets_recv": 14120670,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 3500,
+        "dropout": 0
+      },
+      "ztt6jxripk": {
+        "bytes_sent": 14496,
+        "bytes_recv": 58590,
+        "packets_sent": 112,
+        "packets_recv": 837,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "docker0": {
+        "bytes_sent": 55305812,
+        "bytes_recv": 1106761,
+        "packets_sent": 3597,
+        "packets_recv": 853,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 8
+      },
+      "br-af7db7024ae8": {
+        "bytes_sent": 90070,
+        "bytes_recv": 84,
+        "packets_sent": 1930,
+        "packets_recv": 3,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 7
+      },
+      "br-b90a1da802e5": {
+        "bytes_sent": 117797,
+        "bytes_recv": 12347989,
+        "packets_sent": 2219,
+        "packets_recv": 292,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 5
+      },
+      "veth03948b7": {
+        "bytes_sent": 98238,
+        "bytes_recv": 126,
+        "packets_sent": 1994,
+        "packets_recv": 3,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "vethdde618d": {
+        "bytes_sent": 125965,
+        "bytes_recv": 12352077,
+        "packets_sent": 2283,
+        "packets_recv": 292,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "vethe002c92": {
+        "bytes_sent": 55314526,
+        "bytes_recv": 1118157,
+        "packets_sent": 3674,
+        "packets_recv": 840,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "br-7755d3c08dbb": {
+        "bytes_sent": 85710,
+        "bytes_recv": 252,
+        "packets_sent": 1839,
+        "packets_recv": 9,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 13
+      },
+      "veth5cf4894": {
+        "bytes_sent": 93826,
+        "bytes_recv": 126,
+        "packets_sent": 1906,
+        "packets_recv": 3,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "veth3aaf697": {
+        "bytes_sent": 93784,
+        "bytes_recv": 126,
+        "packets_sent": 1905,
+        "packets_recv": 3,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "calibcc83bb2f2f": {
+        "bytes_sent": 853145,
+        "bytes_recv": 189998,
+        "packets_sent": 2070,
+        "packets_recv": 2129,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      },
+      "vxlan.calico": {
+        "bytes_sent": 0,
+        "bytes_recv": 0,
+        "packets_sent": 0,
+        "packets_recv": 0,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 710
+      },
+      "cali5c8cd140191": {
+        "bytes_sent": 449394,
+        "bytes_recv": 436309,
+        "packets_sent": 4951,
+        "packets_recv": 4555,
+        "errin": 0,
+        "errout": 0,
+        "dropin": 0,
+        "dropout": 0
+      }
+    },
+    "packet_stats": {},
+    "error_rates": {
+      "lo": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "enp4s0f2np2": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "eno1": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0.0188,
+        "severity": "Low"
+      },
+      "ztt6jxripk": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "docker0": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0.1798,
+        "severity": "Low"
+      },
+      "br-af7db7024ae8": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0.3621,
+        "severity": "Low"
+      },
+      "br-b90a1da802e5": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0.1991,
+        "severity": "Low"
+      },
+      "veth03948b7": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "vethdde618d": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "vethe002c92": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "br-7755d3c08dbb": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0.7035,
+        "severity": "Low"
+      },
+      "veth5cf4894": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "veth3aaf697": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "calibcc83bb2f2f": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      },
+      "cali5c8cd140191": {
+        "error_rate": 0.0,
+        "packet_drop_rate": 0,
+        "severity": "Low"
+      }
+    }
+  }
+}

@@ -1,0 +1,192 @@
+volumes:
+  prometheus_data: null
+  grafana_data: null
+  loki_data: null
+  opensearch_data: null
+  graylog_data: null
+  rabbitmq_data: null
+  localai_data:
+
+    null
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    expose:
+      - 9090
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '--no-verbose'
+        - '--tries=1'
+        - '--spider'
+        - http://localhost:9090/-/healthy
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    expose:
+      - 3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Change in prod
+    depends_on:
+      - prometheus
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '--no-verbose'
+        - '--tries=1'
+        - '--spider'
+        - http://localhost:3000/api/health
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: unless-stopped
+    expose:
+      - 3100
+    volumes:
+      - loki_data:/loki
+    command: '-config.file=/etc/loki/local-config.yaml'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '--no-verbose'
+        - '--tries=1'
+        - '--spider'
+        - http://localhost:3100/ready
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - plugins.security.ssl.http.enabled=false
+      - plugins.security.disabled=true # For local; enable in prod
+    ulimits:
+      memlock: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f
+          http://localhost:9200/_cluster/health?wait_for_status=green&timeout=1s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  graylog:
+    image: graylog/graylog:latest
+    container_name: graylog
+    restart: unless-stopped
+    expose:
+      - 9000
+      - 12201/udp # GELF input
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=$(generate_secret | base64)
+      - GRAYLOG_ROOT_PASSWORD_SHA2=$(echo -n "admin" | sha256sum | awk '{print
+        $1}')
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200
+    depends_on:
+      - opensearch
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - http://localhost:9000/api/system
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    expose:
+      - 5672
+      - 15672 # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=$RABBITMQ_USER
+      - RABBITMQ_DEFAULT_PASS=$RABBITMQ_PASS
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test:
+        - CMD
+        - rabbitmq-diagnostics
+        - status
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  localai:
+    image: quay.io/go-skynet/local-ai:latest
+    container_name: localai
+    restart: unless-stopped
+    expose:
+      - 8080
+    volumes:
+      - localai_data:/build/models
+    environment:
+      - API_KEY=${LOCALAI_API_KEY}
+    command: '--models-path /build/models --debug'
+    depends_on:
+      - rabbitmq # For orchestration triggers
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - http://localhost:8080/health
+      interval: 30s
+      timeout: 10s
+      retries: 3

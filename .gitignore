@@ -6,3 +6,26 @@ shared-backup/
 .env.test
 searxng/settings.yml
 searxng/uwsgi*
+
+# Supabase cloned directory
+supabase/
+
+# Log files
+*.log
+traefik/logs/
+traefik/letsencrypt/
+
+# Node modules
+node_modules/
+*/node_modules/
+
+# Build artifacts
+.next/
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+.DS_Store
+*.tmp

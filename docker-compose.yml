@@ -1,6 +1,7 @@
 include:
   - ./extensions.yml
   - ./supabase/docker/docker-compose.yml
+  - ./docker-compose.traefik.yml
 
 networks:
   localai:
@@ -14,13 +15,17 @@ volumes:
   qdrant_storage:
   open-webui:
   flowise:
-  caddy-data:
-  caddy-config:
   valkey-data:
   langfuse_postgres_data:
   langfuse_clickhouse_data:
   langfuse_clickhouse_logs:
   langfuse_minio_data:
+  agentic_data:
+
+networks:
+  default:
+    name: localai_default
+    driver: bridge
 
 x-n8n: &service-n8n
   image: n8nio/n8n:latest
@@ -74,8 +79,19 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-        - ~/.flowise:/root/.flowise
+        - flowise:/root/.flowise
     entrypoint: /bin/sh -c "sleep 3; flowise start"
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flowise.rule=Host(`${FLOWISE_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/flowise`)"
+      - "traefik.http.routers.flowise.entrypoints=websecure"
+      - "traefik.http.routers.flowise.tls=true"
+      - "traefik.http.routers.flowise.tls.certresolver=letsencrypt"
+      - "traefik.http.services.flowise.loadbalancer.server.port=3001"
+      - "traefik.http.middlewares.flowise-stripprefix.stripprefix.prefixes=/flowise"
+      - "traefik.http.routers.flowise.middlewares=flowise-stripprefix@docker"
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -87,6 +103,17 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - open-webui:/app/backend/data
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openwebui.rule=Host(`${WEBUI_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/openwebui`)"
+      - "traefik.http.routers.openwebui.entrypoints=websecure"
+      - "traefik.http.routers.openwebui.tls=true"
+      - "traefik.http.routers.openwebui.tls.certresolver=letsencrypt"
+      - "traefik.http.services.openwebui.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.openwebui-stripprefix.stripprefix.prefixes=/openwebui"
+      - "traefik.http.routers.openwebui.middlewares=openwebui-stripprefix@docker"
 
   n8n-import:
     <<: *service-n8n
@@ -111,6 +138,17 @@ services:
     depends_on:
       n8n-import:
         condition: service_completed_successfully
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.rule=Host(`${N8N_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/n8n`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls=true"
+      - "traefik.http.routers.n8n.tls.certresolver=letsencrypt"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+      - "traefik.http.middlewares.n8n-stripprefix.stripprefix.prefixes=/n8n"
+      - "traefik.http.routers.n8n.middlewares=n8n-stripprefix@docker"
 
   qdrant:
     image: qdrant/qdrant:v1.10.1
@@ -121,9 +159,12 @@ services:
       - 6334/tcp
     volumes:
       - qdrant_storage:/qdrant/storage
+    networks:
+      - default
 
   neo4j:
-    image: neo4j:5.20.0
+    image: neo4j:latest
+    container_name: neo4j
     volumes:
         - ./neo4j/logs:/logs
         - ./neo4j/config:/config
@@ -136,43 +177,17 @@ services:
     environment:
         - NEO4J_AUTH=${NEO4J_AUTH:-"neo4j/your_password"}
     restart: always
-
-  caddy:
-    container_name: caddy
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - 80:80/tcp
-      - 443:443/tcp
-    expose:
-      - 2019/tcp
-      - 443/tcp
-      - 443/udp
-      - 80/tcp
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy-addon:/etc/caddy/addons:ro
-      - caddy-data:/data:rw
-      - caddy-config:/config:rw
-    environment:
-      - N8N_HOSTNAME=${N8N_HOSTNAME:-":8001"}
-      - WEBUI_HOSTNAME=${WEBUI_HOSTNAME:-":8002"}
-      - FLOWISE_HOSTNAME=${FLOWISE_HOSTNAME:-":8003"}
-      - OLLAMA_HOSTNAME=${OLLAMA_HOSTNAME:-":8004"}
-      - SUPABASE_HOSTNAME=${SUPABASE_HOSTNAME:-":8005"}
-      - SEARXNG_HOSTNAME=${SEARXNG_HOSTNAME:-":8006"}
-      - LANGFUSE_HOSTNAME=${LANGFUSE_HOSTNAME:-":8007"}
-      - NEO4J_HOSTNAME=${NEO4J_HOSTNAME:-":8008"}
-      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL:-internal}
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/neo4j`)"
+      - "traefik.http.routers.neo4j.entrypoints=websecure"
+      - "traefik.http.routers.neo4j.tls=true"
+      - "traefik.http.routers.neo4j.tls.certresolver=letsencrypt"
+      - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
+      - "traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j"
+      - "traefik.http.routers.neo4j.middlewares=neo4j-stripprefix@docker"
 
   langfuse-worker:
     image: langfuse/langfuse-worker:3.0.0
@@ -231,6 +246,8 @@ services:
       REDIS_TLS_CA: ${REDIS_TLS_CA:-/certs/ca.crt}
       REDIS_TLS_CERT: ${REDIS_TLS_CERT:-/certs/redis.crt}
       REDIS_TLS_KEY: ${REDIS_TLS_KEY:-/certs/redis.key}
+    networks:
+      - default
 
   langfuse-web:
     image: langfuse/langfuse:3.0.0
@@ -251,6 +268,17 @@ services:
       LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-}
       LANGFUSE_INIT_USER_NAME: ${LANGFUSE_INIT_USER_NAME:-}
       LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.langfuse.rule=Host(`${LANGFUSE_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/langfuse`)"
+      - "traefik.http.routers.langfuse.entrypoints=websecure"
+      - "traefik.http.routers.langfuse.tls=true"
+      - "traefik.http.routers.langfuse.tls.certresolver=letsencrypt"
+      - "traefik.http.services.langfuse.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.langfuse-stripprefix.stripprefix.prefixes=/langfuse"
+      - "traefik.http.routers.langfuse.middlewares=langfuse-stripprefix@docker"
 
   clickhouse:
     image: clickhouse/clickhouse-server:24.8
@@ -273,6 +301,8 @@ services:
       timeout: 5s
       retries: 10
       start_period: 1s
+    networks:
+      - default
 
   minio:
     image: minio/minio:RELEASE.2024-08-03T15-22-10Z
@@ -294,6 +324,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 1s
+    networks:
+      - default
 
   postgres:
     image: postgres:${POSTGRES_VERSION:-16-alpine}
@@ -311,6 +343,8 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - langfuse_postgres_data:/var/lib/postgresql/data
+    networks:
+      - default
 
   redis:
     container_name: redis
@@ -337,6 +371,8 @@ services:
       interval: 3s
       timeout: 10s
       retries: 10
+    networks:
+      - default
 
   searxng:
     container_name: searxng
@@ -361,12 +397,85 @@ services:
       options:
         max-size: "1m"
         max-file: "1"
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.searxng.rule=Host(`${SEARXNG_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/searxng`)"
+      - "traefik.http.routers.searxng.entrypoints=websecure"
+      - "traefik.http.routers.searxng.tls=true"
+      - "traefik.http.routers.searxng.tls.certresolver=letsencrypt"
+      - "traefik.http.services.searxng.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.searxng-stripprefix.stripprefix.prefixes=/searxng"
+      - "traefik.http.routers.searxng.middlewares=searxng-stripprefix@docker"
+
+  # Agentic Knowledge RAG Graph service
+  agentic-rag:
+    build:
+      context: ./agentic-knowledge-rag-graph
+      dockerfile: Dockerfile
+    container_name: agentic-rag
+    restart: unless-stopped
+    expose:
+      - 8000/tcp
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_AUTH=${NEO4J_AUTH}
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      - QDRANT_URL=http://qdrant:6333
+      - OLLAMA_URL=http://ollama:11434
+    volumes:
+      - agentic_data:/app/data
+      - ./shared:/app/shared
+    depends_on:
+      - neo4j
+      - postgres
+      - qdrant
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.agentic.rule=Host(`${AGENTIC_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/agentic`)"
+      - "traefik.http.routers.agentic.entrypoints=websecure"
+      - "traefik.http.routers.agentic.tls=true"
+      - "traefik.http.routers.agentic.tls.certresolver=letsencrypt"
+      - "traefik.http.services.agentic.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.agentic-stripprefix.stripprefix.prefixes=/agentic"
+      - "traefik.http.routers.agentic.middlewares=agentic-stripprefix@docker"
+
+  # Frontend Next.js application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    expose:
+      - 3000/tcp
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=https://${SUPABASE_HOSTNAME:-localhost}/
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+      - NEXTAUTH_URL=https://${FRONTEND_HOSTNAME:-localhost}/
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    depends_on:
+      - postgres
+    networks:
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOSTNAME:-localhost}`) || Host(`localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.frontend.priority=1"
 
   ollama-cpu:
     profiles: ["cpu"]
     <<: *service-ollama
-    expose:
-      - 11434/tcp
+    networks:
+      - default
 
   ollama-gpu:
     profiles: ["gpu-nvidia"]
@@ -378,6 +487,8 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+    networks:
+      - default
 
   ollama-gpu-amd:
     profiles: ["gpu-amd"]
@@ -386,6 +497,8 @@ services:
     devices:
       - "/dev/kfd"
       - "/dev/dri"
+    networks:
+      - default
 
   ollama-pull-llama-cpu:
     profiles: ["cpu"]
@@ -405,9 +518,6 @@ services:
     image: ollama/ollama:rocm
     depends_on:
      - ollama-gpu-amd
-
-
-
 
 # Commented out dashboard service due to Supabase dependency issues
 #  dashboard:

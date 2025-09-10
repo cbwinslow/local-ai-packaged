@@ -2,6 +2,12 @@ include:
   - ./extensions.yml
   - ./supabase/docker/docker-compose.yml
 
+networks:
+  localai:
+    driver: bridge
+  supabase:
+    driver: bridge
+
 volumes:
   n8n_storage:
   ollama_storage:
@@ -31,7 +37,7 @@ x-n8n: &service-n8n
     - WEBHOOK_URL=${N8N_HOSTNAME:+https://}${N8N_HOSTNAME:-http://localhost:5678}
 
 x-ollama: &service-ollama
-  image: ollama/ollama:latest
+  image: ollama/ollama:0.3.12
   container_name: ollama
   restart: unless-stopped
   expose:
@@ -45,7 +51,7 @@ x-ollama: &service-ollama
     - ollama_storage:/root/.ollama
 
 x-init-ollama: &init-ollama
-  image: ollama/ollama:latest
+  image: ollama/ollama:0.3.12
   container_name: ollama-pull-llama
   volumes:
     - ollama_storage:/root/.ollama
@@ -56,7 +62,7 @@ x-init-ollama: &init-ollama
 
 services:
   flowise:
-    image: flowiseai/flowise
+    image: flowiseai/flowise:latest
     restart: unless-stopped
     container_name: flowise
     expose:
@@ -107,7 +113,7 @@ services:
         condition: service_completed_successfully
 
   qdrant:
-    image: qdrant/qdrant
+    image: qdrant/qdrant:v1.10.1
     container_name: qdrant
     restart: unless-stopped
     expose:
@@ -117,7 +123,7 @@ services:
       - qdrant_storage:/qdrant/storage
 
   neo4j:
-    image: neo4j:latest
+    image: neo4j:5.20.0
     volumes:
         - ./neo4j/logs:/logs
         - ./neo4j/config:/config
@@ -133,7 +139,7 @@ services:
 
   caddy:
     container_name: caddy
-    image: docker.io/library/caddy:2-alpine
+    image: caddy:2-alpine
     restart: unless-stopped
     ports:
       - 80:80/tcp
@@ -169,7 +175,7 @@ services:
         max-file: "1"
 
   langfuse-worker:
-    image: langfuse/langfuse-worker:3
+    image: langfuse/langfuse-worker:3.0.0
     restart: always
     depends_on: &langfuse-depends-on
       postgres:
@@ -227,7 +233,7 @@ services:
       REDIS_TLS_KEY: ${REDIS_TLS_KEY:-/certs/redis.key}
 
   langfuse-web:
-    image: langfuse/langfuse:3
+    image: langfuse/langfuse:3.0.0
     restart: always
     depends_on: *langfuse-depends-on
     expose:
@@ -247,7 +253,7 @@ services:
       LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
 
   clickhouse:
-    image: clickhouse/clickhouse-server
+    image: clickhouse/clickhouse-server:24.8
     restart: always
     user: "101:101"
     expose:
@@ -269,7 +275,7 @@ services:
       start_period: 1s
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2024-08-03T15-22-10Z
     restart: always
     entrypoint: sh
     # create the 'langfuse' bucket before starting the service
@@ -290,7 +296,7 @@ services:
       start_period: 1s
 
   postgres:
-    image: postgres:${POSTGRES_VERSION:-latest}
+    image: postgres:${POSTGRES_VERSION:-16-alpine}
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -308,7 +314,7 @@ services:
 
   redis:
     container_name: redis
-    image: docker.io/valkey/valkey:8-alpine
+    image: valkey/valkey:8-alpine
     command: valkey-server --save 30 1 --loglevel warning
     restart: unless-stopped
     expose:
@@ -334,7 +340,7 @@ services:
 
   searxng:
     container_name: searxng
-    image: docker.io/searxng/searxng:latest
+    image: searxng/searxng:latest
     restart: unless-stopped
     expose:
       - 8080/tcp
@@ -359,6 +365,8 @@ services:
   ollama-cpu:
     profiles: ["cpu"]
     <<: *service-ollama
+    expose:
+      - 11434/tcp
 
   ollama-gpu:
     profiles: ["gpu-nvidia"]
@@ -401,3 +409,24 @@ services:
 
 
 
+# Commented out dashboard service due to Supabase dependency issues
+#  dashboard:
+#    build:
+#      context: ./dashboard
+#      dockerfile: Dockerfile
+#    container_name: dashboard
+#    restart: unless-stopped
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#    environment:
+#      - NODE_ENV=production
+#      - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
+#      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+#      - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
+#      - GITHUB_TOKEN=${GITHUB_TOKEN}
+#    depends_on:
+#      - supabase
+#    networks:
+#      - supabase

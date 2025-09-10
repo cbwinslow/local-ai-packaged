@@ -1,0 +1,465 @@
+name: Deploy Static Documentation
+
+on:
+  push:
+    branches: [ main, docs ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/static-deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install -g @11ty/eleventy
+          npm install -g @11ty/eleventy-plugin-rss
+          npm install -g @11ty/eleventy-plugin-syntaxhighlight
+          npm install -g markdown-it
+          npm install -g markdown-it-anchor
+
+      - name: Configure Eleventy
+        run: |
+          mkdir -p docs-site
+          cd docs-site
+
+          # Create Eleventy config
+          cat > .eleventy.js << 'EOF'
+          module.exports = function(eleventyConfig) {
+            // Copy static assets
+            eleventyConfig.addPassthroughCopy("css");
+            eleventyConfig.addPassthroughCopy("assets");
+            eleventyConfig.addPassthroughCopy("*.png");
+            eleventyConfig.addPassthroughCopy("*.jpg");
+
+            // Add filters
+            eleventyConfig.addFilter("readableDate", dateObj => {
+              return new Date(dateObj).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              });
+            });
+
+            return {
+              dir: {
+                input: "./",
+                output: "../dist",
+                includes: "_includes",
+                layouts: "_layouts"
+              }
+            };
+          };
+          EOF
+
+          # Create layout template
+          mkdir -p _layouts
+          cat > _layouts/base.liquid << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{ title or "Local AI Packaged" }} - Documentation</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
+            <style>
+              body { padding-top: 60px; }
+              .sidebar { height: calc(100vh - 60px); position: fixed; overflow-y: auto; }
+              .content { margin-left: 300px; }
+              .navbar-brand { font-weight: bold; }
+              pre { background: #f8f9fa; border-radius: 5px; }
+            </style>
+          </head>
+          <body>
+            <nav class="navbar navbar-dark bg-dark fixed-top">
+              <div class="container-fluid">
+                <a class="navbar-brand" href="#">Local AI Packaged</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              </div>
+            </nav>
+
+            <div class="container-fluid">
+              <div class="row">
+                <nav class="col-md-3 bg-light sidebar">
+                  <div class="p-3">
+                    <h5>Documentation</h5>
+                    <ul class="nav flex-column">
+                      <li class="nav-item"><a class="nav-link" href="/">Overview</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/installation">Installation</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/architecture">Architecture</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/reports">Reports</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/ci-cd">CI/CD</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/troubleshooting">Troubleshooting</a></li>
+                    </ul>
+
+                    <h6 class="mt-4">Reports</h6>
+                    <ul class="nav flex-column">
+                      <li class="nav-item"><a class="nav-link" href="/reports/health.html">System Health</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/reports/network.html">Network Monitor</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/reports/troubleshooting.html">Troubleshooting</a></li>
+                      <li class="nav-item"><a class="nav-link" href="/reports/docker.html">Docker Status</a></li>
+                    </ul>
+                  </div>
+                </nav>
+
+                <main class="col-md-9 content">
+                  <div class="p-4">
+                    {{ content }}
+                  </div>
+                </main>
+              </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+          </body>
+          </html>
+          EOF
+
+      - name: Convert Markdown to HTML
+        run: |
+          cd docs-site
+
+          # Create main documentation page
+          cat > index.md << 'EOF'
+          ---
+          layout: base.liquid
+          title: Local AI Packaged Documentation
+          ---
+
+          # Local AI Packaged - Complete Documentation
+
+          Welcome to the comprehensive documentation for Local AI Packaged, a self-hosted AI development environment designed for building local Retrieval-Augmented Generation (RAG) AI agents.
+
+          ## Recent Updates
+
+          ### September 2025 Enhancements
+          - **Enhanced CI/CD Pipeline**: Comprehensive GitHub Actions workflows for code quality, security scanning, and deployment
+          - **Advanced Reporting System**: System health monitoring, network analysis, and troubleshooting memory bank
+          - **MCP Server Integration**: Model Context Protocol servers for enhanced AI capabilities
+          - **Static Site Deployment**: Automated documentation deployment to GitHub Pages
+
+          ## Quick Start
+
+          ```bash
+          # Clone and setup
+          git clone https://github.com/cbwinslow/local-ai-packaged.git
+          cd local-ai-packaged
+
+          # Configure environment
+          cp .env.example .env
+          ./fix-supabase-env.sh
+
+          # Start services
+          python start_services.py --profile cpu --environment private
+          ```
+
+          ## Key Features
+
+          - **Local LLMs**: Ollama integration with Qwen2.5, Nomic-Embed, and other models
+          - **RAG Pipeline**: Document ingestion, vector storage, and intelligent querying
+          - **Low-Code Automation**: n8n workflows for Google Drive, Postgres, and Slack integration
+          - **Comprehensive Monitoring**: System health reports and troubleshooting assistance
+          - **Privacy-First**: Offline operation without cloud dependencies
+
+          ## Architecture Overview
+
+          The system consists of multiple interconnected services:
+
+          - **AI Services**: Ollama, Langfuse, OpenWebUI, Flowise
+          - **Database Layer**: Supabase (Postgres + PGVector), Qdrant, Neo4j
+          - **Workflow Layer**: n8n for automation and integration
+          - **Monitoring**: Comprehensive health checks and reporting
+          - **Security**: Containerized environment with MCP protocol integration
+
+          {{< notification type="info" >}}
+          **Latest Version**: v1.1.0 (September 2025)  
+          **Docker Images**: Production-ready with security scanning  
+          **Documentation**: Auto-generated from comprehensive repository docs
+          {{< /notification >}}
+
+          For detailed information, explore the sections in the navigation sidebar.
+          EOF
+
+          # Create CI/CD documentation
+          cat > ci-cd.md << 'EOF'
+          ---
+          layout: base.liquid
+          title: CI/CD and Deployment
+          ---
+
+          # CI/CD Pipeline
+
+          The project includes a robust continuous integration and deployment pipeline using GitHub Actions.
+
+          ## Workflow Overview
+
+          ### Code Quality (`lint` job)
+          - Python code formatting (Black, isort)
+          - Lint checking (flake8, pylint)
+          - Type checking (MyPy)
+          - YAML configuration validation
+
+          ### Security (`security` job)
+          - Filesystem vulnerability scanning (Trivy)
+          - Secret detection (TruffleHog)
+          - Dependency security checks
+
+          ### Docker (`docker` job)
+          - Compose file validation
+          - Container configuration checking
+          - Network and volume verification
+
+          ### Infrastructure (`test` job)
+          - Database connectivity tests
+          - Service dependency validation
+          - Configuration management verification
+
+          ### Reporting (`reports` job)
+          - Automated report generation
+          - Artifact collection and archiving
+          - Performance metrics collection
+
+          ### Deployment (`deploy-docker` job)
+          - SSH-based deployment to production
+          - Container orchestration
+          - Health verification
+          - Rollback capabilities
+
+          ## Static Site Deployment
+
+          Documentation is automatically deployed to a static website:
+
+          - Content generated from Markdown files
+          - Searchable documentation site
+          - Responsive design with Bootstrap
+          - Automated builds on documentation changes
+
+          ## Manual Deployment Options
+
+          ### Docker Compose Deployment
+          ```bash
+          # Production deployment
+          python start_services.py --profile gpu --environment public
+
+          # Development with hot reload
+          python start_services.py --profile cpu --environment private --dev
+          ```
+
+          ### Static Site Generation
+          ```bash
+          # Generate documentation site
+          cd docs-site
+          npx @11ty/eleventy
+
+          # Serve locally
+          npx @11ty/eleventy --serve
+          ```
+
+          ## Secrets Management
+
+          The pipeline uses encrypted secrets for:
+
+          - GitHub Personal Access Tokens
+          - Docker Registry credentials
+          - SSH deployment keys
+          - API tokens for integrations
+
+          ## Monitoring and Alerts
+
+          - Slack notifications on pipeline status
+          - Email alerts for failures
+          - Log aggregation with timestamps
+          - Performance monitoring integration
+          EOF
+
+          # Create troubleshooting documentation
+          cat > troubleshooting.md << 'EOF'
+          ---
+          layout: base.liquid
+          title: Troubleshooting Guide
+          ---
+
+          # Troubleshooting Memory Bank
+
+          This section provides access to the intelligent troubleshooting system that learns from past incidents and provides contextual solutions.
+
+          ## Quick Solutions
+
+          ### Common Docker Issues
+
+          **Port Conflicts**
+          ```bash
+          # Check port usage
+          python reports/network_monitor.py
+
+          # Find conflicting processes
+          lsof -i :5678
+
+          # Stop conflicting container
+          docker compose down
+
+          # Restart services
+          python start_services.py
+          ```
+
+          **Container Startup Failures**
+          ```bash
+          # Check logs
+          docker compose logs n8n
+          docker compose logs ollama
+
+          # Validate configuration
+          python reports/yaml_validate.py docker-compose.yml
+
+          # Health check
+          python reports/system_health.py
+          ```
+
+          ### AI Model Issues
+
+          **Ollama Model Download Fails**
+          ```bash
+          # Check disk space
+          df -h /var/lib/docker
+
+          # Clean up old images
+          docker system prune -a
+
+          # Restart Ollama
+          docker compose restart ollama
+          ```
+
+          **Model Not Responding**
+          ```bash
+          # Check Ollama health
+          curl http://localhost:11434/api/version
+
+          # Restart model
+          docker exec ollama ollama stop qwen2.5
+          docker exec ollama ollama run qwen2.5:7b
+          ```
+
+          ## Memory Bank Features
+
+          ### Search Similar Issues
+          ```python
+          from reports.troubleshooting_memory_bank import TroubleshootingMemoryBank
+
+          memory_bank = TroubleshootingMemoryBank()
+          similar = memory_bank.search_similar_incidents("port conflict n8n", "Docker")
+          ```
+
+          ### Add New Incident
+          ```python
+          incident_id = memory_bank.add_incident(
+              description="Service startup failure",
+              category="Docker",
+              services_affected=["n8n"],
+              symptoms=["Port binding error"]
+          )
+          ```
+
+          ### Log Resolution
+          ```python
+          memory_bank.add_troubleshooting_attempt(
+              incident_id=incident_id,
+              description="Restart sequence",
+              actions_taken=["docker compose down", "docker compose up"],
+              success=True,
+              duration_minutes=5
+          )
+          ```
+
+          ## Preventive Measures
+
+          ### Regular Maintenance
+          - **Weekly**: Run system health reports
+          - **Daily**: Check Docker container status
+          - **Monthly**: Clean up unused images and volumes
+
+          ### Monitoring Commands
+          ```bash
+          # System overview
+          python reports/system_health.py
+
+          # Network status
+          python reports/network_monitor.py
+
+          # Docker cleanup
+          docker system prune -f
+          ```
+
+          ### Best Practices
+          1. Always use `docker compose down` before switching profiles
+          2. Monitor disk space regularly
+          3. Backup configurations before major changes
+          4. Use the troubleshooting memory bank for similar issues
+
+          ## Advanced Diagnostics
+
+          ### Full System Report
+          ```bash
+          # Comprehensive report
+          mkdir -p reports/full-diagnostic
+          python reports/system_health.py > reports/full-diagnostic/health.txt
+          python reports/network_monitor.py > reports/full-diagnostic/network.txt
+          python reports/docker_status.py > reports/full-diagnostic/docker.txt
+          ```
+
+          ### Log Analysis
+          ```bash
+          # Container logs with timestamps
+          docker compose logs --tail=100 -t > logs.txt
+
+          # Service-specific logs
+          docker compose logs ollama n8n > ai-services-logs.txt
+          ```
+          EOF
+
+      - name: Build site
+        run: |
+          cd docs-site
+          npx @11ty/eleventy
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-site/_site
+          cname: docs.ai-stack.local
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Check deployment
+        run: |
+          # Wait for deployment to propagate
+          sleep 30
+
+          # Check if site is accessible (replace with your actual domain)
+          curl -f http://docs.ai-stack.local/ || echo "Site deployment in progress"
+
+      - name: Notify on deployment success
+        if: success()
+        run: |
+          echo "Static documentation deployed successfully!"
+          echo "URL: http://docs.ai-stack.local"

@@ -1,0 +1,50 @@
+{
+  "mcpServers": {
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "alwaysAllow": [
+        "puppeteer_navigate"
+      ]
+    },
+    "sequentialthinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "home/cbwinslow/"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "linear-updater": {
+      "command": "node",
+      "args": [
+        "/home/cbwinslow/.local/share/Roo-Code/MCP/linear-updater/src/index.js"
+      ],
+      "env": {
+        "LINEAR_API_KEY": "lin_api_J7C1RfvT3BezmE48OB3JWkT4AWVO730w8Fyi8YW0",
+        "LINEAR_TEAM_KEY": "CLO",
+        "REPO_PATH": "/home/cbwinslow/local-ai-packaged"
+      },
+      "disabled": false,
+      "alwaysAllow": [],
+      "disabledTools": []
+    }
+  }
+}

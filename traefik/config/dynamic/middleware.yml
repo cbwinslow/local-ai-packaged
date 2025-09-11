@@ -1,0 +1,114 @@
+http:
+  middlewares:
+    # Security headers middleware
+    security-headers:
+      headers:
+        # Force HTTPS
+        sslRedirect: true
+        sslTemporaryRedirect: false
+        sslHost: "example.com"  # Replace with your domain
+        sslProxyHeaders:
+          X-Forwarded-Proto: "https"
+        # Security Headers
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000  # 180 days
+        forceSTSHeader: true
+        frameDeny: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        referrerPolicy: "same-origin"
+        # CORS Headers
+        accessControlAllowMethods:
+          - "GET"
+          - "POST"
+          - "PUT"
+          - "DELETE"
+          - "OPTIONS"
+        accessControlAllowHeaders:
+          - "Authorization"
+          - "Content-Type"
+          - "X-Requested-With"
+        accessControlAllowOriginList:
+          - "https://yourdomain.com"  # Replace with your domain
+          - "https://*.yourdomain.com"
+        accessControlMaxAge: 100
+        accessControlAllowCredentials: true
+
+    # Rate limiting
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+        period: "1m"
+
+    # JWT Authentication (for Supabase)
+    jwt-auth:
+      forwardAuth:
+        address: "https://your-supabase-url.supabase.co/auth/v1/verify"  # Replace with your Supabase URL
+        trustForwardHeader: true
+        tls:
+          insecureSkipVerify: false
+        authResponseHeaders:
+          - "X-User-Id"
+          - "X-User-Email"
+
+    # IP Whitelist (for Cloudflare)
+    cloudflare-ip-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - "173.245.48.0/20"
+          - "103.21.244.0/22"
+          - "103.22.200.0/22"
+          - "103.31.4.0/22"
+          - "141.101.64.0/18"
+          - "108.162.192.0/18"
+          - "190.93.240.0/20"
+          - "188.114.96.0/20"
+          - "197.234.240.0/22"
+          - "198.41.128.0/17"
+          - "162.158.0.0/15"
+          - "104.16.0.0/13"
+          - "104.24.0.0/14"
+          - "172.64.0.0/13"
+          - "131.0.72.0/22"
+
+    # Real IP (for Cloudflare)
+    real-ip:
+      headers:
+        customRequestHeaders:
+          X-Real-IP: "{http.request.header.CF-Connecting-IP}"
+
+    # Compress responses
+    compress:
+      compress: {}
+
+    # Circuit breaker
+    circuit-breaker:
+      circuitBreaker:
+        expression: "NetworkErrorRatio() > 0.5 || LatencyAtQuantileMS(50) > 100"
+
+    # Retry
+    retry:
+      retry:
+        attempts: 3
+        initialInterval: "100ms"
+
+# TLS Configuration
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      sniStrict: true
+      curvePreferences:
+        - "secp521r1"
+        - "secp384r1"
+      cipherSuites:
+        - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+        - "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305"
+        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+        - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+      clientAuth:
+        clientAuthType: RequestClientCert

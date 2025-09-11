@@ -1,0 +1,656 @@
+{
+  "timestamp": "2025-09-10T19:13:37.965494",
+  "system_info": {
+    "hostname": "cbwhpz",
+    "os": "Linux",
+    "kernel": "6.14.0-29-generic",
+    "architecture": "x86_64",
+    "cpus": 56,
+    "memory_total_gb": 94.08,
+    "disk_total_gb": 232.64
+  },
+  "docker_status": {
+    "containers": [
+      {
+        "name": "friendly_bardeen",
+        "image": "hashicorp/terraform-mcp-server",
+        "status": "Up 40 minutes",
+        "ports": "",
+        "size": "0B"
+      },
+      {
+        "name": "local-ai-packaged-postgres-1",
+        "image": "postgres:latest",
+        "status": "Up 8 hours (healthy)",
+        "ports": "5432/tcp",
+        "size": "0B"
+      },
+      {
+        "name": "redis",
+        "image": "valkey/valkey:8-alpine",
+        "status": "Up 8 hours (healthy)",
+        "ports": "6379/tcp",
+        "size": "0B"
+      },
+      {
+        "name": "supabase-postgrest",
+        "image": "postgrest/postgrest",
+        "status": "Up 9 hours",
+        "ports": "0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp",
+        "size": "0B"
+      },
+      {
+        "name": "opendiscourse-neo4j",
+        "image": "neo4j:4.4",
+        "status": "Up 9 hours",
+        "ports": "0.0.0.0:7474->7474/tcp, [::]:7474->7474/tcp, 7473/tcp, 0.0.0.0:7687->7687/tcp, [::]:7687->7687/tcp",
+        "size": "0B"
+      },
+      {
+        "name": "roop-unleashed-gpu",
+        "image": "roop-unleashed-fixed-image:latest",
+        "status": "Up 9 hours",
+        "ports": "0.0.0.0:7860->7860/tcp, [::]:7860->7860/tcp",
+        "size": "0B"
+      }
+    ],
+    "images": [
+      {
+        "repository": "ghcr.io/open-webui/open-webui",
+        "tag": "main",
+        "size": "4.85GB",
+        "created": "2025-09-10 06:56:54 -0400 EDT"
+      },
+      {
+        "repository": "postgres",
+        "tag": "latest",
+        "size": "454MB",
+        "created": "2025-09-08 16:04:25 -0400 EDT"
+      },
+      {
+        "repository": "ghcr.io/github/github-mcp-server",
+        "tag": "latest",
+        "size": "34.2MB",
+        "created": "2025-09-03 09:35:12 -0400 EDT"
+      },
+      {
+        "repository": "n8nio/n8n",
+        "tag": "latest",
+        "size": "974MB",
+        "created": "2025-09-03 04:21:18 -0400 EDT"
+      },
+      {
+        "repository": "supabase/edge-runtime",
+        "tag": "v1.69.6",
+        "size": "705MB",
+        "created": "2025-09-02 00:31:33 -0400 EDT"
+      },
+      {
+        "repository": "roop-unleashed-fixed-image",
+        "tag": "latest",
+        "size": "12.9GB",
+        "created": "2025-08-28 00:55:54 -0400 EDT"
+      },
+      {
+        "repository": "valkey/valkey",
+        "tag": "8-alpine",
+        "size": "47.9MB",
+        "created": "2025-08-22 09:53:28 -0400 EDT"
+      },
+      {
+        "repository": "hashicorp/terraform-mcp-server",
+        "tag": "latest",
+        "size": "10.8MB",
+        "created": "2025-08-13 14:48:55 -0400 EDT"
+      },
+      {
+        "repository": "flowiseai/flowise",
+        "tag": "latest",
+        "size": "3.03GB",
+        "created": "2025-08-11 08:15:40 -0400 EDT"
+      },
+      {
+        "repository": "supabase/storage-api",
+        "tag": "v1.25.7",
+        "size": "566MB",
+        "created": "2025-07-12 07:46:44 -0400 EDT"
+      },
+      {
+        "repository": "supabase/gotrue",
+        "tag": "v2.177.0",
+        "size": "47.2MB",
+        "created": "2025-07-08 04:49:05 -0400 EDT"
+      },
+      {
+        "repository": "supabase/postgres-meta",
+        "tag": "v0.91.0",
+        "size": "386MB",
+        "created": "2025-07-03 04:45:44 -0400 EDT"
+      },
+      {
+        "repository": "supabase/supavisor",
+        "tag": "2.5.7",
+        "size": "1.05GB",
+        "created": "2025-06-30 13:17:41 -0400 EDT"
+      },
+      {
+        "repository": "supabase/studio",
+        "tag": "2025.06.30-sha-6f5982d",
+        "size": "801MB",
+        "created": "2025-06-30 00:20:00 -0400 EDT"
+      },
+      {
+        "repository": "supabase/logflare",
+        "tag": "1.14.2",
+        "size": "449MB",
+        "created": "2025-05-27 17:17:24 -0400 EDT"
+      },
+      {
+        "repository": "neo4j",
+        "tag": "4.4",
+        "size": "542MB",
+        "created": "2025-05-22 09:57:28 -0400 EDT"
+      },
+      {
+        "repository": "supabase/realtime",
+        "tag": "v2.34.47",
+        "size": "164MB",
+        "created": "2025-04-15 07:34:37 -0400 EDT"
+      },
+      {
+        "repository": "supabase/postgres",
+        "tag": "15.8.1.060",
+        "size": "1.96GB",
+        "created": "2025-03-24 22:08:44 -0400 EDT"
+      },
+      {
+        "repository": "postgrest/postgrest",
+        "tag": "latest",
+        "size": "20.2MB",
+        "created": "2024-11-09 09:11:53 -0500 EST"
+      },
+      {
+        "repository": "postgrest/postgrest",
+        "tag": "v12.2.12",
+        "size": "17.4MB",
+        "created": "2024-11-06 12:47:05 -0500 EST"
+      },
+      {
+        "repository": "ollama/ollama",
+        "tag": "0.3.12",
+        "size": "3.27GB",
+        "created": "2024-09-25 02:18:00 -0400 EDT"
+      },
+      {
+        "repository": "qdrant/qdrant",
+        "tag": "v1.10.1",
+        "size": "183MB",
+        "created": "2024-07-11 11:11:54 -0400 EDT"
+      },
+      {
+        "repository": "traefik",
+        "tag": "v3.0",
+        "size": "172MB",
+        "created": "2024-07-02 18:20:26 -0400 EDT"
+      },
+      {
+        "repository": "neo4j",
+        "tag": "5.20.0",
+        "size": "508MB",
+        "created": "2024-05-23 06:12:20 -0400 EDT"
+      },
+      {
+        "repository": "timberio/vector",
+        "tag": "0.28.1-alpine",
+        "size": "124MB",
+        "created": "2023-03-06 09:33:47 -0500 EST"
+      },
+      {
+        "repository": "darthsim/imgproxy",
+        "tag": "v3.8.0",
+        "size": "173MB",
+        "created": "2022-10-07 07:38:11 -0400 EDT"
+      },
+      {
+        "repository": "kong",
+        "tag": "2.8.1",
+        "size": "139MB",
+        "created": "2022-10-06 19:01:18 -0400 EDT"
+      }
+    ],
+    "volumes": [],
+    "networks": []
+  },
+  "network_info": {
+    "listening_ports": [
+      {
+        "port": 35351,
+        "address": "127.0.0.1",
+        "process": "language_server_linux_x64"
+      },
+      {
+        "port": 5672,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 9993,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 631,
+        "address": "::1",
+        "process": "Unknown"
+      },
+      {
+        "port": 631,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 9090,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 25672,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 10256,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 42533,
+        "address": "127.0.0.1",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 443,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 50051,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 7860,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 5432,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 4369,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 8090,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 43029,
+        "address": "127.0.0.1",
+        "process": "code"
+      },
+      {
+        "port": 25000,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 10259,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 11434,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 9080,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 33681,
+        "address": "127.0.0.1",
+        "process": "language_server_linux_x64"
+      },
+      {
+        "port": 41819,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 8070,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 16443,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 7700,
+        "address": "127.0.0.1",
+        "process": "code"
+      },
+      {
+        "port": 43863,
+        "address": "127.0.0.1",
+        "process": "node"
+      },
+      {
+        "port": 25,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 7687,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 8829,
+        "address": "127.0.0.1",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 10250,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 42385,
+        "address": "127.0.0.1",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 9098,
+        "address": "127.0.0.1",
+        "process": "refact-lsp"
+      },
+      {
+        "port": 3145,
+        "address": "::",
+        "process": "code"
+      },
+      {
+        "port": 49159,
+        "address": "127.0.0.1",
+        "process": "datadog-static-analyzer-server"
+      },
+      {
+        "port": 53,
+        "address": "127.0.0.54",
+        "process": "Unknown"
+      },
+      {
+        "port": 53,
+        "address": "127.0.0.53",
+        "process": "Unknown"
+      },
+      {
+        "port": 35675,
+        "address": "127.0.0.1",
+        "process": "windsurf"
+      },
+      {
+        "port": 10257,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 3000,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 35949,
+        "address": "127.0.0.1",
+        "process": "publisher"
+      },
+      {
+        "port": 42247,
+        "address": "127.0.0.1",
+        "process": "code"
+      },
+      {
+        "port": 8828,
+        "address": "127.0.0.1",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 9050,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 19001,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 25,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 54113,
+        "address": "::",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 8080,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 41207,
+        "address": "127.0.0.1",
+        "process": "code"
+      },
+      {
+        "port": 80,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 64120,
+        "address": "::ffff:127.0.0.1",
+        "process": "java"
+      },
+      {
+        "port": 6554,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 9993,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 10249,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 7474,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 26155,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 9099,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 7860,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 54112,
+        "address": "0.0.0.0",
+        "process": "next-server (v15.3.3)"
+      },
+      {
+        "port": 22,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 10248,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 3000,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 22,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 1338,
+        "address": "127.0.0.1",
+        "process": "Unknown"
+      },
+      {
+        "port": 9100,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 1716,
+        "address": "::",
+        "process": "kdeconnectd"
+      },
+      {
+        "port": 3683,
+        "address": "::",
+        "process": "code"
+      },
+      {
+        "port": 7474,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      },
+      {
+        "port": 54114,
+        "address": "::",
+        "process": "code"
+      },
+      {
+        "port": 7070,
+        "address": "::",
+        "process": "Unknown"
+      },
+      {
+        "port": 7687,
+        "address": "0.0.0.0",
+        "process": "Unknown"
+      }
+    ],
+    "port_conflicts": [],
+    "network_connections": []
+  },
+  "service_health": {
+    "ollama": {
+      "reachable": true,
+      "response_time_ms": 2.55,
+      "http_status": 200,
+      "error": null
+    },
+    "n8n": {
+      "reachable": false,
+      "response_time_ms": null,
+      "http_status": null,
+      "error": null
+    },
+    "supabase": {
+      "reachable": false,
+      "response_time_ms": null,
+      "http_status": null,
+      "error": null
+    },
+    "open-webui": {
+      "reachable": true,
+      "response_time_ms": 1.79,
+      "http_status": 200,
+      "error": null
+    },
+    "qdrant": {
+      "reachable": false,
+      "response_time_ms": null,
+      "http_status": null,
+      "error": null
+    },
+    "neo4j": {
+      "reachable": true,
+      "response_time_ms": 8.55,
+      "http_status": 200,
+      "error": null
+    },
+    "flowise": {
+      "reachable": false,
+      "response_time_ms": null,
+      "http_status": null,
+      "error": null
+    },
+    "langfuse": {
+      "reachable": true,
+      "response_time_ms": 4.38,
+      "http_status": 503,
+      "error": null
+    }
+  },
+  "resource_usage": {
+    "cpu_percent": 9.9,
+    "memory_percent": 45.1,
+    "memory_used_gb": 42.34,
+    "disk_usage_percent": 92.1,
+    "disk_free_gb": 17.47,
+    "network_connections": 357
+  },
+  "assets": {
+    "files": {
+      "docs": 14,
+      "reports": 8
+    },
+    "configs": {
+      "docker_compose": true,
+      "services": 21,
+      "env_file": true,
+      "caddyfile": false
+    },
+    "workflows": {
+      "n8n": 3,
+      "flowise": 5
+    },
+    "volumes": {}
+  },
+  "alerts": []
+}

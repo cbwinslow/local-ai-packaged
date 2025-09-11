@@ -37,35 +37,48 @@ else
   git pull
 fi
 
-# 3. Prepare .env with generated secrets
-echo "Preparing .env file..."
-cp .env.example .env
-generate_secret() { openssl rand -hex 32; }
-jwt_random() { openssl rand -base64 32; }
-# Override secrets in .env with generated values
-sed -i "s|POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(generate_secret)|g" .env
-sed -i "s|N8N_ENCRYPTION_KEY=.*|N8N_ENCRYPTION_KEY=$(generate_secret)|g" .env
-sed -i "s|N8N_USER_MANAGEMENT_JWT_SECRET=.*|N8N_USER_MANAGEMENT_JWT_SECRET=$(generate_secret)|g" .env
-sed -i "s|JWT_SECRET=.*|JWT_SECRET=$(generate_secret)|g" .env
-# For ANON_KEY and SERVICE_ROLE_KEY, use example base but update with new random
-ANON_RANDOM=$(jwt_random)
-sed -i "s|ANON_KEY=.*|ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlLWRlbW8iLCAiaWF0Ijog$(date +%s),ICJleHAiOiA$(($(date +%s) + 157680000))fQ.$(echo $ANON_RANDOM | base64)|g" .env
-SERVICE_RANDOM=$(jwt_random)
-sed -i "s|SERVICE_ROLE_KEY=.*|SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjogInNlcnZpY2Vfcm9sZSIsICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsICJpYXQiOiA$(date +%s),ICJleHAiOiA$(($(date +%s) + 157680000))fQ.$(echo $SERVICE_RANDOM | base64)|g" .env
-sed -i "s|DASHBOARD_PASSWORD=.*|DASHBOARD_PASSWORD=$(generate_secret)|g" .env
-sed -i "s|POOLER_TENANT_ID=.*|POOLER_TENANT_ID=1000|g" .env
-sed -i "s|NEO4J_AUTH=.*|NEO4J_AUTH=neo4j/$(generate_secret)|g" .env
-sed -i "s|CLICKHOUSE_PASSWORD=.*|CLICKHOUSE_PASSWORD=$(generate_secret)|g" .env
-sed -i "s|MINIO_ROOT_PASSWORD=.*|MINIO_ROOT_PASSWORD=$(generate_secret)|g" .env
-sed -i "s|LANGFUSE_SALT=.*|LANGFUSE_SALT=$(generate_secret)|g" .env
-sed -i "s|NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=$(generate_secret)|g" .env
-sed -i "s|ENCRYPTION_KEY=.*|ENCRYPTION_KEY=$(generate_secret)|g" .env
-# Extensions
-echo "RABBITMQ_DEFAULT_USER=$RABBITMQ_USER" >> .env
-echo "RABBITMQ_DEFAULT_PASS=$RABBITMQ_PASS" >> .env
-echo "GRAYLOG_PASSWORD=$GRAYLOG_PASSWORD" >> .env
-echo "OPENSEARCH_PASSWORD=$OPENSEARCH_PASSWORD" >> .env
-echo "LOCALAI_API_KEY=$(generate_secret)" >> .env  # For LocalAI auth
+# 3. Prepare .env with Bitwarden secrets (repeatable, no regeneration)
+echo "Preparing .env file from Bitwarden..."
+
+# Check if migration needed (if .env lacks critical secrets)
+if [ ! -f .env ] || ! grep -q "POSTGRES_PASSWORD=" .env || [ "${#POSTGRES_PASSWORD}" -lt 64 ]; then
+    echo "⚠️  Skipping Bitwarden migration for development - using existing .env"
+    echo "For production, run: ./scripts/migrate-secrets-to-bitwarden.sh"
+    source .env
+else
+    if [ -f scripts/populate-env-from-bitwarden.sh ]; then
+        echo "🔐 Populating secrets from Bitwarden..."
+        ./scripts/populate-env-from-bitwarden.sh
+    else
+        echo "⚠️  Bitwarden population script not found. Using existing .env"
+    fi
+fi
+
+# Populate .env from Bitwarden if script exists
+if [ -f scripts/populate-env-from-bitwarden.sh ]; then
+    echo "🔐 Populating secrets from Bitwarden..."
+    ./scripts/populate-env-from-bitwarden.sh
+else
+    echo "⚠️  Bitwarden population script not found. Using existing .env"
+    cp .env.example .env 2>/dev/null || true
+fi
+
+# Source the populated .env
+source .env
+
+# Validate critical secrets exist (non-placeholder)
+if [[ "$POSTGRES_PASSWORD" == *"your_"* ]] || [[ "$JWT_SECRET" == *"your_"* ]]; then
+    echo "❌ Critical secrets missing in .env. Run: ./scripts/populate-env-from-bitwarden.sh"
+    exit 1
+fi
+
+echo "✅ Secrets validated. Using Bitwarden-managed credentials."
+# Extensions (use Bitwarden values if available, fallback to defaults)
+echo "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}" >> .env
+echo "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-guest}" >> .env
+echo "GRAYLOG_PASSWORD=${GRAYLOG_PASSWORD:-admin}" >> .env
+echo "OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD:-admin}" >> .env
+echo "LOCALAI_API_KEY=${LOCALAI_API_KEY:-$(openssl rand -hex 32)}" >> .env  # Generate if not in Bitwarden
 
 # 4. Extend docker-compose.yml with OLK stack, RabbitMQ, LocalAI
 echo "Creating extensions.yml for new services..."
@@ -322,6 +335,8 @@ EOF
 # 7. DB and Queue Init
 echo "Initializing DB and queues..."
 PROFILE="${USE_GPU:+gpu-nvidia}"
+# Ensure .env is sourced for start_services
+export $(grep -v '^#' .env | xargs)
 python3 start_services.py --profile $PROFILE --environment private  # Starts base services
 docker compose up -d prometheus grafana loki opensearch graylog rabbitmq localai  # Start extensions
 sleep 20  # Wait for Supabase and RabbitMQ

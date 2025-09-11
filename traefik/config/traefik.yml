@@ -1,0 +1,99 @@
+# Global configuration
+api:
+  dashboard: true
+  insecure: true  # Only for development, use auth in production
+  debug: false
+
+# Logging configuration
+log:
+  level: INFO
+  format: common
+  filePath: /var/log/traefik/traefik.log
+
+# Access log configuration
+accessLog:
+  filePath: /var/log/traefik/access.log
+  bufferingSize: 100
+  fields:
+    defaultMode: keep
+    names:
+      ClientUsername: drop
+    headers:
+      defaultMode: keep
+      names:
+        User-Agent: keep
+        Authorization: redact
+        Content-Type: keep
+
+# Entry points configuration
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+    http:
+      middlewares:
+        - security-headers@file
+        - rate-limit@file
+      tls:
+        options: default
+
+# TLS configuration
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      sniStrict: true
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/cert.pem
+        keyFile: /certs/key.pem
+
+# Docker provider configuration
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: "local-ai-packaged_default"
+    watch: true
+    useBindPortIP: false
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# Metrics configuration (Prometheus)
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addServicesLabels: true
+
+# Tracing configuration (optional)
+tracing:
+  jaeger:
+    samplingServerURL: http://jaeger:5778/sampling
+    samplingType: const
+    samplingParam: 1.0
+
+# Ping endpoint for health checks
+ping:
+  entryPoint: web
+
+# Enable experimental features
+experimental:
+  http3: true
+  plugins:
+    traefik-container-manager:
+      modulename: github.com/traefik/plugins/container-manager
+      version: v0.1.0

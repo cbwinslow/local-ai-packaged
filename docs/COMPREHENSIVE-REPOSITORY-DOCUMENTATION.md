@@ -24,9 +24,11 @@
     - [Container Orchestration](#container-orchestration)
   - [Diagrams](#diagrams)
     - [High-Level Architecture](#high-level-architecture)
+    - [Class Definitions](#class-definitions)
     - [RAG Workflow Sequence](#rag-workflow-sequence)
     - [Docker Network Topology](#docker-network-topology)
     - [Service Dependencies](#service-dependencies)
+    - [SQL Tables and ERD](#sql-tables-and-erd)
   - [Additional Coverage](#additional-coverage)
     - [Ancillary Files](#ancillary-files)
     - [Security Considerations](#security-considerations)
@@ -48,6 +50,30 @@ The repository is curated from the original n8n self-hosted AI starter kit with 
 **Target Users**: Developers, AI researchers, and teams building privacy-focused AI applications.
 
 **License**: Apache License 2.0 (see [`LICENSE`](LICENSE)).
+
+**Third-Party Licenses and Copyrights**:
+- **Supabase**: PostgreSQL-based, Apache 2.0. Copyright: Supabase Inc. (2020-present). Services: supabase.com (self-hosted via Docker).
+- **n8n**: Workflow automation, Apache 2.0 with Commons Clause. Copyright: n8n GmbH (2019-present). Services: n8n.io.
+- **Ollama**: Local LLM runner, MIT License. Copyright: Ollama (2023-present). Services: ollama.ai.
+- **Caddy**: Web server/proxy, Apache 2.0. Copyright: Caddy Authors (2015-present). Services: caddyserver.com.
+- **Qdrant**: Vector DB, Apache 2.0. Copyright: Qdrant (2021-present). Services: qdrant.tech.
+- **Neo4j**: Graph DB, GPL v3 (Community), Commercial license. Copyright: Neo4j Inc. (2007-present). Services: neo4j.com.
+- **Langfuse**: LLM observability, MIT. Copyright: Langfuse (2023-present). Services: langfuse.com.
+- **SearxNG**: Metasearch, AGPL v3. Copyright: SearxNG contributors (2015-present). Services: searxng.org.
+- **Congress.gov API**: U.S. Library of Congress, Public Domain (U.S. Government). Copyright: None (government work). Services: congress.gov.
+- **GovInfo API**: U.S. Government Publishing Office, Public Domain. Copyright: None. Services: govinfo.gov.
+- **OpenAI API** (optional): Proprietary commercial license. Copyright: OpenAI (2015-present). Services: openai.com.
+- **Other Docker images**: Various OSS licenses (Alpine Linux: GPL v2, etc.). All containers use official images with their respective licenses.
+
+**Services Copyright Summary**:
+| Service | Copyright Holder | License | Key Files |
+|---------|------------------|---------|-----------|
+| Supabase | Supabase Inc. | Apache 2.0 | supabase/docker/* |
+| n8n | n8n GmbH | Apache 2.0+Commons | n8n/* |
+| Ollama | Ollama | MIT | (container only) |
+| Congress.gov | U.S. Library of Congress | Public Domain | services/api_clients/congress_gov.py |
+
+Full licenses in respective repositories; this project aggregates under Apache 2.0 compatibility.
 
 ## Repository Structure
 The project is organized into directories for core configurations, services, and utilities:
@@ -116,18 +142,33 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 ## Processes and Procedures
 
 ### Installation and Setup
-**Prerequisites**: Docker/Docker Desktop, Python 3, Git.
+**Prerequisites**: Docker/Docker Desktop (v20+), Python 3.8+, Git, Bitwarden CLI (for secrets).
 
 **Step-by-Step**:
 1. Clone: `git clone -b stable https://github.com/coleam00/local-ai-packaged.git && cd local-ai-packaged`.
-2. Copy `.env.example` to `.env`.
-3. Generate secrets: `./fix-supabase-env.sh` (populates JWT, Postgres password, etc.).
-4. For production: Set hostnames in `.env` (e.g., `N8N_HOSTNAME=n8n.example.com`), email for Let's Encrypt.
-5. Start: `python start_services.py --profile cpu --environment private` (options: cpu/gpu-nvidia/gpu-amd/none; private/public).
+2. Install Bitwarden CLI: `wget -qO- https://downloads.bitwarden.com/cli/Bitwarden_Installer.sh | bash` (or `sudo snap install bw`).
+3. Authenticate Bitwarden: `bw login` (use 2FA), then `export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)`.
+4. Migrate existing secrets (one-time): `./scripts/migrate-secrets-to-bitwarden.sh` (stores .env values in Bitwarden vault).
+5. Populate .env: `./scripts/populate-env-from-bitwarden.sh` (pulls from Bitwarden; requires BW_PASSWORD env var).
+6. For production: Set hostnames in .env (e.g., `N8N_HOSTNAME=n8n.example.com`), LETSENCRYPT_EMAIL; Use Cloudflare Secrets for env vars.
+7. Deploy: `./scripts/deploy-legislative-ai.sh` (handles Supabase init, extensions, DB schema, queue setup).
+   - Alternative: `python tools/start_services.py --profile cpu --environment private` (manual start).
+8. Verify: `docker compose ps` (all healthy), `curl http://localhost:8000/health` (Supabase), access n8n at http://localhost:9003.
 
-**Inputs/Outputs**: `.env` (inputs: secrets/ports); Outputs: Running containers, accessible UIs.
-**Error Handling**: Script checks Supabase clone/pull, handles first-run SearxNG perms; Troubleshooting in README (e.g., delete db/data for password changes).
-**Best Practices**: Use strong secrets; Backup `.env`; Monitor logs via `docker compose logs`.
+**Database Deployment**:
+- Supabase auto-initializes via docker/volumes/db/init/*.sql (JWT roles, pooler, realtime).
+- Custom schema: Run `./scripts/deploy-legislative-ai.sh` (creates legislative.bills, votes, ai_agents; RabbitMQ queues).
+- ERD: See [SQL Tables/ERD](#sql-tables-and-erd) for full schema.
+- Migrations: db/migrations/*.sql (apply via `psql` or Supabase Studio).
+
+**Secrets Management**:
+- All secrets in Bitwarden (see [docs/secrets-setup.md](docs/secrets-setup.md)): Folders like "Local AI Package/Supabase".
+- Repeatable: `./scripts/populate-env-from-bitwarden.sh && source .env` (no regeneration).
+- Cloudflare: For prod, use `wrangler secret put SUPABASE_JWT_SECRET` in wrangler.toml.
+
+**Inputs/Outputs**: .env (from Bitwarden); Outputs: Running stack, legislative schema, queues (legislative-ingestion, agent-orchestration).
+**Error Handling**: Deploy script validates secrets, handles port conflicts (port-manager.py); Logs: `docker compose logs -f`; Fix JWT: `./fix-jwt-problem.sh`.
+**Best Practices**: chmod 600 .env; Backup vault; Rotate annually; Use public env only with TLS; Monitor via Grafana (http://localhost:8010, admin/admin).
 
 ### Service Deployment
 **Workflow**: Managed by [`start_services.py`](start_services.py).
@@ -206,6 +247,15 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 - **Ollama** (image: ollama/ollama:latest): Local LLM inference. Ports: 11434. Profiles: cpu/gpu-nvidia/gpu-amd (ROCm). Env: Context=8192, max models=2. Volumes: ollama_storage. Deps: None. Communication: HTTP API. Scaling: GPU-accelerated; Pull init models (qwen2.5:7b, nomic-embed).
 - **Supabase** (included compose): Full backend stack. See [Supabase Stack](#supabase-stack). Proxy via Caddy:8005.
 - **Caddy** (image: caddy:2-alpine): Reverse proxy. Ports: 80/443. Volumes: caddy-data/config. Env: Hostnames (N8N_HOSTNAME etc.), Let's Encrypt email. Deps: All services. Communication: Upstream to service ports. Scaling: Single; Security: Auto-TLS.
+
+**Data Sources Ingested**:
+- **Congress.gov API** (Primary): U.S. legislative data (bills, members, actions, subjects, cosponsors). Base: https://api.congress.gov. Endpoints: /bills/{congress}/{type}{number}.json, /actions, /subjects, /cosponsors, /member/{bioguide}. Rate limit: 1000/hr (API key required, public domain data).
+- **GovInfo API** (Documents): Federal Register, Code of Federal Regulations, Bills XML/PDF. Base: https://api.govinfo.gov. Collections: BILLS, FR, CFR. Downloads queued via govinfo_download_queue table.
+- **USAspending.gov** (Future): Federal spending data (contracts, grants). API key required.
+- **Federal Register API** (Integrated via GovInfo): Executive actions, notices.
+- **File System** (Local): /data/shared for RAG ingestion (PDF/Excel/CSV/TXT via n8n triggers).
+
+All sources are U.S. Government (public domain); No private data ingested.
 
 ### Supabase Stack
 Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compose.yml):
@@ -300,6 +350,7 @@ graph TB
         R[Redis/Valkey]
         MI[MinIO S3]
         S[SearxNG Search]
+        Q[TaskQueue<br/>(SQL-based)]
     end
     C --> N8N
     C --> OWUI
@@ -310,6 +361,7 @@ graph TB
     N8N --> QD
     N8N --> NJ
     N8N --> S
+    N8N --> Q
     OWUI --> OL
     FL --> OL
     SB --> PG
@@ -317,7 +369,33 @@ graph TB
     LG --> OL
     style C fill:#f9f,stroke:#333
     style PG fill:#bbf,stroke:#333
+    style Q fill:#bfb,stroke:#333
 ```
+
+### Class Definitions
+**Database Models** (from [`db/models.py`](db/models.py); SQLAlchemy + Pydantic):
+- **APIKey**: Stores API keys (id: UUID, name, api_key, service_name: congress_gov/govinfo, rate_limit, is_active). Relationships: api_calls (APICallLog).
+- **APICallLog**: Logs calls (id, api_key_id, service_name, endpoint, method, status_code, response_time_ms, success, error_message, headers/body JSONB, ip_address, created_at). Indexes: service/created_at/api_key.
+- **CongressBill**: Bills (id, bill_id: unique, type/number/congress, title/summary, sponsor_id/name/state/party, dates, urls, active/enacted/vetoed, subjects, raw_data JSONB). Relationships: actions/subjects/cosponsors.
+- **CongressBillAction**: Actions (id, bill_id, date/text/code/type, committee, acted_by details). Unique: bill_id/date/text.
+- **CongressBillSubject**: Subjects (id, bill_id, subject). Unique: bill_id/subject.
+- **CongressBillCosponsor**: Cosponsors (id, bill_id, bioguide/thomas/govtrack ids, name/state/district/party, date, original). Unique: bill_id/name/date.
+- **CongressMember**: Members (id, member_id unique, names/dob/gender/party/leadership, social ids, urls, in_office, stats: votes/missed/pvi/nominate, raw_data JSONB). Relationships: roles.
+- **CongressMemberRole**: Roles (id, member_id, congress/chamber/title/state/party, dates/office/phone, stats). Unique: member_id/congress/chamber.
+- **GovInfoCollection**: Collections (id, code unique: BILLS/FR, name/category/description, package_count/last_modified/url).
+- **GovInfoPackage**: Packages (id, package_id unique, collection_id, modified/link/class/title/branch/pages/authors/type, raw_metadata/content).
+- **GovInfoDownloadQueue**: Queue (id, package_id unique, collection_id, status: pending/downloading/completed/failed, priority/retry/last_error, timestamps).
+- **Task**: Queue tasks (id, type: BILL_INGEST/etc., payload JSONB, priority/status/retry, error/scheduled/parent/depends/metadata, timestamps/lock). Relationships: children/parent.
+
+**Queue System** (from [`services/queue/__init__.py`](services/queue/__init__.py)):
+- **TaskQueue** class: SQL-based (uses Task model). Methods: create_task(TaskCreate), get_task(id), update_task(TaskUpdate), delete_task, get_next_task(types, worker_id, lock_timeout=300), complete_task(result), fail_task(error), retry_task(delay=0), get_status/result, cleanup_old(days=7).
+- Enums: TaskStatus (PENDING/PROCESSING/COMPLETED/FAILED/RETRY), TaskPriority (LOW=1/NORMAL=2/HIGH=3/URGENT=4), TaskType (BILL_INGEST/MEMBER_INGEST/ACTION_INGEST/etc.).
+- Features: Locking (locked_at/by, timeout), Dependencies (depends_on list), Retries (max_retries=3), Validation (Pydantic), Pagination/Filtering (status/priority/type).
+- Integration: Uses SQLAlchemy Session; Error handling (QueueError/TaskNotFoundError); Logging via logger.
+
+**API Clients** (from [`services/api_clients`](services/api_clients)):
+- **CongressGovClient** (congress_gov.py): Inherits BaseAPIClient. Methods: get_bill(congress/type/number), get_actions/subjects/cosponsors/member, search_bills(query). Uses Pydantic: Bill/BillAction/etc. models, PaginatedResponse. Rate limiting, logging (APICallLog).
+- Base: _make_request (headers with API key), _parse_response (JSON to model).
 
 **Legend**: Solid arrows = HTTP/DB connections; Dashed = Optional (e.g., search).
 
@@ -379,7 +457,62 @@ graph TD
     style OL fill:#bfb
 ```
 
-**Version**: v1.0 (2025-09-10).
+### SQL Tables and ERD
+**Schema** (from [`db/migrations/001_initial_schema.sql`](db/migrations/001_initial_schema.sql); 362 lines):
+- Extensions: uuid-ossp, pgcrypto.
+- Tables: api_keys (id/name/api_key/service/rate_limit/active/timestamps), api_call_logs (id/api_key_id/service/endpoint/method/status/time/success/error/headers/body/ip/user/timestamp; indexes: service/created/api_key).
+- congress_bills (id/bill_id unique/type/number/congress/title/sponsor/dates/actions/urls/active/enacted/subjects/summary/raw/timestamps; indexes: congress/type/sponsor/date/updated).
+- congress_bill_actions (id/bill_id/date/text/code/type/committee/acted_by; unique: bill/date/text; indexes: bill/date).
+- congress_bill_subjects (id/bill_id/subject; unique: bill/subject; indexes: bill/subject).
+- congress_bill_cosponsors (id/bill_id/ids/name/state/district/party/date/original; unique: bill/name/date; indexes: bill/name/state).
+- congress_members (id/member_id unique/names/dob/gender/party/leadership/social/ids/urls/office/in_office/stats/raw/timestamps; indexes: state/party).
+- congress_member_roles (id/member_id/congress/chamber/titles/state/party/dates/office/stats; unique: member/congress/chamber; indexes: member/congress/chamber/state/party).
+- govinfo_collections (id/code unique/name/category/desc/packages/modified/url/timestamps).
+- govinfo_packages (id/package_id unique/collection_id/modified/link/class/title/branch/pages/authors/type/raw/content/timestamps; indexes: collection/modified/type).
+- govinfo_download_queue (id/package_id unique/collection_id/status/priority/retry/error/timestamps; indexes: status/priority/created).
+- Triggers: update_modified_column() for updated_at on updates.
+- Function: log_api_call() inserts to api_call_logs (returns UUID).
+
+**ERD** (Mermaid; relationships from models.py):
+```mermaid
+erDiagram
+    APIKey ||--o{ APICallLog : "has"
+    CongressBill ||--o{ CongressBillAction : "has"
+    CongressBill ||--o{ CongressBillSubject : "has"
+    CongressBill ||--o{ CongressBillCosponsor : "has"
+    CongressMember ||--o{ CongressMemberRole : "has"
+    GovInfoCollection ||--o{ GovInfoPackage : "has"
+    GovInfoCollection ||--o{ GovInfoDownloadQueue : "has"
+    GovInfoPackage ||--|| GovInfoDownloadQueue : "queued"
+    Task ||--o{ Task : "parent_of"
+    
+    APIKey {
+        UUID id PK
+        TEXT name
+        TEXT api_key UK
+        TEXT service_name
+        INTEGER rate_limit
+        BOOLEAN is_active
+    }
+    CongressBill {
+        UUID id PK
+        TEXT bill_id UK
+        TEXT bill_type
+        INTEGER congress
+        TEXT title
+        JSONB raw_data
+    }
+    Task {
+        UUID id PK
+        ENUM task_type
+        JSONB payload
+        ENUM status
+        INTEGER priority
+        JSONB metadata
+    }
+```
+
+**Version**: v1.1 (2025-09-10; enhanced with classes/queue/ERD/sources/licenses).
 
 ## Additional Coverage
 

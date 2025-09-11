@@ -1,42 +1,55 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from '@/hooks/useAuth'
 
-interface Workflow {
+export interface Workflow {
   id: string
   name: string
   description: string
+  created_at: string
+  updated_at: string
+  is_active: boolean
 }
 
 export default function WorkflowsPage() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session, loading } = useAuth()
   const [workflows, setWorkflows] = useState<Workflow[]>([])
-  const [loading, setLoading] = useState(true)
   const [triggerLoading, setTriggerLoading] = useState<string | null>(null)
   const [status, setStatus] = useState<string>('')
   const router = useRouter()
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-      if (!session) {
-        router.push('/auth')
-      }
-    })
-  }, [router])
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (!session) return
 
     // Placeholder workflows (in production, fetch from n8n API)
     const placeholderWorkflows: Workflow[] = [
-      { id: 'ingest-bill', name: 'Ingest Bill Data', description: 'Trigger ingestion of new legislative bills from Congress API' },
-      { id: 'build-graph', name: 'Build Knowledge Graph', description: 'Extract entities and build Neo4j graph from documents' },
-      { id: 'rag-query', name: 'Run RAG Query', description: 'Execute RAG query on ingested data' }
+      { 
+        id: 'ingest-bill', 
+        name: 'Ingest Bill Data', 
+        description: 'Trigger ingestion of new legislative bills from Congress API',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      { 
+        id: 'build-graph', 
+        name: 'Build Knowledge Graph', 
+        description: 'Extract entities and build Neo4j graph from documents',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      { 
+        id: 'rag-query', 
+        name: 'Run RAG Query', 
+        description: 'Execute RAG query on ingested data',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      }
     ]
 
     setWorkflows(placeholderWorkflows)
@@ -45,21 +58,23 @@ export default function WorkflowsPage() {
   const handleTrigger = async (workflowId: string, params: any = {}) => {
     setTriggerLoading(workflowId)
     setStatus('')
+    
     try {
       const response = await fetch('/api/workflows/trigger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ workflowId, params })
+        body: JSON.stringify({ workflowId })
       })
-
-      if (response.ok) {
-        const data = await response.json()
-        setStatus(`Workflow "${data.workflowName}" triggered successfully! ID: ${data.executionId}`)
-      } else {
-        setStatus('Failed to trigger workflow')
+      
+      if (!response.ok) {
+        throw new Error(`Failed to trigger workflow: ${response.statusText}`)
       }
+      
+      const result = await response.json()
+      setStatus(`Workflow triggered successfully: ${result.workflowId}`)
     } catch (error) {
-      setStatus('Network error triggering workflow')
+      console.error('Error triggering workflow:', error)
+      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setTriggerLoading(null)
     }

@@ -2,36 +2,47 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import type { Session } from '@supabase/supabase-js'
 import { MetricsChart } from '@/components/dashboard/MetricsChart'
 import { GraphViewer } from '@/components/dashboard/GraphViewer'
+import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabase'
+
+interface MetricsPayload {
+  new: {
+    id: string
+    name: string
+    value: number
+    created_at: string
+  }
+}
 
 export default function DashboardPage() {
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [metrics, setMetrics] = useState<any>(null)
+  const { session, loading } = useAuth()
+  const [metrics, setMetrics] = useState<{ name: string; value: number }[]>([])
   const router = useRouter()
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-      if (!session) {
-        router.push('/auth')
-      }
-    })
-  }, [router])
 
   useEffect(() => {
     if (!session) return
 
-    // Subscribe to realtime metrics from Supabase (assume 'metrics' table)
+    // Subscribe to realtime metrics from Supabase
     const subscription = supabase
       .channel('metrics')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'metrics' }, (payload) => {
-        setMetrics(payload.new)
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'metrics',
+        },
+        (payload) => {
+          const newMetric = {
+            name: payload.new.name,
+            value: payload.new.value,
+            createdAt: new Date(payload.new.created_at).toLocaleTimeString()
+          }
+          setMetrics(prev => [...prev, newMetric].slice(-10)) // Keep only last 10 metrics
+        }
+      )
       .subscribe()
 
     return () => {

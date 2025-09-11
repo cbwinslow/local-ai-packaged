@@ -1,0 +1,93 @@
+{
+  "global": {
+    "log_level": "INFO",
+    "backup_enabled": true,
+    "rollback_on_failure": true,
+    "services": [
+      "frontend",
+      "n8n",
+      "neo4j",
+      "postgres",
+      "qdrant",
+      "agentic-rag",
+      "langfuse",
+      "searxng",
+      "flowise",
+      "open-webui"
+    ],
+    "env_file": ".env",
+    "docker_compose_files": [
+      "docker-compose.yml",
+      "docker-compose.traefik.yml",
+      "docker-compose.mcp.yml",
+      "extensions.yml"
+    ]
+  },
+  "environments": {
+    "local": {
+      "description": "Local Docker Compose deployment",
+      "host": "localhost",
+      "ports": {
+        "traefik": 80,
+        "traefik_https": 443,
+        "frontend": 3000
+      },
+      "dependencies": ["docker", "docker-compose"],
+      "pre_deploy": ["scripts/setup_env.sh"],
+      "post_deploy": ["scripts/deploy-legislative-ai.sh --non-interactive"],
+      "health_checks": {
+        "frontend": "curl -f http://localhost:3000 || exit 1",
+        "n8n": "docker inspect -f '{{.State.Health.Status}}' n8n | grep healthy"
+      }
+    },
+    "proxmox": {
+      "description": "Proxmox VM provisioning and deployment",
+      "host": "proxmox.example.com",
+      "user": "root",
+      "password": "your_proxmox_password",
+      "vm_template": "local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst",
+      "vm_resources": {
+        "memory": 4096,
+        "cores": 4,
+        "disk": "20G"
+      },
+      "network": "vmbr0",
+      "dependencies": ["pct", "qm"],
+      "pre_deploy": ["apt update && apt install -y docker.io docker-compose git"],
+      "post_deploy": "cd /opt/local-ai && ./deploy/master.sh -t local",
+      "health_checks": {
+        "vm": "pct status {vm_id} | grep running"
+      }
+    },
+    "cloudflare": {
+      "description": "Local services exposed via Cloudflare Tunnel",
+      "host": "localai.example.com",
+      "api_token": "your_cloudflare_api_token",
+      "tunnel_name": "local-ai-tunnel",
+      "ingress_rules": [
+        {
+          "hostname": "localai.example.com",
+          "service": "http://localhost:80"
+        }
+      ],
+      "dependencies": ["cloudflared"],
+      "pre_deploy": ["cloudflared tunnel create {tunnel_name}"],
+      "post_deploy": ["cloudflared tunnel run {tunnel_name}"],
+      "health_checks": {
+        "tunnel": "cloudflared tunnel list | grep active"
+      }
+    },
+    "remote": {
+      "description": "Deploy to remote server via SSH/Rsync",
+      "host": "user@remote.example.com",
+      "ssh_key": "~/.ssh/id_rsa",
+      "deploy_path": "/opt/local-ai",
+      "dependencies": ["ssh", "rsync"],
+      "pre_deploy": ["apt update && apt install -y docker.io docker-compose git"],
+      "post_deploy": "cd {deploy_path} && ./deploy/master.sh -t local --non-interactive",
+      "health_checks": {
+        "ssh": "ssh -i {ssh_key} {host} 'docker ps | grep Up'"
+      }
+    }
+  }
+}

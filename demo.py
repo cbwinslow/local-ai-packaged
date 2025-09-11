@@ -113,10 +113,9 @@ def demo_generated_secrets():
         
         for line in secret_lines[:6]:  # Show first 6 secrets
             key, value = line.split('=', 1)
-            if len(value) > 20:
-                print(f"   ✅ {key:<25} | {value[:20]}...")
-            else:
-                print(f"   ✅ {key:<25} | {value}")
+            # Instead of showing the actual secret, mask its value.
+            masked = "[REDACTED]" if len(value) > 0 else "(empty)"
+            print(f"   ✅ {key:<25} | {masked} (len={len(value)})")
         print(f"   ... and {20 - len(secret_lines)} more auto-generated secrets!")
     else:
         print("   ⚠️  No .env file found. Run 'python3 install.py' first.")

@@ -11,6 +11,7 @@ import tempfile
 import shutil
 from pathlib import Path
 import re
+import urllib.parse
 
 class TestSecretGeneration:
     """Test secret generation and environment configuration"""
@@ -203,8 +204,23 @@ class TestSecretGeneration:
         
         # Should contain opendiscourse.net references in values, not just comments
         lines = [line for line in content.split('\n') if line.strip() and not line.strip().startswith('#') and '=' in line]
+        def is_opendiscourse_domain(value):
+            value = value.strip()
+            # Check if value is a URL
+            try:
+                parsed = urllib.parse.urlparse(value)
+                host = parsed.hostname
+                if host and (host == "opendiscourse.net" or host.endswith(".opendiscourse.net")):
+                    return True
+            except Exception:
+                pass
+            # Otherwise, check direct domain match
+            if value == "opendiscourse.net" or value.endswith(".opendiscourse.net"):
+                return True
+            return False
+
         found = any(
-            "opendiscourse.net" in line.split('=', 1)[1] for line in lines
+            is_opendiscourse_domain(line.split('=', 1)[1]) for line in lines
         )
         assert found, ".env.template should contain opendiscourse.net domain in a configuration value"
         

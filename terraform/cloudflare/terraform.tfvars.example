@@ -1,0 +1,16 @@
+# Cloudflare API Token - Get from https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Zone:Read, Zone:Edit, Account:Read
+cloudflare_api_token = "your-cloudflare-api-token"
+
+# Cloudflare Account ID - Get from the right sidebar of your Cloudflare dashboard
+cloudflare_account_id = "your-cloudflare-account-id"
+
+# Domain name (should already be added to your Cloudflare account)
+domain_name = "opendiscourse.net"
+
+# Environment (dev, staging, prod)
+environment = "prod"
+
+# Optional: Enable Cloudflare features
+enable_analytics = true
+enable_bot_protection = true

@@ -1,0 +1,308 @@
+# =============================================================================
+# LLM Inference Prompts for Local AI Package
+# =============================================================================
+# This file contains optimized prompts for various LLM inference tasks
+# within the Local AI Package ecosystem
+# =============================================================================
+
+name: "Local AI Package LLM Prompts"
+description: "Curated prompts for AI-powered operations and analysis"
+version: "1.0.0"
+
+# =============================================================================
+# System Prompts
+# =============================================================================
+system_prompts:
+  infrastructure_assistant:
+    role: "Infrastructure Management Assistant"
+    prompt: |
+      You are an expert infrastructure assistant for the Local AI Package, a comprehensive
+      self-hosted AI platform running on Docker with services including N8N, Supabase,
+      Ollama, Neo4j, and monitoring tools deployed on opendiscourse.net.
+      
+      Your expertise includes:
+      - Docker containerization and orchestration
+      - Terraform infrastructure as code
+      - Cloudflare deployment and management
+      - AI service integration and optimization
+      - Security best practices
+      - Performance monitoring and troubleshooting
+      
+      Always prioritize security, scalability, and maintainability in your recommendations.
+      Provide specific, actionable solutions with code examples when appropriate.
+  
+  development_assistant:
+    role: "AI Development Specialist"
+    prompt: |
+      You are an AI development specialist for the Local AI Package ecosystem.
+      You help with developing AI workflows, integrating language models, building
+      knowledge graphs, and creating intelligent automation systems.
+      
+      Your specialties include:
+      - N8N workflow design and automation
+      - LLM integration with Ollama
+      - Vector database operations with Qdrant
+      - Knowledge graph development with Neo4j
+      - RAG (Retrieval Augmented Generation) systems
+      - AI agent orchestration
+      
+      Focus on practical, production-ready solutions that leverage the full
+      capabilities of the Local AI Package platform.
+  
+  security_analyst:
+    role: "Security Analysis Expert"
+    prompt: |
+      You are a cybersecurity expert specializing in AI infrastructure security.
+      You analyze configurations, identify vulnerabilities, and provide security
+      recommendations for the Local AI Package deployment.
+      
+      Your focus areas include:
+      - Container security and hardening
+      - Network security and isolation
+      - Secrets management and encryption
+      - Access control and authentication
+      - Vulnerability assessment
+      - Compliance and best practices
+      
+      Always provide specific remediation steps and prioritize based on risk level.
+
+# =============================================================================
+# Task-Specific Prompts
+# =============================================================================
+task_prompts:
+  code_review:
+    prompt: |
+      Review the following code for the Local AI Package project. Focus on:
+      
+      1. **Security**: Check for hardcoded secrets, injection vulnerabilities, and access controls
+      2. **Performance**: Identify bottlenecks, inefficient queries, or resource leaks
+      3. **Maintainability**: Assess code clarity, documentation, and adherence to patterns
+      4. **Integration**: Verify proper integration with project services (Docker, Supabase, etc.)
+      5. **Error Handling**: Ensure robust error handling and logging
+      
+      Provide specific recommendations with code examples for improvements.
+      
+      Code to review:
+      ```
+      {code}
+      ```
+  
+  troubleshooting:
+    prompt: |
+      I'm experiencing an issue with the Local AI Package deployment. Please help diagnose
+      and resolve the problem using these details:
+      
+      **Service Configuration:**
+      - Environment: {environment}
+      - Domain: opendiscourse.net
+      - Services: N8N, Supabase, Ollama, Neo4j, Flowise, monitoring stack
+      
+      **Issue Description:**
+      {issue_description}
+      
+      **Error Messages:**
+      {error_messages}
+      
+      **Relevant Logs:**
+      {logs}
+      
+      Please provide:
+      1. Root cause analysis
+      2. Step-by-step troubleshooting guide
+      3. Prevention strategies
+      4. Monitoring recommendations
+  
+  workflow_design:
+    prompt: |
+      Design an N8N workflow for the Local AI Package that accomplishes the following:
+      
+      **Objective:** {objective}
+      
+      **Requirements:**
+      - Integration with available services (Supabase, Ollama, Neo4j, etc.)
+      - Error handling and retry logic
+      - Proper credential management
+      - Scalable and maintainable design
+      - Performance optimization
+      
+      **Constraints:**
+      {constraints}
+      
+      Please provide:
+      1. Workflow architecture overview
+      2. Node-by-node configuration
+      3. JSON workflow export
+      4. Testing and validation steps
+      5. Monitoring and alerting setup
+  
+  optimization:
+    prompt: |
+      Analyze and optimize the following Local AI Package component:
+      
+      **Component:** {component}
+      **Current Configuration:** {configuration}
+      **Performance Metrics:** {metrics}
+      **Resource Usage:** {resources}
+      
+      **Optimization Goals:**
+      - Improve response times
+      - Reduce resource consumption
+      - Enhance scalability
+      - Maintain reliability
+      
+      Provide specific recommendations including:
+      1. Configuration changes
+      2. Architecture improvements
+      3. Resource allocation adjustments
+      4. Monitoring enhancements
+      5. Cost optimization opportunities
+
+# =============================================================================
+# Domain-Specific Prompts
+# =============================================================================
+domain_prompts:
+  docker_optimization:
+    prompt: |
+      Optimize the following Docker Compose configuration for the Local AI Package:
+      
+      ```yaml
+      {docker_compose}
+      ```
+      
+      Focus on:
+      - Resource efficiency and limits
+      - Security hardening
+      - Health check implementation
+      - Network isolation
+      - Volume management
+      - Startup dependencies
+      - Production readiness
+      
+      Provide the optimized configuration with explanations for each change.
+  
+  terraform_review:
+    prompt: |
+      Review and improve this Terraform configuration for Cloudflare deployment:
+      
+      ```hcl
+      {terraform_config}
+      ```
+      
+      Evaluate:
+      - Resource organization and naming
+      - Security configurations
+      - Performance optimizations
+      - Cost efficiency
+      - Maintainability
+      - Best practices compliance
+      
+      Suggest improvements with rationale for each recommendation.
+  
+  ai_integration:
+    prompt: |
+      Design an AI integration solution for the Local AI Package with these requirements:
+      
+      **Use Case:** {use_case}
+      **Data Sources:** {data_sources}
+      **Expected Outputs:** {outputs}
+      **Performance Requirements:** {performance}
+      
+      **Available Services:**
+      - Ollama (Local LLMs)
+      - Qdrant (Vector Database)
+      - Neo4j (Knowledge Graph)
+      - Supabase (PostgreSQL + Vector)
+      - N8N (Workflow Automation)
+      
+      Provide:
+      1. Architecture design
+      2. Data flow diagram
+      3. Implementation steps
+      4. Performance considerations
+      5. Monitoring strategy
+
+# =============================================================================
+# Response Templates
+# =============================================================================
+response_templates:
+  technical_solution:
+    structure: |
+      ## Solution Overview
+      {overview}
+      
+      ## Implementation Steps
+      {steps}
+      
+      ## Code Examples
+      ```{language}
+      {code}
+      ```
+      
+      ## Testing & Validation
+      {testing}
+      
+      ## Monitoring & Maintenance
+      {monitoring}
+      
+      ## Additional Resources
+      {resources}
+  
+  troubleshooting_guide:
+    structure: |
+      ## Problem Analysis
+      {analysis}
+      
+      ## Root Cause
+      {root_cause}
+      
+      ## Immediate Solutions
+      {immediate_solutions}
+      
+      ## Long-term Fixes
+      {long_term_fixes}
+      
+      ## Prevention Strategies
+      {prevention}
+      
+      ## Monitoring Recommendations
+      {monitoring}
+
+# =============================================================================
+# Quality Assurance Prompts
+# =============================================================================
+qa_prompts:
+  security_audit:
+    prompt: |
+      Conduct a comprehensive security audit of the Local AI Package configuration:
+      
+      **Scope:** {scope}
+      **Configuration Files:** {files}
+      **Environment:** {environment}
+      
+      Audit checklist:
+      - [ ] Secrets management
+      - [ ] Network security
+      - [ ] Container hardening
+      - [ ] Access controls
+      - [ ] Data encryption
+      - [ ] Vulnerability assessment
+      - [ ] Compliance check
+      
+      Provide a detailed security report with risk ratings and remediation plans.
+  
+  performance_analysis:
+    prompt: |
+      Analyze the performance characteristics of the Local AI Package deployment:
+      
+      **Metrics:** {metrics}
+      **Resource Usage:** {resources}
+      **Response Times:** {response_times}
+      **Throughput:** {throughput}
+      
+      Provide:
+      1. Performance baseline assessment
+      2. Bottleneck identification
+      3. Optimization recommendations
+      4. Scaling strategies
+      5. Monitoring improvements
+      6. Cost-performance analysis

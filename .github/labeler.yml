@@ -1,0 +1,89 @@
+# Auto-labeling configuration for pull requests
+# Labels are applied based on file paths that are modified
+
+# Documentation changes
+documentation:
+  - '*.md'
+  - 'docs/**/*'
+  - '.github/workflows/static-deploy.yml'
+
+# CI/CD and workflow changes
+ci-cd:
+  - '.github/workflows/**'
+  - '.github/actions/**'
+  - 'scripts/**'
+
+# Docker and infrastructure
+docker:
+  - 'docker-compose*.yml'
+  - 'Dockerfile*'
+  - '.dockerignore'
+  - 'config/**'
+
+# Terraform and infrastructure as code
+terraform:
+  - 'terraform/**'
+  - '*.tf'
+  - '*.tfvars'
+
+# Python code changes
+python:
+  - '**/*.py'
+  - 'requirements*.txt'
+  - 'pyproject.toml'
+  - 'setup.py'
+
+# Testing
+testing:
+  - 'tests/**'
+  - '**/test_*.py'
+  - 'pytest.ini'
+  - '.coveragerc'
+
+# Security and secrets
+security:
+  - 'scripts/generate-secrets.sh'
+  - '.env.template'
+  - '.env.example'
+
+# Database and data
+database:
+  - 'supabase/**'
+  - 'db/**'
+  - 'data/**'
+  - '**/migrations/**'
+
+# AI and ML
+ai-ml:
+  - 'models/**'
+  - 'prompts/**'
+  - 'flowise/**'
+  - 'n8n/**'
+
+# Configuration
+configuration:
+  - '*.yml'
+  - '*.yaml'
+  - '*.json'
+  - '*.toml'
+  - '*.ini'
+
+# Dependencies
+dependencies:
+  - 'requirements*.txt'
+  - 'package*.json'
+  - 'yarn.lock'
+  - 'Pipfile*'
+  - 'pyproject.toml'
+
+# Bug fixes (based on branch naming)
+bug:
+  - head-branch: ['^fix/', '^hotfix/', '^bugfix/']
+
+# Features (based on branch naming)
+feature:
+  - head-branch: ['^feature/', '^feat/']
+
+# Enhancement (based on branch naming)
+enhancement:
+  - head-branch: ['^enhancement/', '^improve/']

@@ -1,0 +1,245 @@
+# =============================================================================
+# GitHub Copilot Configuration for Local AI Package
+# =============================================================================
+# This file configures GitHub Copilot for optimal assistance with the 
+# Local AI Package project including AI services, Docker, and automation
+# =============================================================================
+
+name: "Local AI Package Development Assistant"
+description: "AI-powered development assistant for Local AI Package project"
+version: "1.0.0"
+
+# =============================================================================
+# Project Context
+# =============================================================================
+project:
+  name: "Local AI Package"
+  type: "AI Infrastructure"
+  domain: "opendiscourse.net"
+  technologies:
+    - "Docker"
+    - "Docker Compose"
+    - "Python"
+    - "JavaScript/TypeScript"
+    - "Terraform"
+    - "Cloudflare"
+    - "Supabase"
+    - "N8N"
+    - "Ollama"
+    - "Neo4j"
+    - "PostgreSQL"
+
+# =============================================================================
+# Development Guidelines
+# =============================================================================
+guidelines:
+  code_style:
+    - "Follow PEP 8 for Python code"
+    - "Use ESLint and Prettier for JavaScript/TypeScript"
+    - "Maintain consistent indentation (2 spaces for YAML, 4 for Python)"
+    - "Use meaningful variable and function names"
+    - "Add comprehensive docstrings and comments"
+  
+  security:
+    - "Never hardcode secrets or API keys"
+    - "Use environment variables for configuration"
+    - "Implement proper input validation"
+    - "Follow principle of least privilege"
+    - "Use secure random generation for secrets"
+  
+  docker:
+    - "Use multi-stage builds for optimization"
+    - "Minimize image layers"
+    - "Use specific version tags, avoid 'latest'"
+    - "Implement health checks"
+    - "Use non-root users when possible"
+  
+  infrastructure:
+    - "Use Infrastructure as Code (Terraform)"
+    - "Implement proper backup strategies"
+    - "Use immutable infrastructure principles"
+    - "Implement monitoring and logging"
+    - "Follow cloud-native patterns"
+
+# =============================================================================
+# AI Service Patterns
+# =============================================================================
+ai_patterns:
+  workflow_automation:
+    - "Use N8N for complex workflow orchestration"
+    - "Implement error handling and retries"
+    - "Use webhooks for real-time integrations"
+    - "Store credentials securely"
+  
+  llm_integration:
+    - "Use Ollama for local LLM inference"
+    - "Implement proper context management"
+    - "Add rate limiting and caching"
+    - "Monitor model performance"
+  
+  vector_databases:
+    - "Use Qdrant for vector similarity search"
+    - "Implement proper indexing strategies"
+    - "Use appropriate embedding models"
+    - "Optimize for query performance"
+  
+  knowledge_graphs:
+    - "Use Neo4j for complex relationships"
+    - "Design efficient graph schemas"
+    - "Implement proper Cypher queries"
+    - "Use graph algorithms appropriately"
+
+# =============================================================================
+# Common Prompts and Completions
+# =============================================================================
+prompts:
+  docker_compose:
+    trigger: "# Docker Compose service for"
+    completion: |
+      services:
+        {service_name}:
+          image: {image_name}:{version}
+          container_name: {container_name}
+          restart: unless-stopped
+          environment:
+            - NODE_ENV=${NODE_ENV:-production}
+          ports:
+            - "{host_port}:{container_port}"
+          volumes:
+            - {service_name}_data:/data
+          networks:
+            - localai
+          depends_on:
+            - postgres
+          healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:{container_port}/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+      
+      volumes:
+        {service_name}_data:
+          driver: local
+  
+  terraform_resource:
+    trigger: "# Terraform resource for Cloudflare"
+    completion: |
+      resource "cloudflare_{resource_type}" "{resource_name}" {
+        zone_id = data.cloudflare_zone.domain.id
+        name    = "{resource_name}"
+        
+        tags = [
+          "terraform",
+          "local-ai-package",
+          var.environment
+        ]
+      }
+  
+  python_service:
+    trigger: "# Python service class for"
+    completion: |
+      import logging
+      from typing import Optional, Dict, Any
+      import asyncio
+      
+      logger = logging.getLogger(__name__)
+      
+      class {ServiceName}Service:
+          """
+          {Service description}
+          """
+          
+          def __init__(self, config: Dict[str, Any]):
+              self.config = config
+              self.client = None
+          
+          async def initialize(self) -> None:
+              """Initialize the service connection."""
+              try:
+                  # Initialize service connection
+                  logger.info(f"Initializing {ServiceName} service")
+              except Exception as e:
+                  logger.error(f"Failed to initialize {ServiceName}: {e}")
+                  raise
+          
+          async def health_check(self) -> bool:
+              """Check service health."""
+              try:
+                  # Implement health check logic
+                  return True
+              except Exception as e:
+                  logger.error(f"Health check failed: {e}")
+                  return False
+          
+          async def cleanup(self) -> None:
+              """Cleanup service resources."""
+              try:
+                  # Cleanup logic
+                  logger.info(f"Cleaned up {ServiceName} service")
+              except Exception as e:
+                  logger.error(f"Cleanup failed: {e}")
+
+# =============================================================================
+# Context-Aware Suggestions
+# =============================================================================
+context_rules:
+  file_patterns:
+    "docker-compose*.yml":
+      - "Suggest appropriate service configurations"
+      - "Recommend security best practices"
+      - "Suggest proper networking setup"
+    
+    "*.tf":
+      - "Suggest Terraform best practices"
+      - "Recommend resource naming conventions"
+      - "Suggest proper variable usage"
+    
+    "*.py":
+      - "Suggest async/await patterns for I/O operations"
+      - "Recommend proper error handling"
+      - "Suggest logging best practices"
+    
+    ".env*":
+      - "Never suggest actual secret values"
+      - "Recommend using placeholder values"
+      - "Suggest proper variable naming"
+
+# =============================================================================
+# Code Quality Checks
+# =============================================================================
+quality_checks:
+  security:
+    - "Scan for hardcoded secrets"
+    - "Check for SQL injection vulnerabilities"
+    - "Verify proper input validation"
+    - "Check for insecure dependencies"
+  
+  performance:
+    - "Identify potential bottlenecks"
+    - "Suggest caching opportunities"
+    - "Recommend optimization strategies"
+    - "Check for resource leaks"
+  
+  maintainability:
+    - "Check code complexity"
+    - "Verify proper documentation"
+    - "Suggest refactoring opportunities"
+    - "Check for code duplication"
+
+# =============================================================================
+# Learning Resources
+# =============================================================================
+resources:
+  documentation:
+    - "https://docs.docker.com/"
+    - "https://terraform.io/docs/"
+    - "https://developers.cloudflare.com/"
+    - "https://supabase.com/docs"
+    - "https://docs.n8n.io/"
+  
+  best_practices:
+    - "https://12factor.net/"
+    - "https://docs.docker.com/develop/dev-best-practices/"
+    - "https://www.terraform.io/docs/cloud/guides/recommended-practices/"
+    - "https://owasp.org/www-project-top-ten/"

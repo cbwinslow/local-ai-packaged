@@ -160,14 +160,14 @@ Run `./fix-supabase-env.sh` to generate and update all critical secrets automati
    # Caddy Config
    ############
 
-   N8N_HOSTNAME=n8n.yourdomain.com
-   WEBUI_HOSTNAME=:openwebui.yourdomain.com
-   FLOWISE_HOSTNAME=:flowise.yourdomain.com
-   SUPABASE_HOSTNAME=:supabase.yourdomain.com
-   OLLAMA_HOSTNAME=:ollama.yourdomain.com
-   SEARXNG_HOSTNAME=searxng.yourdomain.com
-   NEO4J_HOSTNAME=neo4j.yourdomain.com
-   LETSENCRYPT_EMAIL=your-email-address
+   N8N_HOSTNAME=n8n.opendiscourse.net
+   WEBUI_HOSTNAME=openwebui.opendiscourse.net
+   FLOWISE_HOSTNAME=flowise.opendiscourse.net
+   SUPABASE_HOSTNAME=supabase.opendiscourse.net
+   OLLAMA_HOSTNAME=ollama.opendiscourse.net
+   SEARXNG_HOSTNAME=searxng.opendiscourse.net
+   NEO4J_HOSTNAME=neo4j.opendiscourse.net
+   LETSENCRYPT_EMAIL=admin@opendiscourse.net
    ```   
 
 ---
@@ -273,7 +273,7 @@ Before running the above commands to pull the repo and install everything:
 3. Set up A records for your DNS provider to point your subdomains you'll set up in the .env file for Caddy
 to the IP address of your cloud instance.
 
-   For example, A record to point n8n to [cloud instance IP] for n8n.yourdomain.com
+   For example, A record to point n8n to [cloud instance IP] for n8n.opendiscourse.net
 
 
 **NOTE**: If you are using a cloud machine without the "docker compose" command available by default, such as a Ubuntu GPU instance on DigitalOcean, run these commands before running start_services.py:

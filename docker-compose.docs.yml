@@ -1,0 +1,29 @@
+# Documentation Website Service
+# This extends the main docker-compose.yml to include the documentation website
+
+services:
+  docs-website:
+    build:
+      context: ./docs-website
+      dockerfile: Dockerfile
+    container_name: local-ai-docs
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - localai
+    depends_on:
+      - ollama
+    volumes:
+      - ./docs-website:/app
+      - /app/node_modules
+      - /app/.next
+    profiles:
+      - docs
+      - all
+
+networks:
+  localai:
+    external: true

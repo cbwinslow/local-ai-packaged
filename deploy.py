@@ -9,7 +9,12 @@ import sys
 import subprocess
 import argparse
 import time
-import requests
+try:
+    import requests
+except ImportError:
+    print("❌ The 'requests' library is required but not installed.")
+    print("   Please install it by running: pip install requests")
+    sys.exit(1)
 from pathlib import Path
 
 def print_banner():

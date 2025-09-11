@@ -521,7 +521,47 @@ services:
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
       - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-    depends_on:
-      - supabase
+    # Comment out supabase dependency until properly configured
+    # depends_on:
+    #   - supabase
     networks:
-      - supabase
+      - localai
+
+# Named volumes for data persistence
+volumes:
+  flowise:
+    driver: local
+  langfuse-postgres:
+    driver: local
+  langfuse-redis:
+    driver: local
+  qdrant-data:
+    driver: local
+  neo4j-data:
+    driver: local
+  neo4j-logs:
+    driver: local
+  supabase-db:
+    driver: local
+  supabase-storage:
+    driver: local
+  ollama_storage:
+    driver: local
+  open-webui:
+    driver: local
+  qdrant_storage:
+    driver: local
+  langfuse_clickhouse_data:
+    driver: local
+  langfuse_clickhouse_logs:
+    driver: local
+  langfuse_minio_data:
+    driver: local
+  langfuse_postgres_data:
+    driver: local
+  valkey-data:
+    driver: local
+  agentic_data:
+    driver: local
+  n8n_storage:
+    driver: local

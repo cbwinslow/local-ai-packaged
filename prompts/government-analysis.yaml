@@ -1,0 +1,586 @@
+# ========================================================================================
+# Government Analysis Prompts for GitHub Models
+# ========================================================================================
+# These prompts are optimized for analyzing government data, political trends,
+# and generating insights from the Local AI Package's ingested data
+# ========================================================================================
+
+# ========================
+# Political Analysis Prompts
+# ========================
+
+politician_analysis:
+  name: "Comprehensive Politician Analysis"
+  description: "Analyze a politician's track record, voting patterns, and effectiveness"
+  system_prompt: |
+    You are an expert political analyst with deep knowledge of legislative processes, 
+    voting patterns, and political effectiveness metrics. Analyze the provided politician 
+    data objectively and provide comprehensive insights.
+  
+  user_prompt: |
+    Please analyze the following politician's record and provide a comprehensive assessment:
+    
+    **Politician:** {politician_name}
+    **Party:** {party}
+    **State/District:** {state_district}
+    **Tenure:** {tenure}
+    
+    **Voting Record:**
+    {voting_record}
+    
+    **Bills Sponsored/Co-sponsored:**
+    {bills_data}
+    
+    **Committee Memberships:**
+    {committees}
+    
+    **KPIs:**
+    {kpis}
+    
+    Please provide:
+    1. **Overall Effectiveness Score** (1-10 with explanation)
+    2. **Key Strengths** and areas of legislative focus
+    3. **Voting Pattern Analysis** (party loyalty vs bipartisan cooperation)
+    4. **Legislative Impact** - most significant contributions
+    5. **Comparison to Peers** in similar positions
+    6. **Areas for Improvement**
+    7. **Trend Analysis** - trajectory over time
+    
+    Format your response with clear sections and data-driven insights.
+  
+  temperature: 0.3
+  max_tokens: 2000
+  model: "gpt-4o"
+
+legislative_trend_analysis:
+  name: "Legislative Trend Analysis"
+  description: "Analyze trends in legislative activity and predict future patterns"
+  system_prompt: |
+    You are a legislative analyst specializing in identifying patterns, trends, and 
+    predicting future legislative priorities. Use data-driven analysis to provide 
+    actionable insights about Congressional activity.
+  
+  user_prompt: |
+    Analyze the following legislative data and identify key trends:
+    
+    **Time Period:** {time_period}
+    **Total Bills:** {total_bills}
+    **Bills by Category:**
+    {bills_by_category}
+    
+    **Success Rates:**
+    {success_rates}
+    
+    **Bipartisan Activity:**
+    {bipartisan_data}
+    
+    **Key Topics/Issues:**
+    {trending_topics}
+    
+    **Seasonal Patterns:**
+    {seasonal_data}
+    
+    Please provide:
+    1. **Major Trends** identified in the data
+    2. **Success Rate Analysis** - what types of bills are most likely to pass
+    3. **Bipartisan Cooperation Trends** - areas of cross-party agreement
+    4. **Seasonal/Cyclical Patterns** in legislative activity
+    5. **Emerging Issues** gaining legislative attention
+    6. **Predictions** for next quarter/session priorities
+    7. **Recommendations** for effective legislative strategy
+    
+    Include quantitative metrics and confidence levels for predictions.
+  
+  temperature: 0.4
+  max_tokens: 2500
+  model: "gpt-4o"
+
+vote_prediction:
+  name: "Vote Outcome Prediction"
+  description: "Predict how politicians will vote on upcoming bills"
+  system_prompt: |
+    You are a political prediction expert who analyzes voting patterns, party dynamics, 
+    and politician behavior to predict vote outcomes. Base predictions on historical 
+    data and current political context.
+  
+  user_prompt: |
+    Predict the voting outcome for the following bill:
+    
+    **Bill:** {bill_title}
+    **Summary:** {bill_summary}
+    **Category:** {bill_category}
+    **Sponsor:** {sponsor_info}
+    **Current Status:** {bill_status}
+    
+    **Relevant Politicians:**
+    {politician_data}
+    
+    **Historical Voting Patterns:**
+    {historical_patterns}
+    
+    **Current Political Context:**
+    {political_context}
+    
+    **Party Positions:**
+    {party_positions}
+    
+    Please provide:
+    1. **Overall Prediction** - Pass/Fail with confidence percentage
+    2. **Vote Count Estimate** - Expected yes/no/abstain breakdown
+    3. **Key Swing Votes** - politicians who could determine outcome
+    4. **Party Line Analysis** - expected party unity levels
+    5. **Critical Factors** that could influence the outcome
+    6. **Alternative Scenarios** - what could change the prediction
+    7. **Timing Considerations** - optimal voting timeline
+    
+    Include reasoning for each prediction and identify uncertainty factors.
+  
+  temperature: 0.2
+  max_tokens: 2000
+  model: "gpt-4o"
+
+# ========================
+# Document Analysis Prompts
+# ========================
+
+declassified_document_analysis:
+  name: "Declassified Document Analysis"
+  description: "Analyze declassified government documents for historical insights"
+  system_prompt: |
+    You are a historian and intelligence analyst expert in declassified government 
+    documents. Analyze documents objectively, identifying key information, historical 
+    context, and significance while maintaining scholarly rigor.
+  
+  user_prompt: |
+    Analyze the following declassified document:
+    
+    **Document Title:** {document_title}
+    **Source Agency:** {source_agency}
+    **Classification Level:** {classification_level}
+    **Date Range:** {date_range}
+    **Declassification Date:** {declassification_date}
+    
+    **Document Content:**
+    {document_content}
+    
+    **Related Documents/Context:**
+    {related_context}
+    
+    Please provide:
+    1. **Executive Summary** - key findings in 2-3 sentences
+    2. **Historical Context** - background and significance
+    3. **Key Revelations** - new information disclosed
+    4. **Policy Implications** - impact on understanding of decisions
+    5. **Redacted Information** - analysis of what's still classified
+    6. **Verification Status** - cross-references with known facts
+    7. **Research Implications** - areas for further investigation
+    
+    Maintain objectivity and distinguish between verified facts and speculation.
+  
+  temperature: 0.2
+  max_tokens: 2500
+  model: "gpt-4o"
+
+policy_impact_assessment:
+  name: "Policy Impact Assessment"
+  description: "Assess the real-world impact of government policies and legislation"
+  system_prompt: |
+    You are a policy analyst specializing in evaluating the effectiveness and 
+    impact of government policies. Analyze data objectively to assess outcomes 
+    and provide evidence-based recommendations.
+  
+  user_prompt: |
+    Assess the impact of the following policy/legislation:
+    
+    **Policy/Bill:** {policy_name}
+    **Implementation Date:** {implementation_date}
+    **Affected Areas:** {affected_areas}
+    **Target Population:** {target_population}
+    
+    **Intended Outcomes:**
+    {intended_outcomes}
+    
+    **Available Data/Metrics:**
+    {impact_data}
+    
+    **Stakeholder Feedback:**
+    {stakeholder_feedback}
+    
+    **Budget/Resources:**
+    {budget_info}
+    
+    Please provide:
+    1. **Impact Summary** - overall effectiveness rating (1-10)
+    2. **Intended vs Actual Outcomes** - comparison with goals
+    3. **Quantitative Results** - measurable impacts with data
+    4. **Unintended Consequences** - positive and negative
+    5. **Stakeholder Analysis** - who benefited/was harmed
+    6. **Cost-Benefit Analysis** - return on investment
+    7. **Recommendations** - improvements or next steps
+    8. **Lessons Learned** - insights for future policy
+    
+    Support all assessments with available data and evidence.
+  
+  temperature: 0.3
+  max_tokens: 2500
+  model: "gpt-4o"
+
+# ========================
+# Campaign Finance Analysis
+# ========================
+
+campaign_finance_analysis:
+  name: "Campaign Finance Analysis"
+  description: "Analyze campaign contributions and their potential influence"
+  system_prompt: |
+    You are a campaign finance expert who analyzes political contributions, 
+    spending patterns, and potential influence on policy decisions. Provide 
+    objective analysis while identifying potential conflicts of interest.
+  
+  user_prompt: |
+    Analyze the campaign finance data for the following:
+    
+    **Politician/Candidate:** {politician_name}
+    **Election Cycle:** {election_cycle}
+    **Office Sought:** {office}
+    
+    **Contribution Data:**
+    {contribution_data}
+    
+    **Top Donors:**
+    {top_donors}
+    
+    **Industry Breakdown:**
+    {industry_breakdown}
+    
+    **Spending Categories:**
+    {spending_data}
+    
+    **Legislative Record (if applicable):**
+    {legislative_record}
+    
+    Please provide:
+    1. **Funding Overview** - total raised, sources, patterns
+    2. **Donor Analysis** - largest contributors and their interests
+    3. **Industry Influence** - sectors with significant contributions
+    4. **Potential Conflicts** - areas where donations might influence policy
+    5. **Spending Efficiency** - how funds were utilized
+    6. **Compliance Issues** - any regulatory concerns
+    7. **Comparison to Peers** - relative to similar candidates
+    8. **Red Flags** - unusual patterns or concerning relationships
+    
+    Maintain objectivity and focus on factual analysis of potential influence.
+  
+  temperature: 0.2
+  max_tokens: 2000
+  model: "gpt-4o"
+
+lobbying_influence_analysis:
+  name: "Lobbying Influence Analysis"
+  description: "Analyze lobbying activities and their impact on legislation"
+  system_prompt: |
+    You are an expert in lobbying disclosure analysis who tracks the influence 
+    of special interests on government policy. Analyze lobbying data to identify 
+    patterns and potential policy impacts.
+  
+  user_prompt: |
+    Analyze the lobbying activity around the following:
+    
+    **Issue/Legislation:** {issue_topic}
+    **Time Period:** {time_period}
+    **Relevant Committee(s):** {committees}
+    
+    **Lobbying Data:**
+    {lobbying_data}
+    
+    **Top Lobbying Firms:**
+    {lobbying_firms}
+    
+    **Client Organizations:**
+    {client_organizations}
+    
+    **Spending Amounts:**
+    {spending_amounts}
+    
+    **Meetings/Contacts:**
+    {meeting_data}
+    
+    **Legislative Outcome:**
+    {legislative_outcome}
+    
+    Please provide:
+    1. **Lobbying Intensity** - volume and spending levels
+    2. **Key Players** - most active firms and clients
+    3. **Strategic Focus** - specific targets and messaging
+    4. **Timeline Analysis** - lobbying activity vs legislative events
+    5. **Influence Assessment** - correlation with outcomes
+    6. **Opposition Analysis** - competing interests and strategies
+    7. **Regulatory Compliance** - disclosure quality and completeness
+    8. **Policy Impact** - how lobbying shaped final legislation
+    
+    Identify patterns that suggest effective lobbying strategies.
+  
+  temperature: 0.3
+  max_tokens: 2000
+  model: "gpt-4o"
+
+# ========================
+# Bipartisan Analysis
+# ========================
+
+bipartisan_cooperation_analysis:
+  name: "Bipartisan Cooperation Analysis"
+  description: "Analyze cross-party cooperation and identify bridge-building opportunities"
+  system_prompt: |
+    You are a political scientist specializing in bipartisan cooperation and 
+    legislative compromise. Analyze voting patterns and collaboration to identify 
+    opportunities for cross-party solutions.
+  
+  user_prompt: |
+    Analyze bipartisan cooperation in the following context:
+    
+    **Issue Area:** {issue_area}
+    **Time Period:** {time_period}
+    **Chamber:** {chamber}
+    
+    **Voting Data:**
+    {voting_data}
+    
+    **Cross-Party Bills:**
+    {bipartisan_bills}
+    
+    **Bridge-Builder Politicians:**
+    {bridge_builders}
+    
+    **Successful Compromises:**
+    {successful_compromises}
+    
+    **Failed Attempts:**
+    {failed_attempts}
+    
+    **Current Political Climate:**
+    {political_climate}
+    
+    Please provide:
+    1. **Cooperation Index** - quantitative measure of bipartisanship
+    2. **Success Factors** - what makes bipartisan efforts work
+    3. **Key Bridge-Builders** - politicians who cross party lines
+    4. **Issue Areas** - topics with most/least cooperation
+    5. **Barriers to Cooperation** - what prevents compromise
+    6. **Opportunities** - areas ripe for bipartisan solutions
+    7. **Recommendations** - strategies to increase cooperation
+    8. **Trend Analysis** - is bipartisanship increasing or decreasing
+    
+    Focus on constructive analysis that promotes democratic governance.
+  
+  temperature: 0.4
+  max_tokens: 2500
+  model: "gpt-4o"
+
+# ========================
+# Public Opinion Analysis
+# ========================
+
+public_opinion_correlation:
+  name: "Public Opinion vs. Legislative Action"
+  description: "Analyze correlation between public opinion and legislative outcomes"
+  system_prompt: |
+    You are a public opinion researcher who analyzes the relationship between 
+    citizen preferences and government action. Examine data to understand 
+    democratic responsiveness and representation.
+  
+  user_prompt: |
+    Analyze the relationship between public opinion and legislative action:
+    
+    **Issue:** {issue_topic}
+    **Time Period:** {time_period}
+    
+    **Public Opinion Data:**
+    {polling_data}
+    
+    **Demographic Breakdown:**
+    {demographic_data}
+    
+    **Legislative Actions:**
+    {legislative_actions}
+    
+    **Politician Positions:**
+    {politician_positions}
+    
+    **Media Coverage:**
+    {media_coverage}
+    
+    **Interest Group Activity:**
+    {interest_group_activity}
+    
+    Please provide:
+    1. **Correlation Analysis** - strength of opinion-action relationship
+    2. **Responsiveness Gaps** - where action doesn't match opinion
+    3. **Demographic Variations** - how different groups are represented
+    4. **Timeline Analysis** - lag between opinion and action
+    5. **Influence Factors** - what shapes the opinion-action relationship
+    6. **Case Studies** - examples of high/low responsiveness
+    7. **Democratic Health** - assessment of representation quality
+    8. **Recommendations** - improving democratic responsiveness
+    
+    Focus on systemic patterns rather than partisan perspectives.
+  
+  temperature: 0.3
+  max_tokens: 2500
+  model: "gpt-4o"
+
+# ========================
+# Corruption & Ethics Analysis
+# ========================
+
+ethics_violation_analysis:
+  name: "Ethics and Corruption Analysis"
+  description: "Analyze potential ethics violations and corruption patterns"
+  system_prompt: |
+    You are an ethics investigator who analyzes government actions for potential 
+    violations of ethical standards and corruption. Maintain objectivity and 
+    focus on factual analysis of patterns and behaviors.
+  
+  user_prompt: |
+    Analyze the following for potential ethics concerns:
+    
+    **Subject:** {subject_name}
+    **Position/Role:** {position}
+    **Time Period:** {time_period}
+    
+    **Financial Disclosures:**
+    {financial_data}
+    
+    **Voting Record:**
+    {voting_record}
+    
+    **Business Relationships:**
+    {business_relationships}
+    
+    **Gifts/Benefits Received:**
+    {gifts_benefits}
+    
+    **Family/Associate Activities:**
+    {associate_activities}
+    
+    **Relevant Regulations:**
+    {applicable_rules}
+    
+    Please provide:
+    1. **Risk Assessment** - potential ethics violations (low/medium/high)
+    2. **Conflict of Interest Analysis** - financial or personal conflicts
+    3. **Pattern Recognition** - systematic vs isolated incidents
+    4. **Regulatory Compliance** - adherence to disclosure requirements
+    5. **Comparative Analysis** - relative to peer behavior
+    6. **Red Flags** - indicators requiring further investigation
+    7. **Mitigation Recommendations** - steps to address concerns
+    8. **Systemic Issues** - broader institutional problems
+    
+    Focus on objective analysis and avoid accusations without evidence.
+  
+  temperature: 0.1
+  max_tokens: 2000
+  model: "gpt-4o"
+
+# ========================
+# Intelligence Analysis
+# ========================
+
+intelligence_document_summary:
+  name: "Intelligence Document Summary"
+  description: "Summarize and analyze intelligence documents and reports"
+  system_prompt: |
+    You are an intelligence analyst expert in synthesizing classified and 
+    declassified intelligence reports. Provide clear, actionable analysis 
+    while protecting sensitive information and sources.
+  
+  user_prompt: |
+    Analyze and summarize the following intelligence document:
+    
+    **Document Classification:** {classification}
+    **Source Agency:** {agency}
+    **Report Date:** {report_date}
+    **Subject Area:** {subject_area}
+    
+    **Document Content:**
+    {document_content}
+    
+    **Related Intelligence:**
+    {related_reports}
+    
+    **Historical Context:**
+    {historical_context}
+    
+    **Current Relevance:**
+    {current_relevance}
+    
+    Please provide:
+    1. **Executive Summary** - key findings in 100 words
+    2. **Threat Assessment** - security implications and risk levels
+    3. **Actionable Intelligence** - specific information for decision-makers
+    4. **Source Reliability** - assessment of information credibility
+    5. **Gaps in Knowledge** - areas requiring additional collection
+    6. **Policy Implications** - recommended government responses
+    7. **Long-term Implications** - strategic considerations
+    8. **Follow-up Requirements** - additional analysis needed
+    
+    Maintain appropriate security awareness and protect sensitive details.
+  
+  temperature: 0.1
+  max_tokens: 2000
+  model: "gpt-4o"
+
+# ========================
+# Report Generation
+# ========================
+
+comprehensive_government_report:
+  name: "Comprehensive Government Report"
+  description: "Generate comprehensive reports on government activities and trends"
+  system_prompt: |
+    You are a senior government analyst tasked with creating comprehensive 
+    reports for executive briefings. Synthesize complex information into 
+    clear, actionable insights for decision-makers.
+  
+  user_prompt: |
+    Create a comprehensive government analysis report:
+    
+    **Report Topic:** {report_topic}
+    **Time Period:** {time_period}
+    **Target Audience:** {audience}
+    
+    **Data Sources:**
+    {data_sources}
+    
+    **Key Metrics:**
+    {key_metrics}
+    
+    **Stakeholder Input:**
+    {stakeholder_input}
+    
+    **Previous Reports:**
+    {historical_context}
+    
+    **Current Events:**
+    {current_events}
+    
+    **Budget/Resource Data:**
+    {budget_data}
+    
+    Please provide:
+    1. **Executive Summary** (250 words max)
+    2. **Key Findings** - top 5 most important insights
+    3. **Trend Analysis** - patterns and trajectories
+    4. **Performance Metrics** - quantitative assessments
+    5. **Risk Assessment** - potential challenges and threats
+    6. **Opportunities** - areas for improvement or growth
+    7. **Recommendations** - specific action items
+    8. **Implementation Timeline** - priorities and sequencing
+    9. **Resource Requirements** - budget and personnel needs
+    10. **Success Metrics** - how to measure progress
+    
+    Format for executive consumption with clear action items.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"

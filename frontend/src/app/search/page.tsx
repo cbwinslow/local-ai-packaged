@@ -1,27 +1,24 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from '@/hooks/useAuth'
+
+interface SearchResult {
+  id: string
+  title: string
+  content: string
+  relevance: number
+  created_at: string
+}
 
 export default function SearchPage() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session, loading } = useAuth()
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<any>(null)
+  const [results, setResults] = useState<SearchResult[] | null>(null)
   const [searchLoading, setSearchLoading] = useState(false)
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-      if (!session) {
-        router.push('/auth')
-      }
-    })
-  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,14 +32,15 @@ export default function SearchPage() {
         body: JSON.stringify({ query })
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        setResults(data.results)
-      } else {
-        setResults({ error: 'Search failed' })
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.statusText}`)
       }
+
+      const data = await response.json()
+      setResults(data.results || [])
     } catch (error) {
-      setResults({ error: 'Network error' })
+      console.error('Search error:', error)
+      setResults([])
     } finally {
       setSearchLoading(false)
     }
@@ -79,15 +77,15 @@ export default function SearchPage() {
         </form>
         <div className="mt-8">
           {results ? (
-            results.error ? (
-              <p className="text-red-400">Error: {results.error}</p>
-            ) : (
+            results && results.length > 0 ? (
               <div>
                 <h2 className="text-xl font-semibold mb-4">Results:</h2>
                 <pre className="bg-gray-800 p-4 rounded-lg text-sm overflow-auto">
                   {JSON.stringify(results, null, 2)}
                 </pre>
               </div>
+            ) : (
+              <p>No results found.</p>
             )
           ) : (
             <p>Search results will appear here...</p>

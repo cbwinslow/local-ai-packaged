@@ -12,58 +12,38 @@ interface SearchResult {
   category: string;
 }
 
-// Mock search data - in production, this would come from an API or indexed content
-const searchData: SearchResult[] = [
-  {
-    title: 'Government Data Ingestion',
-    content: 'Enhanced system for ingesting government data from 300+ sources including federal, state, local, and international government websites.',
-    url: '/tools/ingestion',
-    type: 'page',
-    category: 'Tools',
-  },
-  {
-    title: 'enhanced_government_ingestion.py',
-    content: 'Main script for comprehensive government data ingestion with intelligent rate limiting and document processing.',
-    url: '/tools/ingestion#enhanced-government-ingestion',
-    type: 'function',
-    category: 'Scripts',
-  },
-  {
-    title: 'Methodology Framework',
-    content: 'Comprehensive framework for analyzing government documents using AI and machine learning techniques.',
-    url: '/analysis/methodology',
-    type: 'page',
-    category: 'Analysis',
-  },
-  {
-    title: 'Docker Services Setup',
-    content: 'Complete guide for setting up and configuring Docker services including Ollama, Supabase, n8n, and monitoring stack.',
-    url: '/architecture/docker',
-    type: 'page',
-    category: 'Architecture',
-  },
-  {
-    title: 'DataIngestionPipeline',
-    content: 'Class for managing the complete data ingestion pipeline with error handling and progress tracking.',
-    url: '/tools/frameworks#data-ingestion-pipeline',
-    type: 'class',
-    category: 'Classes',
-  },
-  {
-    title: 'Quick Start Guide',
-    content: 'Get up and running with Local AI Packaged in under 10 minutes.',
-    url: '/getting-started/quick-start',
-    type: 'page',
-    category: 'Getting Started',
-  },
-];
+// Load search data dynamically from an API endpoint or static JSON file
+const [searchData, setSearchData] = useState<SearchResult[]>([]);
+const [loading, setLoading] = useState<boolean>(true);
 
-const fuse = new Fuse(searchData, {
-  keys: ['title', 'content', 'category'],
-  threshold: 0.4,
-  includeScore: true,
-});
+useEffect(() => {
+  // Replace '/api/searchData' with your actual endpoint or static file path
+  fetch('/api/searchData')
+    .then((res) => res.json())
+    .then((data) => {
+      setSearchData(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error('Failed to load search data:', err);
+      setLoading(false);
+    });
+}, []);
 
+// Initialize Fuse.js with dynamic searchData
+const [fuse, setFuse] = useState<Fuse<SearchResult> | null>(null);
+
+useEffect(() => {
+  if (searchData.length > 0) {
+    setFuse(
+      new Fuse(searchData, {
+        keys: ['title', 'content', 'category'],
+        threshold: 0.4,
+        includeScore: true,
+      })
+    );
+  }
+}, [searchData]);
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;

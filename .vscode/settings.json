@@ -1,0 +1,5 @@
+{
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "nextflow.telemetry.enabled": true,
+    "sarif-viewer.connectToGithubCodeScanning": "off"
+}

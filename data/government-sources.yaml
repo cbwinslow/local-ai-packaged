@@ -284,3 +284,345 @@ UN_TREATIES: "https://treaties.un.org"
 ## Foreign Aid
 USAID_DATA: "https://explorer.usaid.gov"
 FOREIGN_ASSISTANCE: "https://foreignassistance.gov"
+
+# ========================
+# Additional State Governments (Complete 50 States)
+# ========================
+
+## All 50 States Legislatures
+ALABAMA_LEGISLATURE: "https://www.legislature.state.al.us"
+ALASKA_LEGISLATURE: "https://www.akleg.gov"
+ARIZONA_LEGISLATURE: "https://www.azleg.gov"
+ARKANSAS_LEGISLATURE: "https://www.arkleg.state.ar.us"
+CALIFORNIA_LEGISLATURE: "https://leginfo.legislature.ca.gov"
+COLORADO_LEGISLATURE: "https://leg.colorado.gov"
+CONNECTICUT_LEGISLATURE: "https://www.cga.ct.gov"
+DELAWARE_LEGISLATURE: "https://legis.delaware.gov"
+FLORIDA_LEGISLATURE: "https://www.flsenate.gov"
+GEORGIA_LEGISLATURE: "https://www.legis.ga.gov"
+HAWAII_LEGISLATURE: "https://www.capitol.hawaii.gov"
+IDAHO_LEGISLATURE: "https://legislature.idaho.gov"
+ILLINOIS_LEGISLATURE: "https://www.ilga.gov"
+INDIANA_LEGISLATURE: "https://iga.in.gov"
+IOWA_LEGISLATURE: "https://www.legis.iowa.gov"
+KANSAS_LEGISLATURE: "https://www.kslegislature.org"
+KENTUCKY_LEGISLATURE: "https://legislature.ky.gov"
+LOUISIANA_LEGISLATURE: "https://www.legis.la.gov"
+MAINE_LEGISLATURE: "https://legislature.maine.gov"
+MARYLAND_LEGISLATURE: "https://mgaleg.maryland.gov"
+MASSACHUSETTS_LEGISLATURE: "https://malegislature.gov"
+MICHIGAN_LEGISLATURE: "https://www.legislature.mi.gov"
+MINNESOTA_LEGISLATURE: "https://www.leg.state.mn.us"
+MISSISSIPPI_LEGISLATURE: "https://billstatus.ls.state.ms.us"
+MISSOURI_LEGISLATURE: "https://www.senate.mo.gov"
+MONTANA_LEGISLATURE: "https://leg.mt.gov"
+NEBRASKA_LEGISLATURE: "https://nebraskalegislature.gov"
+NEVADA_LEGISLATURE: "https://www.leg.state.nv.us"
+NEW_HAMPSHIRE_LEGISLATURE: "https://gencourt.state.nh.us"
+NEW_JERSEY_LEGISLATURE: "https://www.njleg.state.nj.us"
+NEW_MEXICO_LEGISLATURE: "https://www.nmlegis.gov"
+NEW_YORK_LEGISLATURE: "https://www.nysenate.gov/legislation"
+NORTH_CAROLINA_LEGISLATURE: "https://www.ncleg.gov"
+NORTH_DAKOTA_LEGISLATURE: "https://www.legis.nd.gov"
+OHIO_LEGISLATURE: "https://www.legislature.ohio.gov"
+OKLAHOMA_LEGISLATURE: "https://www.oklegislature.gov"
+OREGON_LEGISLATURE: "https://www.oregonlegislature.gov"
+PENNSYLVANIA_LEGISLATURE: "https://www.legis.state.pa.us"
+RHODE_ISLAND_LEGISLATURE: "http://webserver.rilin.state.ri.us"
+SOUTH_CAROLINA_LEGISLATURE: "https://www.scstatehouse.gov"
+SOUTH_DAKOTA_LEGISLATURE: "https://sdlegislature.gov"
+TENNESSEE_LEGISLATURE: "https://www.capitol.tn.gov"
+TEXAS_LEGISLATURE: "https://capitol.texas.gov"
+UTAH_LEGISLATURE: "https://le.utah.gov"
+VERMONT_LEGISLATURE: "https://legislature.vermont.gov"
+VIRGINIA_LEGISLATURE: "https://lis.virginia.gov"
+WASHINGTON_LEGISLATURE: "https://leg.wa.gov"
+WEST_VIRGINIA_LEGISLATURE: "https://www.wvlegislature.gov"
+WISCONSIN_LEGISLATURE: "https://docs.legis.wisconsin.gov"
+WYOMING_LEGISLATURE: "https://wyoleg.gov"
+
+# ========================
+# Major Cities Data (Top 100)
+# ========================
+
+## Top 10 Cities
+NYC_OPEN_DATA: "https://opendata.cityofnewyork.us"
+LA_OPEN_DATA: "https://data.lacity.org"
+CHICAGO_DATA: "https://data.cityofchicago.org"
+HOUSTON_DATA: "https://cohgis-mycity.opendata.arcgis.com"
+PHOENIX_DATA: "https://www.phoenix.gov/opendata"
+PHILADELPHIA_DATA: "https://www.opendataphilly.org"
+SAN_ANTONIO_DATA: "https://data.sanantonio.gov"
+SAN_DIEGO_DATA: "https://data.sandiego.gov"
+DALLAS_DATA: "https://www.dallasopendata.com"
+SAN_JOSE_DATA: "https://data.sanjoseca.gov"
+
+## Additional Major Cities (11-50)
+AUSTIN_DATA: "https://data.austintexas.gov"
+JACKSONVILLE_DATA: "https://data.jacksonville.gov"
+FORT_WORTH_DATA: "https://data.fortworthtexas.gov"
+COLUMBUS_OH_DATA: "https://opendata.columbus.gov"
+CHARLOTTE_DATA: "https://data.charlottenc.gov"
+INDIANAPOLIS_DATA: "https://data.indy.gov"
+SEATTLE_DATA: "https://data.seattle.gov"
+DENVER_DATA: "https://www.denvergov.org/opendata"
+WASHINGTON_DC_DATA: "https://opendata.dc.gov"
+BOSTON_DATA: "https://data.boston.gov"
+EL_PASO_DATA: "https://data.elpasotexas.gov"
+DETROIT_DATA: "https://data.detroitmi.gov"
+NASHVILLE_DATA: "https://data.nashville.gov"
+PORTLAND_DATA: "https://www.portland.gov/open-data"
+MEMPHIS_DATA: "https://data.memphistn.gov"
+OKLAHOMA_CITY_DATA: "https://data.okc.gov"
+LAS_VEGAS_DATA: "https://opendata.lasvegasnevada.gov"
+LOUISVILLE_DATA: "https://data.louisvilleky.gov"
+BALTIMORE_DATA: "https://data.baltimorecity.gov"
+MILWAUKEE_DATA: "https://data.milwaukee.gov"
+ALBUQUERQUE_DATA: "https://www.cabq.gov/abq-data"
+TUCSON_DATA: "https://data.tucsonaz.gov"
+FRESNO_DATA: "https://data.fresno.gov"
+MESA_DATA: "https://data.mesaaz.gov"
+KANSAS_CITY_DATA: "https://data.kcmo.org"
+ATLANTA_DATA: "https://opendata.atlantaga.gov"
+LONG_BEACH_DATA: "https://data.longbeach.gov"
+COLORADO_SPRINGS_DATA: "https://coloradosprings.gov/open-data"
+RALEIGH_DATA: "https://data.raleighnc.gov"
+MIAMI_DATA: "https://opendata.miamigov.com"
+VIRGINIA_BEACH_DATA: "https://data.vbgov.com"
+OMAHA_DATA: "https://opendata.dogis.org"
+OAKLAND_DATA: "https://data.oaklandca.gov"
+MINNEAPOLIS_DATA: "https://opendata.minneapolismn.gov"
+TULSA_DATA: "https://www.cityoftulsa.org/government/open-tulsa/open-data"
+ARLINGTON_TX_DATA: "https://data.arlingtontx.gov"
+NEW_ORLEANS_DATA: "https://data.nola.gov"
+WICHITA_DATA: "https://opendata.wichita.gov"
+CLEVELAND_DATA: "https://clevelandohio.gov/open"
+TAMPA_DATA: "https://opendata.tampa.gov"
+
+# ========================
+# International Government Sources (Expanded)
+# ========================
+
+## European Union & Members
+EU_PARLIAMENT: "https://www.europarl.europa.eu/portal/en"
+EU_OPEN_DATA: "https://data.europa.eu/en"
+EU_COMMISSION: "https://ec.europa.eu/info/index_en"
+EU_COUNCIL: "https://www.consilium.europa.eu/en"
+GERMANY_BUNDESTAG: "https://www.bundestag.de/en"
+FRANCE_ASSEMBLEE: "https://www.assemblee-nationale.fr/dyn/opendata"
+UK_PARLIAMENT: "https://www.parliament.uk/business/publications"
+UK_GOV_API: "https://www.gov.uk/api"
+UK_HANSARD: "https://hansard.parliament.uk"
+ITALY_CAMERA: "https://dati.camera.it"
+SPAIN_CONGRESO: "https://www.congreso.es/web/guest/transparencia"
+NETHERLANDS_PARLIAMENT: "https://opendata.tweedekamer.nl"
+SWEDEN_RIKSDAG: "https://data.riksdagen.se"
+NORWAY_STORTING: "https://data.stortinget.no"
+DENMARK_FOLKETING: "https://oda.ft.dk"
+
+## Asia-Pacific
+AUSTRALIA_PARLIAMENT: "https://www.aph.gov.au/Parliamentary_Business/Bills_Legislation"
+AUSTRALIA_DATA: "https://data.gov.au"
+JAPAN_DIET: "https://www.shugiin.go.jp/internet/index.nsf/html/index_e.htm"
+SOUTH_KOREA_ASSEMBLY: "https://open.assembly.go.kr"
+SINGAPORE_PARLIAMENT: "https://www.parliament.gov.sg/parliamentary-business"
+NEW_ZEALAND_PARLIAMENT: "https://www.parliament.nz/en/parliamentary-business"
+INDIA_PARLIAMENT: "https://loksabha.nic.in"
+
+## Americas
+CANADA_PARLIAMENT: "https://www.parl.ca/legisinfo"
+CANADA_OPEN_DATA: "https://open.canada.ca/data"
+MEXICO_CONGRESO: "https://www.diputados.gob.mx"
+BRAZIL_CONGRESSO: "https://dadosabertos.camara.leg.br"
+ARGENTINA_CONGRESO: "https://www.hcdn.gob.ar"
+CHILE_CONGRESO: "https://www.camara.cl"
+
+## International Organizations
+UN_DATA: "https://data.un.org"
+UN_DOCUMENTS: "https://documents.un.org"
+WORLD_BANK_DATA: "https://data.worldbank.org"
+IMF_DATA: "https://data.imf.org"
+OECD_DATA: "https://data.oecd.org"
+WHO_DATA: "https://www.who.int/data"
+UNESCO_DATA: "https://uis.unesco.org"
+NATO_DOCS: "https://www.nato.int/cps/en/natohq/official_texts.htm"
+
+# ========================
+# Academic & Research Institutions
+# ========================
+
+## Government Research Centers
+RAND_CORPORATION: "https://www.rand.org/pubs"
+CONGRESSIONAL_RESEARCH_SERVICE: "https://crsreports.congress.gov"
+GOVERNMENT_ACCOUNTABILITY_OFFICE: "https://www.gao.gov/reports-testimonies"
+NATIONAL_ACADEMY_SCIENCES: "https://www.nationalacademies.org/our-work"
+FEDERAL_RESERVE_RESEARCH: "https://www.federalreserve.gov/econres/papers/default.htm"
+
+## Universities & Think Tanks
+HARVARD_KENNEDY_SCHOOL: "https://www.hks.harvard.edu/research-insights"
+GEORGETOWN_PUBLIC_POLICY: "https://publicpolicy.georgetown.edu/research"
+AMERICAN_ENTERPRISE_INSTITUTE: "https://www.aei.org/research"
+BROOKINGS_INSTITUTION: "https://www.brookings.edu/research"
+HERITAGE_FOUNDATION: "https://www.heritage.org/research"
+CENTER_STRATEGIC_INTERNATIONAL: "https://www.csis.org/analysis"
+COUNCIL_FOREIGN_RELATIONS: "https://www.cfr.org/research"
+HOOVER_INSTITUTION: "https://www.hoover.org/research"
+URBAN_INSTITUTE: "https://www.urban.org/research"
+PEW_RESEARCH: "https://www.pewresearch.org/politics"
+
+# ========================
+# Legal & Judicial (Expanded)
+# ========================
+
+## Federal Courts
+SUPREME_COURT_OPINIONS: "https://www.supremecourt.gov/opinions"
+US_COURTS_APPEALS: "https://www.ca2.uscourts.gov/decisions"
+FEDERAL_DISTRICT_COURTS: "https://www.uscourts.gov/court-records"
+BANKRUPTCY_COURTS: "https://www.uscourts.gov/services-forms/bankruptcy"
+PACER_SYSTEM: "https://pacer.uscourts.gov"
+
+## Legal Databases
+JUSTIA_SUPREME_COURT: "https://supreme.justia.com/cases/federal"
+FINDLAW_CASES: "https://caselaw.findlaw.com"
+GOOGLE_SCHOLAR_LEGAL: "https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=&btnG="
+COURTLISTENER: "https://www.courtlistener.com"
+
+## State Court Systems
+CALIFORNIA_COURTS: "https://www.courts.ca.gov"
+NEW_YORK_COURTS: "https://www.nycourts.gov"
+TEXAS_COURTS: "https://www.txcourts.gov"
+FLORIDA_COURTS: "https://www.flcourts.org"
+
+# ========================
+# Financial & Economic (Expanded)
+# ========================
+
+## Financial Regulators
+SEC_EDGAR: "https://www.sec.gov/edgar/searchedgar/companysearch.html"
+CFTC_DATA: "https://www.cftc.gov/MarketReports/index.htm"
+FDIC_DATA: "https://www.fdic.gov/analysis/quarterly-banking-profile"
+FEDERAL_RESERVE_ECONOMIC_DATA: "https://fred.stlouisfed.org"
+OFFICE_COMPTROLLER_CURRENCY: "https://www.occ.treas.gov/publications-and-resources/publications/index-publications.html"
+
+## Economic Statistics
+BUREAU_ECONOMIC_ANALYSIS: "https://www.bea.gov/data"
+BUREAU_LABOR_STATISTICS: "https://api.bls.gov/publicAPI/v2"
+CENSUS_ECONOMIC_DATA: "https://api.census.gov/data"
+INTERNATIONAL_TRADE_DATA: "https://usatrade.census.gov"
+COMMODITY_TRADING_DATA: "https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm"
+
+# ========================
+# Media & Transparency Organizations
+# ========================
+
+## Investigative Journalism
+PROPUBLICA_DATASTORE: "https://www.propublica.org/datastore"
+CENTER_INVESTIGATIVE_REPORTING: "https://revealnews.org"
+ICIJ_OFFSHORE_LEAKS: "https://offshoreleaks.icij.org"
+PANAMA_PAPERS: "https://panamapapers.icij.org"
+PARADISE_PAPERS: "https://www.icij.org/investigations/paradise-papers"
+
+## Government Transparency
+SUNLIGHT_FOUNDATION: "https://sunlightfoundation.com"
+OPENGOVDATA: "https://opengovdata.org"
+TRANSPARENCY_INTERNATIONAL: "https://www.transparency.org/en/our-research"
+MAPLIGHT_POLITICS: "https://maplight.org"
+FOLLOWTHEMONEY: "https://www.followthemoney.org"
+
+## Fact Checking
+POLITIFACT: "https://www.politifact.com"
+FACTCHECK_ORG: "https://www.factcheck.org"
+SNOPES_POLITICS: "https://www.snopes.com/politics"
+WASHINGTON_POST_FACT_CHECKER: "https://www.washingtonpost.com/news/fact-checker"
+AP_FACT_CHECK: "https://apnews.com/hub/ap-fact-check"
+
+# ========================
+# Environmental & Climate Data
+# ========================
+
+## Environmental Agencies
+EPA_DATA: "https://www.epa.gov/enviro/web-services"
+NOAA_CLIMATE_DATA: "https://www.ncdc.noaa.gov/data-access"
+NASA_CLIMATE_DATA: "https://climate.nasa.gov/evidence"
+USGS_DATA: "https://www.usgs.gov/products/data-and-tools/overview"
+NATIONAL_WEATHER_SERVICE: "https://www.weather.gov/documentation/services-web-api"
+
+## Climate Research
+IPCC_REPORTS: "https://www.ipcc.ch/reports"
+GLOBAL_CARBON_ATLAS: "http://www.globalcarbonatlas.org"
+CLIMATE_ACTION_TRACKER: "https://climateactiontracker.org"
+
+# ========================
+# Health & Demographics
+# ========================
+
+## Health Agencies
+CDC_DATA: "https://data.cdc.gov"
+NIH_DATA: "https://datascience.nih.gov"
+FDA_DATA: "https://www.fda.gov/drugs/drug-approvals-and-databases"
+CMS_DATA: "https://data.cms.gov"
+SAMHSA_DATA: "https://www.samhsa.gov/data"
+
+## Demographics & Census
+CENSUS_API: "https://api.census.gov/data"
+AMERICAN_COMMUNITY_SURVEY: "https://api.census.gov/data/2019/acs/acs5"
+POPULATION_ESTIMATES: "https://api.census.gov/data/2019/pep"
+
+# ========================
+# Education Data
+# ========================
+
+## Education Departments
+DEPT_EDUCATION_DATA: "https://www2.ed.gov/finaid/prof/resources/data/teach-institution.html"
+NATIONAL_CENTER_EDUCATION_STATS: "https://nces.ed.gov/datatools"
+INSTITUTE_EDUCATION_SCIENCES: "https://ies.ed.gov/data.asp"
+
+# ========================
+# Technology & Innovation
+# ========================
+
+## Patent & Trademark
+USPTO_DATA: "https://www.uspto.gov/learning-and-resources/open-data-and-mobility"
+PATENT_FULL_TEXT: "https://bulkdata.uspto.gov"
+
+## Technology Policy
+FCC_DATA: "https://www.fcc.gov/reports-research/data"
+NTIA_DATA: "https://www.ntia.doc.gov/data"
+
+# ========================
+# Agriculture & Rural Data
+# ========================
+
+## USDA Data
+USDA_NASS: "https://quickstats.nass.usda.gov/api"
+USDA_ERS: "https://www.ers.usda.gov/data-products"
+RURAL_DEVELOPMENT: "https://www.rd.usda.gov/about-rd/offices/rural-development-state-and-local-offices"
+
+# ========================
+# Transportation Data
+# ========================
+
+## DOT Data
+BUREAU_TRANSPORTATION_STATS: "https://www.bts.gov/browse-statistical-products-and-data"
+FEDERAL_HIGHWAY_ADMIN: "https://www.fhwa.dot.gov/policyinformation/statistics.cfm"
+FAA_DATA: "https://www.faa.gov/data_research"
+MARITIME_ADMIN: "https://www.maritime.dot.gov/data-reports"
+
+# ========================
+# Energy Data
+# ========================
+
+## Energy Information
+EIA_DATA: "https://www.eia.gov/opendata"
+DOE_DATA: "https://www.energy.gov/data/open-energy-data"
+RENEWABLE_ENERGY_DATA: "https://www.nrel.gov/analysis/data.html"
+
+# ========================
+# Labor & Employment
+# ========================
+
+## Labor Statistics
+BLS_API: "https://api.bls.gov/publicAPI/v2"
+OSHA_DATA: "https://www.osha.gov/data"
+NLRB_DATA: "https://www.nlrb.gov/reports/graphs-data"
+DEPARTMENT_LABOR_DATA: "https://www.dol.gov/agencies/oasp/evaluation/currentstudies"

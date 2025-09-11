@@ -1,0 +1,596 @@
+# ========================================================================================
+# AI Development and Enhancement Prompts for GitHub Models
+# ========================================================================================
+# These prompts are designed to enhance AI development workflows, code generation,
+# and system optimization for the Local AI Package
+# ========================================================================================
+
+# ========================
+# Code Generation & Enhancement
+# ========================
+
+docker_compose_optimization:
+  name: "Docker Compose Configuration Optimization"
+  description: "Optimize Docker Compose configurations for performance and security"
+  system_prompt: |
+    You are a Docker and DevOps expert specializing in container orchestration, 
+    performance optimization, and security best practices. Analyze and improve 
+    Docker Compose configurations for production deployment.
+  
+  user_prompt: |
+    Optimize the following Docker Compose configuration:
+    
+    **Current Configuration:**
+    ```yaml
+    {docker_compose_content}
+    ```
+    
+    **Environment:** {environment_type}
+    **Performance Requirements:** {performance_requirements}
+    **Security Requirements:** {security_requirements}
+    **Scale Requirements:** {scale_requirements}
+    
+    **Current Issues:**
+    {current_issues}
+    
+    Please provide:
+    1. **Optimized Configuration** - improved YAML with explanations
+    2. **Performance Improvements** - resource optimization strategies
+    3. **Security Enhancements** - security best practices implementation
+    4. **Scalability Improvements** - horizontal/vertical scaling considerations
+    5. **Network Optimization** - efficient service communication
+    6. **Volume Management** - data persistence and backup strategies
+    7. **Health Checks** - comprehensive monitoring and alerting
+    8. **Environment Variables** - secure configuration management
+    9. **Build Optimization** - faster build times and smaller images
+    10. **Production Readiness** - deployment best practices
+    
+    Include specific configuration examples and migration steps.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"
+
+python_code_enhancement:
+  name: "Python Code Enhancement and Optimization"
+  description: "Enhance Python code for performance, maintainability, and best practices"
+  system_prompt: |
+    You are a senior Python developer expert in performance optimization, 
+    clean code principles, and modern Python best practices. Analyze and 
+    improve Python code while maintaining functionality.
+  
+  user_prompt: |
+    Enhance the following Python code:
+    
+    **Current Code:**
+    ```python
+    {python_code}
+    ```
+    
+    **Context:** {code_context}
+    **Performance Requirements:** {performance_requirements}
+    **Python Version:** {python_version}
+    **Dependencies:** {dependencies}
+    
+    **Current Issues:**
+    {current_issues}
+    
+    Please provide:
+    1. **Enhanced Code** - improved version with comments
+    2. **Performance Optimizations** - speed and memory improvements
+    3. **Code Quality** - PEP 8 compliance and best practices
+    4. **Error Handling** - robust exception management
+    5. **Type Hints** - complete type annotations
+    6. **Documentation** - docstrings and inline comments
+    7. **Testing Suggestions** - unit test recommendations
+    8. **Security Improvements** - vulnerability mitigation
+    9. **Async Opportunities** - asynchronous programming benefits
+    10. **Refactoring Suggestions** - structural improvements
+    
+    Focus on maintainability and production readiness.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"
+
+nextjs_feature_enhancement:
+  name: "Next.js Feature Enhancement"
+  description: "Enhance Next.js applications with advanced features and optimizations"
+  system_prompt: |
+    You are a Next.js and React expert specializing in modern web development, 
+    performance optimization, and user experience. Enhance applications with 
+    cutting-edge features and best practices.
+  
+  user_prompt: |
+    Enhance the following Next.js application:
+    
+    **Current Implementation:**
+    ```javascript
+    {nextjs_code}
+    ```
+    
+    **Requirements:** {enhancement_requirements}
+    **Target Users:** {target_users}
+    **Performance Goals:** {performance_goals}
+    **Accessibility Requirements:** {accessibility_requirements}
+    
+    **Desired Features:**
+    {desired_features}
+    
+    Please provide:
+    1. **Enhanced Implementation** - improved code with new features
+    2. **Performance Optimizations** - Core Web Vitals improvements
+    3. **Advanced Features** - modern Next.js capabilities
+    4. **State Management** - efficient data handling
+    5. **API Integration** - RESTful and GraphQL enhancements
+    6. **User Experience** - intuitive interface improvements
+    7. **Accessibility** - WCAG compliance enhancements
+    8. **SEO Optimization** - meta tags and structured data
+    9. **Security Measures** - client-side security best practices
+    10. **Testing Strategy** - component and integration testing
+    
+    Include code examples and implementation guides.
+  
+  temperature: 0.3
+  max_tokens: 3000
+  model: "gpt-4o"
+
+# ========================
+# Database & Data Engineering
+# ========================
+
+database_schema_optimization:
+  name: "Database Schema Optimization"
+  description: "Optimize database schemas for performance and scalability"
+  system_prompt: |
+    You are a database architect expert in relational and NoSQL databases, 
+    performance tuning, and scalable data design. Optimize schemas for 
+    efficiency and maintainability.
+  
+  user_prompt: |
+    Optimize the following database schema:
+    
+    **Current Schema:**
+    ```sql
+    {database_schema}
+    ```
+    
+    **Database Type:** {database_type}
+    **Data Volume:** {data_volume}
+    **Query Patterns:** {query_patterns}
+    **Performance Requirements:** {performance_requirements}
+    
+    **Current Issues:**
+    {current_issues}
+    
+    Please provide:
+    1. **Optimized Schema** - improved table structures
+    2. **Index Strategy** - comprehensive indexing plan
+    3. **Normalization/Denormalization** - optimal data organization
+    4. **Partitioning Strategy** - data distribution optimization
+    5. **Query Optimization** - efficient query patterns
+    6. **Constraint Design** - data integrity enforcement
+    7. **Backup Strategy** - data protection and recovery
+    8. **Scaling Considerations** - horizontal/vertical scaling
+    9. **Migration Plan** - safe schema evolution
+    10. **Monitoring Setup** - performance tracking
+    
+    Include specific SQL examples and performance projections.
+  
+  temperature: 0.2
+  max_tokens: 2500
+  model: "gpt-4o"
+
+vector_database_design:
+  name: "Vector Database Design and Optimization"
+  description: "Design optimal vector database configurations for AI applications"
+  system_prompt: |
+    You are a vector database specialist expert in embedding storage, similarity 
+    search, and AI application architecture. Design efficient vector storage 
+    solutions for large-scale AI applications.
+  
+  user_prompt: |
+    Design an optimal vector database solution:
+    
+    **Use Case:** {use_case}
+    **Data Volume:** {data_volume}
+    **Vector Dimensions:** {vector_dimensions}
+    **Query Patterns:** {query_patterns}
+    **Performance Requirements:** {performance_requirements}
+    
+    **Current Setup:**
+    {current_setup}
+    
+    **Integration Requirements:**
+    {integration_requirements}
+    
+    Please provide:
+    1. **Architecture Design** - optimal vector database configuration
+    2. **Collection Strategy** - data organization and partitioning
+    3. **Index Configuration** - search optimization settings
+    4. **Embedding Strategy** - vector generation and storage
+    5. **Query Optimization** - efficient similarity search
+    6. **Scaling Plan** - handling growth and performance
+    7. **Integration Code** - application connectivity examples
+    8. **Backup Strategy** - data protection and recovery
+    9. **Monitoring Setup** - performance and health tracking
+    10. **Cost Optimization** - resource efficiency strategies
+    
+    Include configuration examples and performance benchmarks.
+  
+  temperature: 0.2
+  max_tokens: 2500
+  model: "gpt-4o"
+
+# ========================
+# DevOps & Infrastructure
+# ========================
+
+cicd_pipeline_design:
+  name: "CI/CD Pipeline Design and Optimization"
+  description: "Design robust CI/CD pipelines for automated deployment"
+  system_prompt: |
+    You are a DevOps engineer expert in CI/CD pipeline design, automation, 
+    and deployment strategies. Create efficient, secure, and reliable 
+    deployment pipelines for modern applications.
+  
+  user_prompt: |
+    Design a CI/CD pipeline for the following project:
+    
+    **Project Type:** {project_type}
+    **Tech Stack:** {tech_stack}
+    **Deployment Target:** {deployment_target}
+    **Team Size:** {team_size}
+    **Release Frequency:** {release_frequency}
+    
+    **Current Process:**
+    {current_process}
+    
+    **Requirements:**
+    {pipeline_requirements}
+    
+    **Constraints:**
+    {constraints}
+    
+    Please provide:
+    1. **Pipeline Architecture** - complete workflow design
+    2. **Build Strategy** - efficient build processes
+    3. **Testing Integration** - automated testing at all stages
+    4. **Security Scanning** - vulnerability and compliance checks
+    5. **Deployment Strategy** - blue-green, canary, or rolling deployments
+    6. **Environment Management** - dev/staging/production configuration
+    7. **Monitoring Integration** - pipeline and application monitoring
+    8. **Rollback Procedures** - automated failure recovery
+    9. **Performance Optimization** - faster pipeline execution
+    10. **Documentation** - setup and maintenance guides
+    
+    Include YAML configurations and implementation steps.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"
+
+kubernetes_deployment_optimization:
+  name: "Kubernetes Deployment Optimization"
+  description: "Optimize Kubernetes deployments for production environments"
+  system_prompt: |
+    You are a Kubernetes expert specializing in container orchestration, 
+    production deployments, and cloud-native architecture. Optimize 
+    Kubernetes configurations for reliability and performance.
+  
+  user_prompt: |
+    Optimize the following Kubernetes deployment:
+    
+    **Current Manifests:**
+    ```yaml
+    {kubernetes_manifests}
+    ```
+    
+    **Environment:** {environment}
+    **Traffic Patterns:** {traffic_patterns}
+    **Resource Constraints:** {resource_constraints}
+    **High Availability Requirements:** {ha_requirements}
+    
+    **Current Issues:**
+    {current_issues}
+    
+    Please provide:
+    1. **Optimized Manifests** - improved Kubernetes configurations
+    2. **Resource Management** - CPU, memory, and storage optimization
+    3. **High Availability** - multi-zone deployment strategies
+    4. **Autoscaling Configuration** - HPA and VPA setup
+    5. **Security Hardening** - RBAC, network policies, and pod security
+    6. **Service Mesh Integration** - traffic management and observability
+    7. **Persistent Storage** - StatefulSets and volume management
+    8. **Monitoring Setup** - Prometheus and Grafana integration
+    9. **Backup Strategy** - etcd and application data protection
+    10. **Disaster Recovery** - multi-cluster and region failover
+    
+    Include YAML examples and operational procedures.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"
+
+# ========================
+# AI/ML Enhancement
+# ========================
+
+rag_system_optimization:
+  name: "RAG System Optimization"
+  description: "Optimize Retrieval-Augmented Generation systems for better performance"
+  system_prompt: |
+    You are an AI/ML engineer expert in RAG systems, vector databases, and 
+    large language models. Optimize RAG implementations for accuracy, 
+    performance, and cost efficiency.
+  
+  user_prompt: |
+    Optimize the following RAG system:
+    
+    **Current Implementation:**
+    ```python
+    {rag_code}
+    ```
+    
+    **Use Case:** {use_case}
+    **Data Sources:** {data_sources}
+    **Query Patterns:** {query_patterns}
+    **Performance Requirements:** {performance_requirements}
+    
+    **Current Issues:**
+    {current_issues}
+    
+    Please provide:
+    1. **Enhanced RAG Architecture** - improved system design
+    2. **Embedding Strategy** - optimal vector generation and storage
+    3. **Retrieval Optimization** - better search accuracy and speed
+    4. **Chunking Strategy** - optimal document segmentation
+    5. **Context Management** - efficient context window utilization
+    6. **Prompt Engineering** - enhanced prompt templates
+    7. **Caching Strategy** - response and embedding caching
+    8. **Evaluation Metrics** - accuracy and performance measurement
+    9. **Cost Optimization** - reduced API calls and compute costs
+    10. **Scalability Plan** - handling increased load and data
+    
+    Include implementation examples and performance benchmarks.
+  
+  temperature: 0.3
+  max_tokens: 3000
+  model: "gpt-4o"
+
+model_fine_tuning_strategy:
+  name: "AI Model Fine-tuning Strategy"
+  description: "Design strategies for fine-tuning AI models for specific use cases"
+  system_prompt: |
+    You are an AI researcher expert in model fine-tuning, transfer learning, 
+    and domain adaptation. Design optimal fine-tuning strategies for 
+    specific applications and domains.
+  
+  user_prompt: |
+    Design a fine-tuning strategy for the following use case:
+    
+    **Base Model:** {base_model}
+    **Target Domain:** {target_domain}
+    **Available Data:** {available_data}
+    **Performance Goals:** {performance_goals}
+    **Resource Constraints:** {resource_constraints}
+    
+    **Current Baseline:**
+    {current_baseline}
+    
+    **Specific Requirements:**
+    {specific_requirements}
+    
+    Please provide:
+    1. **Fine-tuning Strategy** - approach and methodology
+    2. **Data Preparation** - dataset curation and preprocessing
+    3. **Training Configuration** - hyperparameters and settings
+    4. **Evaluation Framework** - metrics and validation approach
+    5. **Overfitting Prevention** - regularization and early stopping
+    6. **Deployment Strategy** - model versioning and serving
+    7. **Performance Monitoring** - continuous evaluation setup
+    8. **Cost Analysis** - training and inference cost projections
+    9. **Risk Mitigation** - bias detection and fairness considerations
+    10. **Maintenance Plan** - model updates and retraining schedule
+    
+    Include code examples and experiment design.
+  
+  temperature: 0.3
+  max_tokens: 3000
+  model: "gpt-4o"
+
+# ========================
+# Security & Compliance
+# ========================
+
+security_audit_analysis:
+  name: "Comprehensive Security Audit"
+  description: "Perform comprehensive security audits of applications and infrastructure"
+  system_prompt: |
+    You are a cybersecurity expert specializing in application security, 
+    infrastructure hardening, and compliance frameworks. Conduct thorough 
+    security assessments and provide actionable recommendations.
+  
+  user_prompt: |
+    Perform a security audit of the following system:
+    
+    **System Architecture:**
+    {system_architecture}
+    
+    **Technology Stack:**
+    {tech_stack}
+    
+    **Current Security Measures:**
+    {current_security}
+    
+    **Compliance Requirements:**
+    {compliance_requirements}
+    
+    **Threat Model:**
+    {threat_model}
+    
+    **Recent Incidents:**
+    {recent_incidents}
+    
+    Please provide:
+    1. **Security Assessment** - comprehensive vulnerability analysis
+    2. **Risk Classification** - prioritized security risks
+    3. **Authentication/Authorization** - identity and access management review
+    4. **Data Protection** - encryption and privacy controls
+    5. **Network Security** - firewall and communication security
+    6. **Application Security** - code and configuration vulnerabilities
+    7. **Infrastructure Security** - server and container hardening
+    8. **Compliance Analysis** - regulatory requirement adherence
+    9. **Incident Response** - detection and response capabilities
+    10. **Remediation Plan** - prioritized security improvements
+    
+    Include specific security configurations and implementation guides.
+  
+  temperature: 0.1
+  max_tokens: 3000
+  model: "gpt-4o"
+
+privacy_compliance_review:
+  name: "Privacy and Compliance Review"
+  description: "Review systems for privacy compliance and data protection"
+  system_prompt: |
+    You are a privacy and compliance expert specializing in GDPR, CCPA, 
+    and other data protection regulations. Review systems for privacy 
+    compliance and recommend improvements.
+  
+  user_prompt: |
+    Review the following system for privacy compliance:
+    
+    **System Description:**
+    {system_description}
+    
+    **Data Types Processed:**
+    {data_types}
+    
+    **Data Flow:**
+    {data_flow}
+    
+    **Current Privacy Controls:**
+    {privacy_controls}
+    
+    **Applicable Regulations:**
+    {applicable_regulations}
+    
+    **User Consent Mechanisms:**
+    {consent_mechanisms}
+    
+    Please provide:
+    1. **Compliance Assessment** - regulation adherence analysis
+    2. **Data Mapping** - comprehensive data inventory
+    3. **Privacy Controls** - technical and administrative safeguards
+    4. **Consent Management** - user consent collection and management
+    5. **Data Subject Rights** - access, portability, deletion capabilities
+    6. **Breach Response** - incident detection and notification procedures
+    7. **Privacy by Design** - architectural privacy enhancements
+    8. **Documentation Requirements** - compliance documentation needs
+    9. **Training Needs** - staff privacy awareness requirements
+    10. **Remediation Plan** - compliance improvement roadmap
+    
+    Include specific implementation recommendations and legal considerations.
+  
+  temperature: 0.1
+  max_tokens: 2500
+  model: "gpt-4o"
+
+# ========================
+# Performance & Monitoring
+# ========================
+
+performance_optimization_analysis:
+  name: "System Performance Optimization"
+  description: "Analyze and optimize system performance across all layers"
+  system_prompt: |
+    You are a performance engineering expert specializing in system 
+    optimization, bottleneck identification, and scalability improvements. 
+    Analyze performance metrics and provide optimization strategies.
+  
+  user_prompt: |
+    Analyze and optimize the performance of the following system:
+    
+    **System Architecture:**
+    {system_architecture}
+    
+    **Performance Metrics:**
+    {performance_metrics}
+    
+    **Current Bottlenecks:**
+    {current_bottlenecks}
+    
+    **Traffic Patterns:**
+    {traffic_patterns}
+    
+    **Resource Utilization:**
+    {resource_utilization}
+    
+    **Performance Goals:**
+    {performance_goals}
+    
+    Please provide:
+    1. **Performance Analysis** - comprehensive bottleneck identification
+    2. **Database Optimization** - query and schema improvements
+    3. **Application Optimization** - code and algorithm enhancements
+    4. **Caching Strategy** - multi-layer caching implementation
+    5. **Load Balancing** - traffic distribution optimization
+    6. **CDN Integration** - content delivery optimization
+    7. **Monitoring Setup** - comprehensive performance tracking
+    8. **Capacity Planning** - resource scaling projections
+    9. **Cost Optimization** - performance per dollar improvements
+    10. **Implementation Roadmap** - prioritized optimization plan
+    
+    Include specific configuration examples and performance projections.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"
+
+monitoring_alerting_setup:
+  name: "Comprehensive Monitoring and Alerting"
+  description: "Design comprehensive monitoring and alerting systems"
+  system_prompt: |
+    You are a Site Reliability Engineer expert in monitoring, observability, 
+    and incident management. Design comprehensive monitoring solutions 
+    that provide actionable insights and prevent outages.
+  
+  user_prompt: |
+    Design a monitoring and alerting system for:
+    
+    **System Architecture:**
+    {system_architecture}
+    
+    **Critical Services:**
+    {critical_services}
+    
+    **SLA Requirements:**
+    {sla_requirements}
+    
+    **Current Monitoring:**
+    {current_monitoring}
+    
+    **Team Structure:**
+    {team_structure}
+    
+    **Budget Constraints:**
+    {budget_constraints}
+    
+    Please provide:
+    1. **Monitoring Architecture** - comprehensive observability design
+    2. **Metrics Strategy** - key performance and business indicators
+    3. **Logging Framework** - centralized log collection and analysis
+    4. **Tracing Implementation** - distributed tracing for microservices
+    5. **Alert Configuration** - intelligent alerting without noise
+    6. **Dashboard Design** - role-based monitoring interfaces
+    7. **Incident Response** - automated escalation and runbooks
+    8. **Capacity Planning** - proactive resource management
+    9. **Cost Monitoring** - infrastructure and service cost tracking
+    10. **Performance Trends** - long-term analysis and forecasting
+    
+    Include configuration examples and implementation procedures.
+  
+  temperature: 0.2
+  max_tokens: 3000
+  model: "gpt-4o"

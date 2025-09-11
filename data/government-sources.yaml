@@ -1,0 +1,286 @@
+# ========================================================================================
+# Government Data Sources - Comprehensive List
+# ========================================================================================
+# This file contains a comprehensive list of government data sources for ingestion
+# into the Local AI Package for political analysis and tracking
+# ========================================================================================
+
+# ========================
+# Federal Government Sources
+# ========================
+
+## Legislative Branch
+CONGRESS_GOV_API: "https://api.congress.gov/v3"
+CONGRESS_GOV_BULK: "https://www.govinfo.gov/bulkdata"
+HOUSE_GOV: "https://clerk.house.gov/legislative-activities"
+SENATE_GOV: "https://www.senate.gov/legislative"
+CRS_REPORTS: "https://crsreports.congress.gov"
+GAO_REPORTS: "https://www.gao.gov/reports-testimonies"
+CBO_REPORTS: "https://www.cbo.gov/data"
+
+## Executive Branch
+WHITE_HOUSE: "https://www.whitehouse.gov/briefing-room"
+PRESIDENTIAL_DOCUMENTS: "https://www.govinfo.gov/app/collection/cpd"
+EXECUTIVE_ORDERS: "https://www.govinfo.gov/app/collection/eo"
+FEDERAL_REGISTER: "https://www.federalregister.gov/api/v1"
+CFR_REGULATIONS: "https://www.govinfo.gov/app/collection/cfr"
+AGENCIES_GOV: "https://www.usa.gov/agencies"
+
+### Executive Departments
+STATE_DEPT: "https://www.state.gov/policy-issues"
+TREASURY_DEPT: "https://home.treasury.gov/policy-issues"
+DEFENSE_DEPT: "https://www.defense.gov/News"
+JUSTICE_DEPT: "https://www.justice.gov/news"
+INTERIOR_DEPT: "https://www.doi.gov/news"
+AGRICULTURE_DEPT: "https://www.usda.gov/media"
+COMMERCE_DEPT: "https://www.commerce.gov/news"
+LABOR_DEPT: "https://www.dol.gov/newsroom"
+HHS_DEPT: "https://www.hhs.gov/about/news"
+HUD_DEPT: "https://www.hud.gov/press"
+TRANSPORTATION_DEPT: "https://www.transportation.gov/briefing-room"
+ENERGY_DEPT: "https://www.energy.gov/news"
+EDUCATION_DEPT: "https://www.ed.gov/news"
+VA_DEPT: "https://www.va.gov/opa/pressrel"
+DHS_DEPT: "https://www.dhs.gov/news-releases"
+
+## Judicial Branch
+SUPREME_COURT: "https://www.supremecourt.gov/opinions"
+USCOURTS: "https://www.uscourts.gov/news"
+FEDERAL_COURTS: "https://www.fjc.gov/research"
+
+## Independent Agencies
+FEC_API: "https://api.open.fec.gov/v1"
+FCC: "https://www.fcc.gov/news-events"
+FTC: "https://www.ftc.gov/news-events"
+SEC: "https://www.sec.gov/news"
+EPA: "https://www.epa.gov/newsroom"
+FDA: "https://www.fda.gov/news-events"
+CDC: "https://www.cdc.gov/media"
+NIH: "https://www.nih.gov/news-events"
+NSF: "https://www.nsf.gov/news"
+NASA: "https://www.nasa.gov/news"
+
+# ========================
+# Intelligence & Defense
+# ========================
+
+## Intelligence Community
+CIA_FOIA: "https://www.cia.gov/readingroom"
+FBI_VAULT: "https://vault.fbi.gov"
+NSA_FOIA: "https://www.nsa.gov/about/foia"
+DARPA_NEWS: "https://www.darpa.mil/news-events"
+DIA_NEWS: "https://www.dia.mil/News"
+
+## Military Branches
+ARMY_NEWS: "https://www.army.mil/news"
+NAVY_NEWS: "https://www.navy.mil/Press-Office"
+AIRFORCE_NEWS: "https://www.af.mil/News"
+MARINES_NEWS: "https://www.marines.mil/News"
+SPACEFORCE_NEWS: "https://www.spaceforce.mil/News"
+COAST_GUARD: "https://www.news.uscg.mil"
+
+## Special Operations
+JSOC_NEWS: "https://www.socom.mil/news"
+SPECIAL_OPS: "https://www.soc.mil/releases"
+
+# ========================
+# Financial & Economic
+# ========================
+FEDERAL_RESERVE: "https://www.federalreserve.gov/newsevents"
+TREASURY_DATA: "https://fiscaldata.treasury.gov/api"
+BEA_DATA: "https://apps.bea.gov/api/signup"
+BLS_DATA: "https://api.bls.gov/publicAPI/v2"
+CENSUS_API: "https://api.census.gov/data"
+OPENSECRETS_API: "https://www.opensecrets.org/api"
+
+# ========================
+# State Government Sources
+# ========================
+
+## State Legislatures
+NCSL_DATA: "https://www.ncsl.org/research"
+BALLOTPEDIA_API: "https://ballotpedia.org/api"
+
+### Individual States (Examples - all 50 states need to be added)
+CALIFORNIA_LEGISLATURE: "https://leginfo.legislature.ca.gov"
+TEXAS_LEGISLATURE: "https://capitol.texas.gov"
+NEW_YORK_LEGISLATURE: "https://www.nysenate.gov/legislation"
+FLORIDA_LEGISLATURE: "https://www.flsenate.gov"
+ILLINOIS_LEGISLATURE: "https://www.ilga.gov"
+PENNSYLVANIA_LEGISLATURE: "https://www.legis.state.pa.us"
+OHIO_LEGISLATURE: "https://www.legislature.ohio.gov"
+GEORGIA_LEGISLATURE: "https://www.legis.ga.gov"
+NORTH_CAROLINA_LEGISLATURE: "https://www.ncleg.gov"
+MICHIGAN_LEGISLATURE: "https://www.legislature.mi.gov"
+
+## State Executive Branches
+GOVERNORS_ASSOCIATION: "https://www.nga.org"
+STATE_EXECUTIVES: "https://www.csg.org"
+
+## State Judicial Systems
+STATE_COURTS: "https://www.ncsc.org"
+COURT_STATISTICS: "https://www.courtstatistics.org"
+
+# ========================
+# Local Government Sources
+# ========================
+
+## Major Cities
+NYC_OPEN_DATA: "https://opendata.cityofnewyork.us"
+LA_OPEN_DATA: "https://data.lacity.org"
+CHICAGO_DATA: "https://data.cityofchicago.org"
+HOUSTON_DATA: "https://cohgis-mycity.opendata.arcgis.com"
+PHOENIX_DATA: "https://www.phoenix.gov/opendata"
+PHILADELPHIA_DATA: "https://www.opendataphilly.org"
+SAN_ANTONIO_DATA: "https://data.sanantonio.gov"
+SAN_DIEGO_DATA: "https://data.sandiego.gov"
+DALLAS_DATA: "https://www.dallasopendata.com"
+SAN_JOSE_DATA: "https://data.sanjoseca.gov"
+
+## Counties
+COUNTY_EXECUTIVES: "https://www.naco.org"
+COUNTY_DATA: "https://www.countyhealthrankings.org"
+
+## Municipal Organizations
+US_CONFERENCE_MAYORS: "https://www.usmayors.org"
+ICMA_DATA: "https://icma.org"
+NLC_DATA: "https://www.nlc.org"
+
+# ========================
+# Declassified Documents
+# ========================
+
+## Historical Archives
+NATIONAL_ARCHIVES: "https://catalog.archives.gov/api/v1"
+JFK_ASSASSINATION: "https://www.archives.gov/research/jfk"
+WATERGATE_FILES: "https://catalog.archives.gov/search?q=watergate"
+PENTAGON_PAPERS: "https://www.archives.gov/research/pentagon-papers"
+CHURCH_COMMITTEE: "https://www.archives.gov/research/investigations/church-committee"
+
+## Declassification Centers
+CIA_DECLASSIFIED: "https://www.cia.gov/library/readingroom"
+FBI_DECLASSIFIED: "https://vault.fbi.gov"
+NSA_DECLASSIFIED: "https://www.nsa.gov/news-features/declassified-documents"
+DOD_DECLASSIFIED: "https://www.defense.gov/Newsroom/Releases"
+
+## Presidential Libraries
+ROOSEVELT_LIBRARY: "https://www.fdrlibrary.org"
+TRUMAN_LIBRARY: "https://www.trumanlibrary.gov"
+EISENHOWER_LIBRARY: "https://www.eisenhowerlibrary.gov"
+KENNEDY_LIBRARY: "https://www.jfklibrary.org"
+JOHNSON_LIBRARY: "https://www.lbjlibrary.org"
+NIXON_LIBRARY: "https://www.nixonlibrary.gov"
+FORD_LIBRARY: "https://www.fordlibrarymuseum.gov"
+CARTER_LIBRARY: "https://www.jimmycarterlibrary.gov"
+REAGAN_LIBRARY: "https://www.reaganlibrary.gov"
+BUSH_41_LIBRARY: "https://www.bush41.org"
+CLINTON_LIBRARY: "https://www.clintonlibrary.gov"
+BUSH_43_LIBRARY: "https://www.georgewbushlibrary.smu.edu"
+OBAMA_LIBRARY: "https://www.obamalibrary.gov"
+TRUMP_LIBRARY: "https://www.45office.com"
+BIDEN_RECORDS: "https://www.whitehouse.gov"
+
+# ========================
+# International Sources
+# ========================
+
+## UK Government
+UK_PARLIAMENT: "https://www.parliament.uk/business/publications"
+UK_GOV_API: "https://www.gov.uk/api"
+UK_HANSARD: "https://hansard.parliament.uk"
+
+## Canadian Government
+CANADA_PARLIAMENT: "https://www.parl.ca/legisinfo"
+CANADA_OPEN_DATA: "https://open.canada.ca/data"
+
+## European Union
+EU_PARLIAMENT: "https://www.europarl.europa.eu/portal/en"
+EU_OPEN_DATA: "https://data.europa.eu/en"
+
+## United Nations
+UN_DATA: "https://data.un.org"
+UN_DOCUMENTS: "https://documents.un.org"
+
+# ========================
+# Research & Think Tanks
+# ========================
+
+## Government Research
+CRS_REPORTS: "https://crsreports.congress.gov"
+GAO_REPORTS: "https://www.gao.gov"
+CBO_DATA: "https://www.cbo.gov/data"
+OMB_DATA: "https://www.whitehouse.gov/omb"
+
+## Independent Research
+BROOKINGS: "https://www.brookings.edu/research"
+CFR_RESEARCH: "https://www.cfr.org/research"
+AEI_RESEARCH: "https://www.aei.org/research"
+HERITAGE_RESEARCH: "https://www.heritage.org/research"
+CATO_RESEARCH: "https://www.cato.org/research"
+
+# ========================
+# Media & Transparency
+# ========================
+
+## Government Transparency
+SUNLIGHT_FOUNDATION: "https://sunlightfoundation.com"
+PROPUBLICA_DATA: "https://www.propublica.org/datastore"
+CENTER_RESPONSIVE_POLITICS: "https://www.opensecrets.org"
+GOVTRACK: "https://www.govtrack.us/api/v2"
+
+## Fact Checking
+POLITIFACT: "https://www.politifact.com"
+FACTCHECK_ORG: "https://www.factcheck.org"
+SNOPES_POLITICS: "https://www.snopes.com/politics"
+
+# ========================
+# Voting & Elections
+# ========================
+
+## Federal Elections
+FEC_DATA: "https://api.open.fec.gov"
+ELECTION_ASSISTANCE: "https://www.eac.gov"
+
+## State Elections
+VOTE411: "https://www.vote411.org"
+BALLOTPEDIA_ELECTIONS: "https://ballotpedia.org/api"
+
+## Voting Records
+GOVTRACK_VOTES: "https://www.govtrack.us/api/v2/vote"
+PROPUBLICA_CONGRESS: "https://projects.propublica.org/api-docs/congress-api"
+
+# ========================
+# Lobbying & Influence
+# ========================
+
+## Lobbying Disclosure
+LDA_REPORTS: "https://lda.senate.gov/filings/public"
+LOBBYING_DISCLOSURE: "https://www.clerk.house.gov/public_disc/financial-search"
+
+## Campaign Finance
+FEC_BULK_DATA: "https://www.fec.gov/data/browse-data"
+OPENSECRETS_BULK: "https://www.opensecrets.org/bulk-data"
+
+# ========================
+# Legal & Regulatory
+# ========================
+
+## Court Records
+PACER: "https://pacer.uscourts.gov"
+SUPREME_COURT_OPINIONS: "https://www.supremecourt.gov/opinions"
+
+## Regulatory Tracking
+REGULATIONS_GOV: "https://www.regulations.gov/api"
+FEDERAL_REGISTER_API: "https://www.federalregister.gov/api/v1"
+
+# ========================
+# International Relations
+# ========================
+
+## Treaties & Agreements
+STATE_DEPT_TREATIES: "https://www.state.gov/treaties-and-international-agreements"
+UN_TREATIES: "https://treaties.un.org"
+
+## Foreign Aid
+USAID_DATA: "https://explorer.usaid.gov"
+FOREIGN_ASSISTANCE: "https://foreignassistance.gov"

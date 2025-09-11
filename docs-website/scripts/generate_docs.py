@@ -211,7 +211,7 @@ class DocumentationGenerator:
     def _safe_unparse(self, node) -> str:
         """Safely unparse an AST node."""
         if node is None:
-            return None
+            return ''
         try:
             if hasattr(ast, 'unparse'):
                 return ast.unparse(node)

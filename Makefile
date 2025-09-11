@@ -192,6 +192,76 @@ docs-serve: ## Serve documentation locally
 	@echo "📚 Serving documentation..."
 	@python -m http.server 8000 --directory docs/
 
+# Government Data Ingestion
+ingest: ## Run basic Congressional data ingestion
+	@echo "🏛️ Ingesting Congressional data..."
+	@python scripts/ingest_government_data.py
+
+ingest-enhanced: ## Run enhanced government data ingestion (300+ sources)
+	@echo "📊 Running enhanced government data ingestion..."
+	@python scripts/enhanced_government_ingestion.py --source congress --limit 1000
+
+ingest-all: ## Ingest from all available sources (comprehensive)
+	@echo "🌐 Ingesting from all government sources..."
+	@python scripts/enhanced_government_ingestion.py --source all --generate-reports
+
+ingest-state: ## Ingest state government data
+	@echo "🏛️ Ingesting state government data..."
+	@python scripts/enhanced_government_ingestion.py --source state --limit 500
+
+ingest-local: ## Ingest local government data
+	@echo "🏢 Ingesting local government data..."
+	@python scripts/enhanced_government_ingestion.py --source local --limit 500
+
+ingest-international: ## Ingest international government data
+	@echo "🌍 Ingesting international government data..."
+	@python scripts/enhanced_government_ingestion.py --source international --limit 500
+
+# Report Generation
+reports: ## Generate comprehensive analysis reports
+	@echo "📊 Generating comprehensive reports..."
+	@python scripts/generate_reports.py --report all
+
+report-politicians: ## Generate politician effectiveness report
+	@echo "👥 Generating politician effectiveness report..."
+	@python scripts/generate_reports.py --report politician-effectiveness
+
+report-trends: ## Generate legislative trends report
+	@echo "📈 Generating legislative trends report..."
+	@python scripts/generate_reports.py --report legislative-trends
+
+report-voting: ## Generate voting patterns report
+	@echo "🗳️ Generating voting patterns report..."
+	@python scripts/generate_reports.py --report voting-patterns
+
+report-sources: ## Generate data sources performance report
+	@echo "📊 Generating data sources report..."
+	@python scripts/generate_reports.py --report data-sources
+
+report-geographic: ## Generate geographic analysis report
+	@echo "🗺️ Generating geographic analysis report..."
+	@python scripts/generate_reports.py --report geographic
+
+# Demo & Testing
+demo: ## Run interactive government data analysis demo
+	@echo "🎬 Starting government data analysis demo..."
+	@python scripts/demo_analysis.py --mode demo
+
+demo-full: ## Run full government data analysis workflow
+	@echo "🚀 Starting full government data analysis..."
+	@python scripts/demo_analysis.py --mode full
+
+# Quick Analysis Workflows
+quick-analysis: ## Quick Congressional data analysis (ingest + report)
+	@echo "⚡ Running quick analysis workflow..."
+	@make ingest-enhanced
+	@make reports
+
+full-analysis: ## Comprehensive government data analysis (all sources + reports)
+	@echo "🚀 Running full analysis workflow..."
+	@make ingest-all
+	@echo "✅ Full analysis complete! Check reports/generated/ for results."
+
 # Environment Management
 env-template: ## Create .env from template
 	@echo "⚙️ Creating .env from template..."

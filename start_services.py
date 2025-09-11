@@ -52,7 +52,7 @@ def check_env_file():
 
 def clone_supabase_repo():
     """Clone the Supabase repository using sparse checkout if not already present."""
-    if not os.path.exists("supabase/docker"):
+    if not os.path.exists("supabase"):
         print("📦 Cloning the Supabase repository...")
         try:
             # Remove any existing supabase directory

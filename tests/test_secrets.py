@@ -201,8 +201,12 @@ class TestSecretGeneration:
         env_template = project_root / ".env.template"
         content = env_template.read_text()
         
-        # Should contain opendiscourse.net references
-        assert "opendiscourse.net" in content, ".env.template should contain opendiscourse.net domain"
+        # Should contain opendiscourse.net references in values, not just comments
+        lines = [line for line in content.split('\n') if line.strip() and not line.strip().startswith('#') and '=' in line]
+        found = any(
+            "opendiscourse.net" in line.split('=', 1)[1] for line in lines
+        )
+        assert found, ".env.template should contain opendiscourse.net domain in a configuration value"
         
         # Should not contain old domain placeholders
         old_domains = ["yourdomain.com", "example.com", "localhost.com"]

@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for documentation */
+.prose {
+  @apply max-w-none;
+}
+
+.prose pre {
+  @apply bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto;
+}
+
+.prose code {
+  @apply bg-gray-100 text-gray-900 px-1 py-0.5 rounded text-sm;
+}
+
+.prose pre code {
+  @apply bg-transparent text-inherit p-0;
+}
+
+/* Dark mode styles */
+.dark .prose {
+  @apply text-gray-300;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  @apply text-gray-100;
+}
+
+.dark .prose a {
+  @apply text-blue-400;
+}
+
+.dark .prose code {
+  @apply bg-gray-800 text-gray-200;
+}
+
+.dark .prose pre {
+  @apply bg-gray-900;
+}
+
+.dark .prose blockquote {
+  @apply border-gray-700 text-gray-400;
+}
+
+.dark .prose hr {
+  @apply border-gray-700;
+}
+
+.dark .prose table {
+  @apply text-gray-300;
+}
+
+.dark .prose thead {
+  @apply text-gray-100 border-gray-700;
+}
+
+.dark .prose tbody tr {
+  @apply border-gray-700;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500 dark:bg-gray-500;
+}
+
+/* Mermaid diagram styles */
+.mermaid {
+  @apply flex justify-center my-8;
+}
+
+/* Search highlight */
+.search-highlight {
+  @apply bg-yellow-200 dark:bg-yellow-800 px-1 rounded;
+}
+
+/* Navigation tree styles */
+.nav-tree {
+  @apply space-y-1;
+}
+
+.nav-tree-item {
+  @apply block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors;
+}
+
+.nav-tree-item.active {
+  @apply bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300;
+}
+
+.nav-tree-item.parent {
+  @apply font-medium;
+}
+
+.nav-tree-item.child {
+  @apply ml-4 text-gray-600 dark:text-gray-400;
+}
+
+/* Code block enhancements */
+.code-block-container {
+  @apply relative;
+}
+
+.code-block-header {
+  @apply bg-gray-800 text-gray-200 px-4 py-2 text-sm font-mono border-b border-gray-700 flex justify-between items-center;
+}
+
+.copy-button {
+  @apply bg-gray-700 hover:bg-gray-600 text-gray-200 px-2 py-1 rounded text-xs transition-colors;
+}
+
+/* Methodology cards */
+.methodology-card {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Tool showcase */
+.tool-showcase {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8;
+}
+
+.tool-card {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 border border-blue-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-all;
+}
+
+/* Workflow diagrams */
+.workflow-diagram {
+  @apply bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 my-8;
+}
+
+/* Interactive elements */
+.interactive-demo {
+  @apply bg-gradient-to-r from-green-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 border-2 border-dashed border-green-300 dark:border-gray-600 rounded-lg p-6 my-8;
+}
+
+/* Responsive design utilities */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    @apply hidden;
+  }
+  
+  .mobile-full {
+    @apply w-full;
+  }
+}

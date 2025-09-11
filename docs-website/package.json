@@ -1,0 +1,48 @@
+{
+  "name": "local-ai-docs",
+  "version": "1.0.0",
+  "description": "Comprehensive documentation website for Local AI Packaged repository",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "export": "next export",
+    "generate-docs": "python scripts/generate_docs.py",
+    "analyze-code": "python scripts/analyze_codebase.py"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.2.0",
+    "@next/mdx": "^14.0.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.0.1",
+    "clsx": "^2.0.0",
+    "framer-motion": "^10.16.4",
+    "fuse.js": "^7.0.0",
+    "highlight.js": "^11.9.0",
+    "lucide-react": "^0.292.0",
+    "mermaid": "^10.6.1",
+    "next": "14.0.0",
+    "postcss": "^8",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-highlight": "^0.15.0",
+    "react-markdown": "^9.0.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0",
+    "remark-toc": "^9.0.0",
+    "tailwindcss": "^3.3.0",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.0",
+    "typescript": "^5"
+  }
+}

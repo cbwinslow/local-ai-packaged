@@ -1,0 +1,41 @@
+
+SYSTEM HEALTH REPORT
+Generated: 2025-09-10T19:13:37.965494
+
+=== SYSTEM INFO ===
+Hostname: cbwhpz
+OS: Linux 6.14.0-29-generic
+Architecture: x86_64
+CPUs: 56
+Memory: 94.08 GB total
+Disk: 232.64 GB total
+
+=== RESOURCE USAGE ===
+CPU Usage: 9.9%
+Memory Usage: 45.1% (42.34 GB used)
+Disk Usage: 92.1%
+Network Connections: 357
+
+=== DOCKER STATUS ===
+Running Containers: 6
+Docker Images: 27
+
+=== SERVICE HEALTH ===
+✓ ollama: Healthy (2.55ms) [HTTP 200]
+✗ n8n: Healthy
+✗ supabase: Healthy
+✓ open-webui: Healthy (1.79ms) [HTTP 200]
+✗ qdrant: Healthy
+✓ neo4j: Healthy (8.55ms) [HTTP 200]
+✗ flowise: Healthy
+✓ langfuse: Healthy (4.38ms) [HTTP 503]
+
+=== ASSETS ===
+Documentation Files: 14
+Report Files: 8
+n8n Workflows: 3
+Flowise Workflows: 5
+Docker Services: 21
+
+=== ALERTS ===
+No alerts

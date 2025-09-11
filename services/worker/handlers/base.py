@@ -1,8 +1,9 @@
 """Base task handler."""
 
+import logging
 from typing import Dict, Any
 from sqlalchemy.orm import Session
-from ....models import TaskInDB
+from models import TaskInDB
 
 class TaskHandler:
     """Base class for task handlers.
@@ -29,7 +30,7 @@ class TaskHandler:
             
         Raises:
             Exception: If the task fails
-        ""
+        """
         raise NotImplementedError("Subclasses must implement handle()")
     
     def log(self, message: str, level: str = 'info', **kwargs) -> None:
@@ -39,13 +40,19 @@ class TaskHandler:
             message: The message to log
             level: Log level (debug, info, warning, error, critical)
             **kwargs: Additional context to include in the log
-        ""
+        """
+        # Note: This method requires task context to be available
+        # Subclasses should ensure task is passed or available in scope
+        task = getattr(self, '_current_task', None)
+
         log_context = {
-            'task_id': str(task.id) if task else None,
-            'task_type': task.task_type if task else None,
+            'task_id': str(task.id) if task is not None else None,
+            'task_type': task.task_type if task is not None else None,
             'handler': self.__class__.__name__,
             **kwargs
         }
         
-        log_method = getattr(self.logger, level.lower(), self.logger.info)
+        # Use Python logging if logger not set up
+        logger = getattr(self, 'logger', logging.getLogger(__name__))
+        log_method = getattr(logger, level.lower(), logger.info)
         log_method(message, extra={'context': log_context})

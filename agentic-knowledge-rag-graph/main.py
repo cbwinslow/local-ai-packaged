@@ -6,14 +6,96 @@ A comprehensive FastAPI service that provides advanced knowledge graph and RAG c
 import os
 import logging
 import asyncio
-from datetime import datetime
-from typing import List, Dict, Any, Optional, Union
+import json
+import secrets
+import string
+from datetime import datetime, timedelta
+from typing import List, Dict, Any, Optional, Union, Annotated
 from contextlib import asynccontextmanager
+from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException, Depends, Query as QueryParam, BackgroundTasks
+from fastapi import (
+    FastAPI, HTTPException, Depends, Query as QueryParam, 
+    BackgroundTasks, Request, status, Header, Security
+)
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from fastapi.security import APIKeyHeader, APIKeyQuery, APIKeyCookie
+from pydantic import BaseModel, Field, validator
 import uvicorn
+import httpx
+from supabase import create_client, Client as SupabaseClient
+
+# API Key Security
+API_KEY_NAME = "X-API-Key"
+api_key_query = APIKeyQuery(name=API_KEY_NAME, auto_error=False)
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+api_key_cookie = APIKeyCookie(name=API_KEY_NAME, auto_error=False)
+
+# Initialize Supabase client
+def get_supabase() -> SupabaseClient:
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
+    if not supabase_url or not supabase_key:
+        raise RuntimeError("Missing Supabase configuration")
+    return create_client(supabase_url, supabase_key)
+
+# API Key Validation
+async def get_api_key(
+    api_key_query: str = Security(api_key_query),
+    api_key_header: str = Security(api_key_header),
+    api_key_cookie: str = Security(api_key_cookie),
+    supabase: SupabaseClient = Depends(get_supabase)
+) -> str:
+    # Check API key in query params, headers, or cookies
+    api_key = api_key_query or api_key_header or api_key_cookie
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials"
+        )
+    
+    # Verify API key in Supabase
+    result = supabase.table('api_keys') \
+        .select('*') \
+        .eq('key', api_key) \
+        .eq('is_active', True) \
+        .execute()
+    
+    if not result.data:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid API key"
+        )
+    
+    return api_key
+
+# Audit Logging
+async def log_audit_event(
+    request: Request,
+    action: str,
+    resource_type: str,
+    resource_id: str = None,
+    metadata: dict = None,
+    user_id: str = None
+):
+    try:
+        # Get client IP and user agent
+        client_host = request.client.host if request.client else None
+        user_agent = request.headers.get('user-agent')
+        
+        # Insert audit log
+        supabase = get_supabase()
+        supabase.table('audit_logs').insert({
+            'action': action,
+            'resource_type': resource_type,
+            'resource_id': resource_id,
+            'metadata': metadata or {},
+            'ip_address': client_host,
+            'user_agent': user_agent,
+            'user_id': user_id
+        }).execute()
+    except Exception as e:
+        logger.error(f"Failed to log audit event: {str(e)}")
 
 # Configure logging
 logging.basicConfig(
@@ -22,7 +104,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Pydantic models
+# Pydantic Models
+class APIKeyCreate(BaseModel):
+    name: str
+    expires_at: Optional[datetime] = None
+    scopes: List[str] = Field(default_factory=list)
+
+class APIKeyResponse(APIKeyCreate):
+    key: str
+    created_at: datetime
+    last_used_at: Optional[datetime]
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
 class Document(BaseModel):
     id: Optional[str] = None
     content: str
@@ -57,6 +153,7 @@ class RAGResponse(BaseModel):
     graph_context: List[Dict[str, Any]]
     confidence: float
     processing_time: float
+    request_id: Optional[str] = None
 
 class HealthStatus(BaseModel):
     status: str
@@ -80,9 +177,19 @@ async def lifespan(app: FastAPI):
     await cleanup_connections()
 
 # Initialize FastAPI app with lifespan
+# API Key Generation
+def generate_api_key(prefix: str = "sk_", length: int = 32) -> str:
+    """Generate a secure API key."""
+    alphabet = string.ascii_letters + string.digits + "-._~"
+    random_chars = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return f"{prefix}{random_chars}"
+
 app = FastAPI(
     title="Agentic Knowledge RAG Graph",
-    description="Enhanced knowledge graph and RAG service for Local AI Package",
+    description="Enhanced knowledge graph and RAG service with API key authentication",
+    version="1.1.0",
+    docs_url="/docs" if os.getenv("ENVIRONMENT") != "production" else None,
+    redoc_url="/redoc" if os.getenv("ENVIRONMENT") != "production" else None,
     version="1.0.0",
     lifespan=lifespan
 )
@@ -300,10 +407,59 @@ async def health_check():
     
     return health_status
 
+@app.post("/api-keys/", response_model=APIKeyResponse)
+async def create_api_key(
+    key_data: APIKeyCreate,
+    request: Request,
+    current_user_id: str = Depends(get_api_key)
+):
+    """Create a new API key with the specified permissions."""
+    try:
+        # Generate a new API key
+        api_key = generate_api_key()
+        expires_at = key_data.expires_at or (datetime.utcnow() + timedelta(days=90)).isoformat()
+        
+        # Store in Supabase
+        supabase = get_supabase()
+        result = supabase.table('api_keys').insert({
+            'key': api_key,
+            'name': key_data.name,
+            'user_id': current_user_id,
+            'scopes': key_data.scopes,
+            'expires_at': expires_at,
+            'is_active': True
+        }).execute()
+        
+        # Log the creation
+        await log_audit_event(
+            request=request,
+            action="api_key.create",
+            resource_type="api_key",
+            resource_id=result.data[0]['id'],
+            user_id=current_user_id
+        )
+        
+        return {
+            **key_data.dict(),
+            'key': api_key,  # Only shown once at creation
+            'created_at': datetime.utcnow().isoformat(),
+            'last_used_at': None,
+            'is_active': True
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to create API key: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create API key"
+        )
+
 @app.post("/documents/", response_model=Dict[str, Any])
 async def add_document(
     document: Document,
-    background_tasks: BackgroundTasks
+    background_tasks: BackgroundTasks,
+    request: Request,
+    api_key: str = Depends(get_api_key)
 ):
     """Add a document to the knowledge base"""
     try:
@@ -326,7 +482,7 @@ async def add_document(
                             d.created_at = datetime(),
                             d.updated_at = datetime()
                         """,
-                        id=document_id,
+                        id=document.id,
                         title=document.title or "Untitled",
                         content=document.content,
                         metadata=document.metadata,
@@ -338,19 +494,19 @@ async def add_document(
         # Add background task to generate embeddings and store in Qdrant
         background_tasks.add_task(
             process_document_embeddings,
-            document_id,
+            document.id,
             document.content,
-            document.metadata
+            document.metadata or {}
         )
         
         processing_time = time.time() - start_time
         
         return {
-            "message": "Document added successfully",
-            "document_id": document_id,
-            "status": "success",
-            "processing_time": processing_time
+            "id": document.id,
+            "status": "processing",
+            "message": "Document is being processed"
         }
+        
     except Exception as e:
         logger.error(f"Error adding document: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -387,11 +543,30 @@ async def process_document_embeddings(document_id: str, content: str, metadata: 
         logger.error(f"❌ Failed to process embeddings for {document_id}: {e}")
 
 @app.post("/query/", response_model=RAGResponse)
-async def query_knowledge_base(query: Query):
+async def query_knowledge_base(
+    query: Query,
+    request: Request,
+    api_key: str = Depends(get_api_key)
+):
     """Query the knowledge base using RAG"""
     try:
         import time
-        start_time = time.time()
+        start_time = datetime.now()
+        request_id = str(uuid4())
+        
+        # Log the query
+        await log_audit_event(
+            request=request,
+            action="query.execute",
+            resource_type="query",
+            resource_id=request_id,
+            metadata={
+                "query_text": query.text,
+                "filters": query.filters,
+                "include_graph_context": query.include_graph_context
+            },
+            user_id=api_key  # Or extract user ID from API key
+        )
         
         sources = []
         graph_context = []
@@ -462,14 +637,32 @@ async def query_knowledge_base(query: Query):
         
         processing_time = time.time() - start_time
         
-        return RAGResponse(
+        response = RAGResponse(
             query=query.text,
             answer=answer,
             sources=sources,
             graph_context=graph_context,
             confidence=0.85,  # Mock confidence score
-            processing_time=processing_time
+            processing_time=processing_time,
+            request_id=request_id
         )
+        
+        # Log successful response
+        await log_audit_event(
+            request=request,
+            action="query.complete",
+            resource_type="query",
+            resource_id=request_id,
+            metadata={
+                "processing_time": processing_time,
+                "sources_count": len(sources),
+                "graph_nodes_count": len(graph_context.get("nodes", [])),
+                "graph_edges_count": len(graph_context.get("edges", []))
+            },
+            user_id=api_key  # Or extract user ID from API key
+        )
+        
+        return response
         
     except Exception as e:
         logger.error(f"Error processing query: {e}")

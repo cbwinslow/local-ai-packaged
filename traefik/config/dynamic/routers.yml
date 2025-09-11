@@ -1,0 +1,104 @@
+http:
+  routers:
+    # Traefik Dashboard
+    traefik-dashboard:
+      rule: "Host(`traefik.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: api@internal
+      middlewares:
+        - "traefik-auth@file"
+        - "security-headers@file"
+      tls:
+        certResolver: letsencrypt
+
+    # Supabase
+    supabase:
+      rule: "Host(`supabase.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: supabase
+      middlewares:
+        - "security-headers@file"
+        - "rate-limit@file"
+      tls:
+        certResolver: letsencrypt
+
+    # n8n
+    n8n:
+      rule: "Host(`n8n.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: n8n
+      middlewares:
+        - "security-headers@file"
+        - "jwt-auth@file"
+      tls:
+        certResolver: letsencrypt
+
+    # Flowise
+    flowise:
+      rule: "Host(`flowise.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: flowise
+      middlewares:
+        - "security-headers@file"
+        - "jwt-auth@file"
+      tls:
+        certResolver: letsencrypt
+
+    # Web UI
+    webui:
+      rule: "Host(`webui.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: webui
+      middlewares:
+        - "security-headers@file"
+      tls:
+        certResolver: letsencrypt
+
+    # Neo4j
+    neo4j:
+      rule: "Host(`neo4j.opendiscourse.net`)"
+      entryPoints:
+        - "websecure"
+      service: neo4j
+      middlewares:
+        - "security-headers@file"
+        - "jwt-auth@file"
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    # Service definitions
+    supabase:
+      loadBalancer:
+        servers:
+          - url: "http://supabase:3000"
+        passHostHeader: true
+
+    n8n:
+      loadBalancer:
+        servers:
+          - url: "http://n8n:5678"
+        passHostHeader: true
+
+    flowise:
+      loadBalancer:
+        servers:
+          - url: "http://flowise:3000"
+        passHostHeader: true
+
+    webui:
+      loadBalancer:
+        servers:
+          - url: "http://webui:3000"
+        passHostHeader: true
+
+    neo4j:
+      loadBalancer:
+        servers:
+          - url: "http://neo4j:7474"
+        passHostHeader: true

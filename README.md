@@ -4,9 +4,18 @@
 quickly bootstraps a fully featured Local AI and Low Code development
 environment including Ollama for your local LLMs, Open WebUI for an interface to chat with your N8N agents, and Supabase for your database, vector store, and authentication. 
 
-This is Cole's version with a couple of improvements and the addition of Supabase, Open WebUI, Flowise, Neo4j, Langfuse, SearXNG, and Caddy!
-Also, the local RAG AI Agent workflows from the video will be automatically in your 
-n8n instance if you use this setup instead of the base one provided by n8n!
+## 🚀 Key Features
+
+- **AI Model Management**: Run local LLMs with Ollama
+- **Workflow Automation**: Visual workflow builder with n8n
+- **Monitoring & Observability**: Integrated monitoring stack with Prometheus, Grafana, and OpenSearch
+- **Knowledge Graph**: Neo4j for advanced data relationships
+- **Vector Search**: Integrated vector database with Qdrant
+- **API Gateway**: Kong for API management and security
+- **Monitoring Dashboard**: Real-time system monitoring and alerting
+- **CI/CD**: GitHub Actions for automated testing and deployment
+- **Infrastructure as Code**: Terraform configurations for cloud deployment
+- **Security**: Integrated authentication and authorization with Supabase
 
 **IMPORANT**: Supabase has updated a couple environment variables so you may have to add some new default values in your .env that I have in my .env.example if you have had this project up and running already and are just pulling new changes. Specifically, you need to add "POOLER_DB_POOL_SIZE=5" to your .env. This is required if you have had the package running before June 14th.
 
@@ -56,18 +65,27 @@ results from up to 229 search services. Users are neither tracked nor profiled, 
 
 ✅ [**Langfuse**](https://langfuse.com/) - Open source LLM engineering platform for agent observability
 
-## What's New
+## 🆕 What's New
 
-### AI Tools Integration (New!)
-- **Graphite**: Metrics and monitoring dashboard
-- **mcp-memory-libsql**: High-performance SQL database for agent memory
-- **Neo4j Agent Memory**: Graph-based memory system for AI agents
+### Monitoring & Observability (New!)
+- **Real-time Monitoring**: Track system metrics and service health
+- **Alerting**: Get notified of issues before they impact users
+- **Log Aggregation**: Centralized logging with Loki
+- **Distributed Tracing**: Track requests across services
+- **Custom Dashboards**: Build and share monitoring dashboards
+
+### AI Tools Integration
 - **CrewAI**: Framework for orchestrating AI agents
-- **Letta**: Memory system for AI agents
-- **Falkor**: High-performance database for AI applications
+- **Neo4j Agent Memory**: Graph-based memory system for AI agents
 - **GraphRAG-SDK**: Graph-based retrieval augmented generation
 - **Llama Stack**: Framework for building LLM applications
 - **MCP Crawl4AI RAG**: Web crawling and RAG pipeline
+
+### Infrastructure Improvements
+- **Terraform Modules**: Deploy to any cloud provider
+- **Kubernetes Support**: Container orchestration
+- **CI/CD Pipelines**: Automated testing and deployment
+- **Security Hardening**: Improved security defaults
 
 ### Existing Features
 - **Supabase Integration**: Authentication, database, and vector storage
@@ -78,13 +96,22 @@ results from up to 229 search services. Users are neither tracked nor profiled, 
 - **SearXNG**: Privacy-focused metasearch engine
 - **Caddy**: Modern web server with automatic HTTPS
 
-## Prerequisites
+## 🛠️ Prerequisites
 
-Before you begin, make sure you have the following software installed:
+### System Requirements
+- **OS**: Linux/macOS/Windows (WSL2 recommended for Windows)
+- **CPU**: x86_64/ARM64 with AVX2 support
+- **RAM**: Minimum 16GB (32GB recommended for optimal performance)
+- **Storage**: 50GB+ free space (SSD recommended)
+- **Docker**: 20.10.0+
+- **Docker Compose**: 2.0.0+
 
-- [Python](https://www.python.org/downloads/) - Required to run the setup script
-- [Git/GitHub Desktop](https://desktop.github.com/) - For easy repository management
-- [Docker/Docker Desktop](https://www.docker.com/products/docker-desktop/) - Required to run all services
+### Required Software
+- [Python 3.10+](https://www.python.org/downloads/)
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/products/docker-desktop/)
+- [Node.js 18+](https://nodejs.org/) (for dashboard development)
+- [Terraform](https://www.terraform.io/) (for infrastructure as code)
 
 ## Installation
 

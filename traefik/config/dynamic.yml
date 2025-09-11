@@ -3,6 +3,14 @@
 
 http:
   middlewares:
+    # Traefik container manager
+    traefik-container-manager:
+      plugin:
+        traefik-container-manager:
+          name: whoami
+          serviceUrl: http://manager:10000
+          timeout: "60"
+          
     # Security headers
     secure-headers:
       headers:

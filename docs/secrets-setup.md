@@ -1,102 +1,190 @@
-# Secure Secrets Management Setup Plan
+# Secure Secrets Management with Bitwarden/Cloudflare
 
 ## Overview
-To securely manage API keys for project tools (Jira, Bitbucket, Linear, GitHub, Supabase, n8n, etc.), we recommend using chezmoi for local, encrypted secrets management. This avoids direct exposure of sensitive data in version control. Alternatives like browser access to Bitwarden or Cloudflare Secrets are considered but require manual intervention.
+This project uses Bitwarden as the primary secrets manager for all API keys, database credentials, and service tokens. This ensures repeatability without regeneration—once stored, secrets can be retrieved consistently across environments. Cloudflare Secrets is used for production deployments. Local .env files are populated from Bitwarden for development.
 
-## Why Chezmoi?
-- Encrypts secrets using age or GPG.
-- Templates for environment-specific values (e.g., .env files).
-- Integrates with dotfiles for bash_secrets.
-- No need to share keys with AI tools; manage locally.
+**Key Principles:**
+- No secret regeneration during normal operations
+- All secrets stored in Bitwarden vault with secure naming conventions
+- Scripts pull secrets dynamically using Bitwarden CLI
+- .env.example serves as template; actual .env is .gitignore'd and populated on-demand
+- Rotate only when compromised or per policy (annual)
 
-## Prerequisites
-- Git installed (already present).
-- Age keypair or GPG for encryption (generate if needed).
+## Critical Secrets Inventory
+The following secrets must be stored in Bitwarden:
 
-## Step-by-Step Setup Plan
+### Supabase (Folder: "Local AI Package/Supabase")
+- `SUPABASE_POSTGRES_PASSWORD`: PostgreSQL master password
+- `SUPABASE_JWT_SECRET`: JWT signing secret (256-bit)
+- `SUPABASE_ANON_KEY`: Public anon key for client access
+- `SUPABASE_SERVICE_ROLE_KEY`: Service role key for admin operations
+- `SUPABASE_DASHBOARD_PASSWORD`: Studio dashboard password
+- `SUPABASE_POOLER_TENANT_ID`: Connection pooler tenant ID
 
-### 1. Install Chezmoi
-Use package manager (Ubuntu/Debian assumed from Linux OS):
-```
-sudo apt update && sudo apt install chezmoi
-```
-Or via curl:
-```
-sh -c "curl -sfL https://git.io/chezmoi | sh"
-```
+### n8n (Folder: "Local AI Package/n8n")
+- `N8N_ENCRYPTION_KEY`: Data encryption key
+- `N8N_USER_MANAGEMENT_JWT_SECRET`: User auth JWT secret
 
-### 2. Initialize Chezmoi Repository
-```
-chezmoi init --apply
-mkdir -p ~/.local/share/chezmoi
-```
+### Database/Storage (Folder: "Local AI Package/Storage")
+- `NEO4J_PASSWORD`: Neo4j database password
+- `CLICKHOUSE_PASSWORD`: ClickHouse analytics password
+- `MINIO_ROOT_PASSWORD`: MinIO S3 storage password
+- `GRAYLOG_PASSWORD`: Graylog logging password
+- `RABBITMQ_PASSWORD`: Message queue password
 
-### 3. Generate Encryption Key (if not using GPG)
-```
-age-keygen -o ~/.config/age/key.txt
-```
-Secure the public key for sharing encrypted files if needed.
+### AI Services (Folder: "Local AI Package/AI APIs")
+- `OPENAI_API_KEY`: OpenAI GPT access
+- `SERPAPI_API_KEY`: Web search API
+- `GRAPHRAG_API_KEY`: GraphRAG indexing
+- `CRAWL4AI_API_KEY`: Web crawling
+- `LOCALAI_API_KEY`: Local AI inference
 
-### 4. Create bash_secrets Template
-Create `~/.local/share/chezmoi/bash_secrets.tmpl` with placeholders:
-```
-#!/bin/bash
-# Encrypted secrets loader
+### Auth/Monitoring (Folder: "Local AI Package/Auth")
+- `NEXTAUTH_SECRET`: NextAuth session secret
+- `LANGFUSE_SALT`: Tracing salt
+- `LOGFLARE_PUBLIC_ACCESS_TOKEN`: Log analytics public
+- `LOGFLARE_PRIVATE_ACCESS_TOKEN`: Log analytics private
 
-# Project Tracking Tools
-export JIRA_API_URL="https://your-org.atlassian.net"
-export JIRA_API_TOKEN="{{ .jira_token }}"
-export BITBUCKET_USERNAME="{{ .bitbucket_user }}"
-export BITBUCKET_APP_PASSWORD="{{ .bitbucket_password }}"
-export LINEAR_API_KEY="{{ .linear_key }}"
-export GITHUB_TOKEN="{{ .github_pat }}"
+**Naming Convention:** Use `projectname_service_variablename` format (e.g., `localai_supabase_jwt_secret`)
 
-# Infrastructure
-export SUPABASE_URL="{{ .supabase_url }}"
-export SUPABASE_ANON_KEY="{{ .supabase_anon }}"
-export N8N_API_URL="{{ .n8n_url }}"
-export N8N_BASIC_AUTH="{{ .n8n_auth }}"
+## Setup Instructions
 
-# Load into environment
-source <(chezmoi cat bash_secrets.tmpl | chezmoi decrypt --template-to bash_secrets.sh)
-```
-
-### 5. Add Secrets to Chezmoi
-Edit the template with actual values (encrypted):
-```
-chezmoi add bash_secrets.tmpl
-chezmoi edit bash_secrets.tmpl
-```
-Fill placeholders, then:
-```
-chezmoi apply
-```
-
-### 6. Integrate with Existing Scripts
-Update scripts like `deploy-legislative-ai.sh` to source `bash_secrets.sh`:
+### 1. Install Bitwarden CLI
 ```bash
-# At top of script
-[ -f ~/bash_secrets.sh ] && source ~/bash_secrets.sh
+# Ubuntu/Debian
+wget -qO- https://downloads.bitwarden.com/cli/Bitwarden_Installer.sh | bash
+# Or via snap
+sudo snap install bw
 ```
 
-### 7. Version Control (Securely)
-- Add chezmoi repo to .gitignore for encrypted files.
-- Commit templates (without secrets) to Git.
-- For team: Share public age key to encrypt shared secrets.
+### 2. Authenticate Bitwarden CLI
+```bash
+# Login (2FA required)
+bw login
+# Unlock vault
+bw unlock --passwordenv BW_PASSWORD
+# Set session key for scripts
+export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)
+```
 
-## Alternative: Browser Access to Secrets Stores
-If chezmoi setup is deferred:
-1. Use browser_action to navigate to Bitwarden/Cloudflare login (user provides credentials manually).
-2. Screenshot/export keys (manual copy-paste recommended for security).
-3. Store temporarily in .env (gitignore'd) for immediate use.
+### 3. Create Secrets Organization (if team deployment)
+- In Bitwarden web: Create organization "Local AI Package"
+- Add collections matching folders above
+- Assign members with appropriate access
+
+### 4. Store Initial Secrets
+For each secret from current .env:
+```bash
+# Example for Supabase JWT
+echo -n "a88def8ee7e5675ccda45a2efe8cffc1355126fbcd097e91616b4b522cdd23a3" | bw encode | bw create login "localai_supabase_jwt_secret" --organizationid YOUR_ORG_ID
+# Repeat for all secrets listed in inventory
+```
+
+**One-time migration script:**
+```bash
+#!/bin/bash
+# migrate-secrets-to-bitwarden.sh
+source .env
+bw login  # Interactive
+export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)
+
+# Supabase
+bw create login "localai_supabase_postgres_password" --password "$POSTGRES_PASSWORD"
+bw create login "localai_supabase_jwt_secret" --password "$JWT_SECRET"
+# ... continue for all variables
+
+echo "Migration complete. Remove secrets from .env and use retrieval scripts."
+```
+
+### 5. Populate .env from Bitwarden (Repeatable Process)
+Create `scripts/populate-env-from-bitwarden.sh`:
+```bash
+#!/bin/bash
+# Requires: bw CLI authenticated
+
+export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)
+
+# Function to retrieve secret
+get_secret() {
+  local name=$1
+  bw get password "$name" 2>/dev/null || echo "SECRET_NOT_FOUND_$name"
+}
+
+# Populate critical secrets
+echo "POSTGRES_PASSWORD=$(get_secret localai_supabase_postgres_password)" >> .env
+echo "JWT_SECRET=$(get_secret localai_supabase_jwt_secret)" >> .env
+echo "ANON_KEY=$(get_secret localai_supabase_anon_key)" >> .env
+# ... add all inventory items
+
+echo ".env populated from Bitwarden. Run: source .env"
+```
+
+Usage:
+```bash
+chmod +x scripts/populate-env-from-bitwarden.sh
+./scripts/populate-env-from-bitwarden.sh
+source .env
+```
+
+### 6. Integrate with Deployment Scripts
+Update `scripts/deploy-legislative-ai.sh` and `tools/start_services.py`:
+```bash
+# At script start
+if [ -f scripts/populate-env-from-bitwarden.sh ]; then
+  ./scripts/populate-env-from-bitwarden.sh
+  source .env
+else
+  echo "WARNING: Using local .env - run populate script first"
+  source .env
+fi
+```
+
+For production (Cloudflare):
+- Use Cloudflare Workers Secrets API
+- Store in `wrangler.toml` secrets section
+- Retrieve via `env.SECRET_NAME` in serverless functions
+
+### 7. Bitwarden Security Best Practices
+- Enable 2FA and YubiKey for vault access
+- Use password manager autofill for CLI login
+- Set vault timeout (e.g., 30 minutes)
+- Audit access logs weekly
+- Backup vault export (encrypted) to secure offsite location
+- Never store .env in version control (already .gitignore'd)
+
+## Cloudflare Secrets for Production
+For public deployments:
+1. Install Wrangler CLI: `npm i -g wrangler`
+2. Add to `wrangler.toml`:
+   ```
+   [[secrets]]
+   name = "SUPABASE_JWT_SECRET"
+   ```
+3. Set: `wrangler secret put SUPABASE_JWT_SECRET`
+4. Access in code: `env.SUPABASE_JWT_SECRET`
+
+## Recovery Process
+If .env lost:
+1. Run `populate-env-from-bitwarden.sh`
+2. Verify: `source .env && echo $JWT_SECRET | wc -c` (should be 64+ chars)
+3. Deploy: `./scripts/deploy-legislative-ai.sh`
+
+## Migration from Current Setup
+1. Run migration script above to store all existing .env secrets
+2. Clear sensitive values from .env (replace with placeholders)
+3. Test retrieval: `./scripts/populate-env-from-bitwarden.sh && source .env && curl -H "apikey: $ANON_KEY" http://localhost:8000/health`
+4. Commit updated scripts/docs (no secrets)
 
 ## Security Notes
-- Never commit unencrypted keys.
-- Use 2FA for all services.
-- Rotate keys periodically.
-- For AI-assisted updates, use keys only in local scripts, not direct tool calls.
+- Bitwarden CLI sessions expire—reauthenticate as needed
+- Use environment variables for BW_PASSWORD in CI/CD
+- Audit: `bw list collections --organizationid ORG_ID`
+- Never expose BW_SESSION in logs
+- For shared teams: Use collections with role-based access
 
 ## Next Steps
-- Confirm OS/package manager for install command.
-- Provide placeholders or initial values for template.
-- Switch to code mode for script updates after setup.
+- Install Bitwarden CLI and authenticate
+- Run migration script for current secrets
+- Test population script
+- Update deployment scripts to use new process
+- Verify Supabase works with retrieved credentials

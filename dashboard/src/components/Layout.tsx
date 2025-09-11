@@ -11,9 +11,11 @@ interface NavigationItem {
 
 const navigation: NavigationItem[] = [
   { name: 'Overview', href: '/', icon: '📊' },
+  { name: 'Monitoring', href: '/monitoring', icon: '📈' },
+  { name: 'Data Explorer', href: '/data-explorer', icon: '🔍' },
   { name: 'Configuration', href: '/config', icon: '⚙️' },
   { name: 'Troubleshooting', href: '/troubleshoot', icon: '🔧' },
-  { name: 'Reports', href: '/reports', icon: '📈' },
+  { name: 'Reports', href: '/reports', icon: '📊' },
   { name: 'Data', href: '/data', icon: '💾' },
   { name: 'Chatbot', href: '/chatbot', icon: '🤖' },
 ]
@@ -45,8 +47,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         }`}>
           <div className="flex h-full flex-col">
             <div className="p-4 border-b">
-              <h1 className="text-xl font-bold text-gray-900">AI Platform Dashboard</h1>
-              <p className="text-sm text-gray-500 mt-1">Monitor & Manage</p>
+              <div className="flex items-center">
+                <div className="bg-indigo-600 text-white p-2 rounded-lg mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">AI Platform Dashboard</h1>
+                  <p className="text-sm text-gray-500">Monitor & Manage</p>
+                </div>
+              </div>
             </div>
             
             <nav className="flex-1 px-2 py-4 space-y-1">

@@ -60,16 +60,27 @@ def generate_secret(length=32):
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
-def generate_hex_secret(length=32):
-    """Generate a secure random hex secret"""
-    return secrets.token_hex(length)
+def generate_hex_secret_openssl():
+    """Generate a secure random hex secret using openssl rand -hex 32"""
+    try:
+        result = subprocess.run(['openssl', 'rand', '-hex', '32'], 
+                              capture_output=True, text=True, check=True)
+        return result.stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # Fallback to Python secrets if openssl is not available
+        return secrets.token_hex(32)
 
 def generate_jwt_secret():
-    """Generate a JWT secret with proper format"""
-    # For JWT secrets, we need a base64url encoded secret
-    import base64
-    raw_secret = secrets.token_bytes(32)
-    return base64.urlsafe_b64encode(raw_secret).decode('utf-8').rstrip('=')
+    """Generate a JWT secret - at least 32 characters as per Supabase docs"""
+    # Per .env.example: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+    # Use openssl for consistency with other secrets
+    try:
+        result = subprocess.run(['openssl', 'rand', '-hex', '32'], 
+                              capture_output=True, text=True, check=True)
+        return result.stdout.strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # Fallback to Python secrets if openssl is not available
+        return secrets.token_hex(32)
 
 def generate_jwt_keys(jwt_secret):
     """Generate ANON_KEY and SERVICE_ROLE_KEY based on JWT_SECRET"""
@@ -156,16 +167,16 @@ def setup_environment(args=None):
     with open(env_example_path, 'r') as f:
         env_content = f.read()
     
-    print("\n🔐 Generating secure secrets...")
+    print("\n🔐 Generating secure secrets following .env.example instructions...")
     
-    # Generate JWT secret first
+    # Generate JWT secret first using openssl as per documentation
     jwt_secret = generate_jwt_secret()
     anon_key, service_role_key = generate_jwt_keys(jwt_secret)
     
-    # Generate secrets
+    # Generate secrets using openssl rand -hex 32 as specified in .env.example
     secrets_map = {
-        'N8N_ENCRYPTION_KEY': generate_hex_secret(32),
-        'N8N_USER_MANAGEMENT_JWT_SECRET': generate_hex_secret(32),
+        'N8N_ENCRYPTION_KEY': generate_hex_secret_openssl(),
+        'N8N_USER_MANAGEMENT_JWT_SECRET': generate_hex_secret_openssl(),
         'POSTGRES_PASSWORD': generate_secret(32),
         'JWT_SECRET': jwt_secret,
         'ANON_KEY': anon_key,
@@ -178,9 +189,9 @@ def setup_environment(args=None):
         'MINIO_ROOT_PASSWORD': generate_secret(32),
         'LANGFUSE_SALT': generate_secret(32),
         'NEXTAUTH_SECRET': generate_secret(32),
-        'ENCRYPTION_KEY': generate_hex_secret(32),
-        'SECRET_KEY_BASE': generate_hex_secret(64),
-        'VAULT_ENC_KEY': generate_hex_secret(32),
+        'ENCRYPTION_KEY': generate_hex_secret_openssl(),  # Use openssl as per .env.example
+        'SECRET_KEY_BASE': generate_hex_secret_openssl(),
+        'VAULT_ENC_KEY': generate_hex_secret_openssl(),
         'FLOWISE_USERNAME': 'admin',
         'FLOWISE_PASSWORD': generate_secret(20),
         'SEARXNG_SECRET_KEY': generate_secret(32),

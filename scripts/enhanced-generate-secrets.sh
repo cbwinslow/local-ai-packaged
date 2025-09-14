@@ -280,6 +280,7 @@ SEARXNG_UWSGI_THREADS=4
 
 # Qdrant Vector Database
 QDRANT_URL=http://qdrant:6333
+# Generate Qdrant API Key
 QDRANT_API_KEY=$(openssl rand -hex 16)
 
 # =============================================================================

@@ -144,36 +144,9 @@ services:
       - 6333/tcp
       - 6334/tcp
     volumes:
-      - qdrant_storage:/qdrant/storage
+      - qdrant_data_persistent:/qdrant/storage
     networks:
       - default
-
-  neo4j:
-    image: neo4j:latest
-    container_name: neo4j
-    volumes:
-        - ./neo4j/logs:/logs
-        - ./neo4j/config:/config
-        - ./neo4j/data:/data
-        - ./neo4j/plugins:/plugins
-    expose:
-      - 7473/tcp
-      - 7474/tcp
-      - 7687/tcp
-    environment:
-        - NEO4J_AUTH=${NEO4J_AUTH:-"neo4j/your_password"}
-    restart: always
-    networks:
-      - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/neo4j`)"
-      - "traefik.http.routers.neo4j.entrypoints=websecure"
-      - "traefik.http.routers.neo4j.tls=true"
-      - "traefik.http.routers.neo4j.tls.certresolver=letsencrypt"
-      - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
-      - "traefik.http.middlewares.neo4j-stripprefix.stripprefix.prefixes=/neo4j"
-      - "traefik.http.routers.neo4j.middlewares=neo4j-stripprefix@docker"
 
   langfuse-worker:
     image: langfuse/langfuse-worker:3.0.0
@@ -328,7 +301,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
     volumes:
-      - langfuse_postgres_data:/var/lib/postgresql/data
+      - postgres_data_persistent:/var/lib/postgresql/data
     networks:
       - default
 
@@ -414,7 +387,6 @@ services:
       - agentic_data:/app/data
       - ./shared:/app/shared
     depends_on:
-      - neo4j
       - postgres
       - qdrant
     networks:
@@ -505,23 +477,117 @@ services:
     depends_on:
      - ollama-gpu-amd
 
- dashboard:
-   build:
-     context: ./dashboard
-     dockerfile: Dockerfile
-   container_name: dashboard
-   restart: unless-stopped
-   ports:
-     - "3000:3000"
-   volumes:
-     - /var/run/docker.sock:/var/run/docker.sock:ro
-   environment:
-     - NODE_ENV=production
-     - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
-     - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
-     - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
-     - GITHUB_TOKEN=${GITHUB_TOKEN}
-   depends_on:
-     - supabase
-   networks:
-     - supabase
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+      - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      - kong
+    networks:
+      - default
+
+# =============================================================================
+# PERSISTENT VOLUMES FOR DATA PERMANENCE
+# =============================================================================
+# Industry-standard approach using bind mounts to host directories
+# This ensures data persists even when containers are completely removed
+# =============================================================================
+volumes:
+  # Core Service Volumes
+  postgres_data_persistent:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/postgres/data
+  
+  qdrant_data_persistent:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/qdrant/data
+  
+  # Legacy volumes - keeping for backward compatibility
+  langfuse_postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/langfuse/postgres
+  
+  langfuse_clickhouse_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/langfuse/clickhouse/data
+  
+  langfuse_clickhouse_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/langfuse/clickhouse/logs
+  
+  langfuse_minio_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/langfuse/minio
+  
+  # Application Volumes
+  ollama_storage:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/ollama
+  
+  flowise:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/flowise
+  
+  open-webui:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/open-webui
+  
+  n8n_storage:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/n8n
+  
+  valkey-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/valkey
+  
+  agentic_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/agentic

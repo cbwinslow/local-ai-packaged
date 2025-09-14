@@ -452,11 +452,11 @@ clean_old_backups() {
     log_info "Cleaning backups older than $days days..."
     
     local count=0
-    find "$BACKUP_DIR" -name "*.tar.gz" -type f -mtime +$days | while read backup; do
+    while read backup; do
         log_info "Removing old backup: $(basename "$backup")"
         rm "$backup"
         ((count++))
-    done
+    done < <(find "$BACKUP_DIR" -name "*.tar.gz" -type f -mtime +$days)
     
     log_success "Cleaned $count old backup(s)"
 }

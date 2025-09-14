@@ -97,6 +97,4 @@ services:
 networks:
   traefik-public:
     external: true
-  default:
-    driver: bridge
 

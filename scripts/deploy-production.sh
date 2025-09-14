@@ -166,7 +166,7 @@ initialize_data() {
     
     # Create all necessary volume directories
     mkdir -p volumes/{postgres/data,qdrant/data,langfuse/{postgres,clickhouse/{data,logs},minio},ollama,flowise,open-webui,n8n,valkey,agentic}
-    mkdir -p volumes/{mcp/{congress/{data,logs},federal/data,fec/data,neo4j-memory/data,postgres/data,vectorize/data,embeddings/cache,azure/{data,config},cloudflare/data,oci/{data,config},pluggedin/data,github/data,stackhawk/data,logs/data},neo4j/{data,logs,import,plugins,conf},memgraph/{data,logs,etc},falkordb/data}
+    mkdir -p volumes/{mcp/{congress/{data,logs},federal/data,fec/data,neo4j-memory/data,postgres/data,vectorize/data,embeddings/cache,cloudflare/data,oci/{data,config},pluggedin/data,github/data,stackhawk/data,logs/data},neo4j/{data,logs,import,plugins,conf},memgraph/{data,logs,etc},falkordb/data}
     mkdir -p supabase/volumes/{db/{data,init-scripts},storage,functions,api}
     mkdir -p backups/{daily,weekly,monthly}
     mkdir -p logs/{application,system,error}
@@ -363,11 +363,6 @@ setup_cloud_integration() {
         
         if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
             log_info "Cloudflare integration available"
-            cloud_configured=true
-        fi
-        
-        if [ -n "$AZURE_CLIENT_ID" ]; then
-            log_info "Azure integration available"
             cloud_configured=true
         fi
         

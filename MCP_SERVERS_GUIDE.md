@@ -9,7 +9,7 @@ This document provides a comprehensive list of MCP (Model Context Protocol) serv
 The Local AI Package implements a production-ready, microservices architecture with:
 
 - **Permanent Data Storage**: All data persists through Docker volume recreation
-- **Cloud Integration**: Support for Cloudflare, Oracle OCI, and Azure free tiers
+- **Cloud Integration**: Support for Cloudflare and Oracle OCI free tiers
 - **Robust Networking**: Traefik reverse proxy with automatic HTTPS
 - **Comprehensive Monitoring**: Grafana, Prometheus, and Langfuse integration
 - **Security Best Practices**: Secrets management, encrypted communications
@@ -106,17 +106,7 @@ The Local AI Package implements a production-ready, microservices architecture w
 
 ### Cloud Integration MCP Servers
 
-#### 9. Azure MCP Server
-- **Port**: 3018
-- **Purpose**: Microsoft Azure cloud services integration
-- **Requirements**: Azure credentials
-- **Features**:
-  - Resource management
-  - Storage operations
-  - AI services access
-  - Cost monitoring
-
-#### 10. Cloudflare MCP Server
+#### 9. Cloudflare MCP Server
 - **Port**: 3019
 - **Purpose**: Cloudflare services integration
 - **Requirements**: Cloudflare API token
@@ -126,7 +116,7 @@ The Local AI Package implements a production-ready, microservices architecture w
   - Workers deployment
   - Analytics access
 
-#### 11. Oracle Cloud Infrastructure (OCI) MCP Server
+#### 10. Oracle Cloud Infrastructure (OCI) MCP Server
 - **Port**: 3020
 - **Purpose**: Oracle Cloud services integration
 - **Requirements**: OCI credentials
@@ -138,7 +128,7 @@ The Local AI Package implements a production-ready, microservices architecture w
 
 ### Development and Management MCP Servers
 
-#### 12. PluggedIn MCP (MCP Manager)
+#### 11. PluggedIn MCP (MCP Manager)
 - **Port**: 3021
 - **Purpose**: MCP server discovery and management
 - **Features**:
@@ -147,7 +137,7 @@ The Local AI Package implements a production-ready, microservices architecture w
   - Configuration management
   - Service discovery
 
-#### 13. GitHub MCP Server
+#### 12. GitHub MCP Server
 - **Port**: 3022
 - **Purpose**: GitHub repository and project management
 - **Requirements**: GitHub token
@@ -159,7 +149,7 @@ The Local AI Package implements a production-ready, microservices architecture w
 
 ### Security and Monitoring MCP Servers
 
-#### 14. StackHawk Security MCP
+#### 13. StackHawk Security MCP
 - **Port**: 3023
 - **Purpose**: Security scanning and vulnerability assessment
 - **Requirements**: StackHawk API key
@@ -169,7 +159,7 @@ The Local AI Package implements a production-ready, microservices architecture w
   - Security monitoring
   - Compliance checking
 
-#### 15. Log Analysis MCP Server
+#### 14. Log Analysis MCP Server
 - **Port**: 3024
 - **Purpose**: System and application log analysis
 - **Features**:
@@ -273,7 +263,6 @@ volumes/
 │   └── storage/
 ├── mcp/                   # MCP server data
 │   ├── congress/
-│   ├── azure/
 │   ├── cloudflare/
 │   └── ...
 └── backups/               # Automated backups
@@ -317,12 +306,6 @@ volumes/
 - **Autonomous Database**: 20GB
 - **Compute**: 2 OCPU hours
 - **Object Storage**: 10GB
-
-### Azure (12 Months Free)
-- **Storage**: 5GB LRS
-- **Database**: 250GB SQL Database
-- **Functions**: 1M requests/month
-- **AI Services**: Various quotas
 
 ## 🚀 Quick Start
 

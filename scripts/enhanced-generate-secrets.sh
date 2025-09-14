@@ -4,7 +4,7 @@
 # Enhanced Secrets Generation Script for Local AI Package
 # =============================================================================
 # This script generates all necessary secrets and API keys for the system
-# Includes cloud integration setup for Cloudflare, Oracle OCI, and Azure
+# Includes cloud integration setup for Cloudflare and Oracle OCI
 # =============================================================================
 
 set -e
@@ -111,7 +111,6 @@ echo
 echo "This script can help set up cloud integrations for permanent storage:"
 echo "1. Cloudflare (Free tier: Workers, R2 Storage, D1 Database)"
 echo "2. Oracle Cloud Infrastructure (Always Free tier: 20GB Block Storage, Autonomous Database)"
-echo "3. Azure (Free tier: 12 months of services)"
 echo
 
 read -p "Do you want to configure cloud integrations? (y/n): " cloud_setup
@@ -120,7 +119,6 @@ if [ "$cloud_setup" = "y" ] || [ "$cloud_setup" = "Y" ]; then
     echo -e "${YELLOW}Cloud Integration Notes:${NC}"
     echo "• Cloudflare: Visit https://dash.cloudflare.com to get API tokens"
     echo "• Oracle OCI: Visit https://cloud.oracle.com to get credentials"
-    echo "• Azure: Visit https://portal.azure.com to get credentials"
     echo
     echo "These will be set as placeholder values - update them with your actual credentials:"
     
@@ -134,12 +132,6 @@ if [ "$cloud_setup" = "y" ] || [ "$cloud_setup" = "Y" ]; then
     OCI_USER_ID="your-oci-user-id"
     OCI_FINGERPRINT="your-oci-fingerprint"
     OCI_REGION="us-ashburn-1"
-    
-    # Azure placeholders
-    AZURE_CLIENT_ID="your-azure-client-id"
-    AZURE_CLIENT_SECRET="your-azure-client-secret"
-    AZURE_TENANT_ID="your-azure-tenant-id"
-    AZURE_SUBSCRIPTION_ID="your-azure-subscription-id"
 else
     # Set empty values for cloud integrations
     CLOUDFLARE_API_TOKEN=""
@@ -149,10 +141,6 @@ else
     OCI_USER_ID=""
     OCI_FINGERPRINT=""
     OCI_REGION=""
-    AZURE_CLIENT_ID=""
-    AZURE_CLIENT_SECRET=""
-    AZURE_TENANT_ID=""
-    AZURE_SUBSCRIPTION_ID=""
 fi
 
 # =============================================================================
@@ -312,12 +300,6 @@ OCI_USER_ID=${OCI_USER_ID}
 OCI_FINGERPRINT=${OCI_FINGERPRINT}
 OCI_REGION=${OCI_REGION}
 
-# Azure (Free Tier)
-AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
-AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
-AZURE_TENANT_ID=${AZURE_TENANT_ID}
-AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
-
 # =============================================================================
 # EXTERNAL API KEYS (Add your own)
 # =============================================================================
@@ -369,7 +351,7 @@ echo -e "${BLUE}📁 Creating directory structure...${NC}"
 
 # Ensure all volume directories exist
 mkdir -p volumes/{postgres/data,qdrant/data,langfuse/{postgres,clickhouse/{data,logs},minio},ollama,flowise,open-webui,n8n,valkey,agentic}
-mkdir -p volumes/{mcp/{congress/{data,logs},federal/data,fec/data,neo4j-memory/data,postgres/data,vectorize/data,embeddings/cache,azure/{data,config},cloudflare/data,oci/{data,config},pluggedin/data,github/data,stackhawk/data,logs/data},neo4j/{data,logs,import,plugins,conf},memgraph/{data,logs,etc},falkordb/data}
+mkdir -p volumes/{mcp/{congress/{data,logs},federal/data,fec/data,neo4j-memory/data,postgres/data,vectorize/data,embeddings/cache,cloudflare/data,oci/{data,config},pluggedin/data,github/data,stackhawk/data,logs/data},neo4j/{data,logs,import,plugins,conf},memgraph/{data,logs,etc},falkordb/data}
 mkdir -p supabase/volumes/{db/{data,init-scripts},storage,functions,api}
 mkdir -p backups/{daily,weekly,monthly}
 mkdir -p logs/{application,system,error}
@@ -402,11 +384,6 @@ if [ "$cloud_setup" = "y" ] || [ "$cloud_setup" = "Y" ]; then
     echo "2. Create Always Free account"
     echo "3. Generate API key pair in Identity → Users → API Keys"
     echo "4. Update OCI_* variables in .env file"
-    echo
-    echo -e "${YELLOW}AZURE SETUP:${NC}"
-    echo "1. Visit https://portal.azure.com"
-    echo "2. Create a service principal: az ad sp create-for-rbac"
-    echo "3. Update AZURE_* variables in .env file"
     echo
 fi
 

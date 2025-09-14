@@ -4,7 +4,7 @@
 # Production-Grade Backup and Restore System for Local AI Package
 # =============================================================================
 # This script provides industry-standard backup and restore capabilities
-# with support for cloud storage (Cloudflare R2, Oracle OCI, Azure Blob)
+# with support for cloud storage (Cloudflare R2, Oracle OCI)
 # =============================================================================
 
 set -e
@@ -40,7 +40,7 @@ show_usage() {
     echo "  $0 restore <backup_file> [--confirm]"
     echo "  $0 list"
     echo "  $0 clean [--older-than-days=30]"
-    echo "  $0 cloud-backup [cloudflare|oracle|azure]"
+    echo "  $0 cloud-backup [cloudflare|oracle]"
     echo "  $0 cloud-restore <provider> <backup_name>"
     echo
     echo -e "${YELLOW}Commands:${NC}"
@@ -411,18 +411,6 @@ cloud_backup_oracle() {
     log_warning "Oracle OCI upload not implemented yet - configure oci cli"
 }
 
-cloud_backup_azure() {
-    local backup_file="$1"
-    log_info "Uploading to Azure Blob Storage..."
-    
-    if [ -z "$AZURE_CLIENT_ID" ]; then
-        log_error "Azure credentials not configured"
-        exit 1
-    fi
-    
-    log_warning "Azure Blob upload not implemented yet - configure az cli"
-}
-
 # =============================================================================
 # MAINTENANCE FUNCTIONS
 # =============================================================================
@@ -508,7 +496,6 @@ main() {
             case "$provider" in
                 "cloudflare") cloud_backup_cloudflare "$backup_file" ;;
                 "oracle") cloud_backup_oracle "$backup_file" ;;
-                "azure") cloud_backup_azure "$backup_file" ;;
                 *) log_error "Invalid cloud provider: $provider"; exit 1 ;;
             esac
             ;;

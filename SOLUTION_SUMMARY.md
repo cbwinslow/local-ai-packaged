@@ -37,7 +37,7 @@ This PR completely resolves all the infrastructure issues and implements a robus
 - All critical data stored in named Docker volumes with bind mounts
 - Data persists even if containers are completely recreated
 - Comprehensive backup system with cloud storage integration
-- Supports Cloudflare R2, Oracle OCI, and Azure Blob Storage
+- Supports Cloudflare R2 and Oracle OCI storage
 
 **MCP Servers List:**
 1. Congress.gov MCP Server (Port 3001)
@@ -48,18 +48,16 @@ This PR completely resolves all the infrastructure issues and implements a robus
 6. Redis MCP Server (Port 3015)
 7. Vectorize MCP Server (Port 3016)
 8. Embeddings MCP Server (Port 3017)
-9. Azure MCP Server (Port 3018)
-10. Cloudflare MCP Server (Port 3019)
-11. Oracle OCI MCP Server (Port 3020)
-12. PluggedIn MCP Manager (Port 3021)
-13. GitHub MCP Server (Port 3022)
-14. StackHawk Security MCP (Port 3023)
-15. Log Analysis MCP Server (Port 3024)
+9. Cloudflare MCP Server (Port 3019)
+10. Oracle OCI MCP Server (Port 3020)
+11. PluggedIn MCP Manager (Port 3021)
+12. GitHub MCP Server (Port 3022)
+13. StackHawk Security MCP (Port 3023)
+14. Log Analysis MCP Server (Port 3024)
 
 **Cloud Integration for Free Permanent Storage:**
 - **Cloudflare Free Tier**: 10GB R2 storage, Workers, D1 database
 - **Oracle OCI Always Free**: 200GB block storage, Autonomous Database
-- **Azure Free Tier**: 5GB storage, SQL Database, AI services
 
 ### 🛠️ Quick Start
 
@@ -97,7 +95,6 @@ volumes/
 │   └── storage/
 ├── mcp/                   # MCP server data
 │   ├── congress/
-│   ├── azure/
 │   └── cloudflare/
 └── backups/               # Automated backups
     ├── daily/
@@ -124,11 +121,10 @@ volumes/
 
 ### ☁️ Cloud Backup Strategy
 
-The backup system supports three cloud providers with free tiers:
+The backup system supports two cloud providers with free tiers:
 
 1. **Cloudflare R2**: S3-compatible storage with 10GB free
-2. **Oracle OCI**: 10GB object storage always free  
-3. **Azure Blob**: 5GB storage in free tier
+2. **Oracle OCI**: 10GB object storage always free
 
 ### 🔧 Management Commands
 

@@ -195,27 +195,6 @@ services:
   # CLOUD INTEGRATION MCP SERVERS
   # =============================================================================
 
-  # Azure MCP Server
-  mcp-azure:
-    build:
-      context: ./mcp-servers/azure-mcp
-      dockerfile: Dockerfile
-    container_name: mcp-azure
-    restart: unless-stopped
-    environment:
-      - PORT=3008
-      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
-      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
-      - NODE_ENV=production
-    ports:
-      - "3018:3008"
-    volumes:
-      - mcp_azure_data:/app/data
-      - mcp_azure_config:/app/config
-    networks:
-      - default
-
   # Cloudflare MCP Server
   mcp-cloudflare:
     build:
@@ -480,18 +459,6 @@ volumes:
       device: ${PWD}/volumes/mcp/embeddings/cache
 
   # Cloud Integration Volumes
-  mcp_azure_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/volumes/mcp/azure/data
-  mcp_azure_config:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/volumes/mcp/azure/config
   mcp_cloudflare_data:
     driver: local
     driver_opts:

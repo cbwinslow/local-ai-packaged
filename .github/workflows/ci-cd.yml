@@ -1,5 +1,8 @@
 name: Legacy CI/CD (Backup)
 
+permissions:
+  contents: read
+
 # This workflow is kept for reference but disabled to avoid conflicts
 # The main CI/CD is now handled by ci.yml
 

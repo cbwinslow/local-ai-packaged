@@ -1,0 +1,9 @@
+# Configuration for CoderabbitAI PR reviews
+version: 1
+review:
+  enabled: true
+  reviewers:
+    - coderabbitai
+  rules:
+    - match: '*'
+      actions: [comment, suggest]

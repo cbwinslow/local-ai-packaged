@@ -1,1 +1,4 @@
-{}
+coderabbitai:
+  pr_review: true
+copilot:
+  instructions: copilot-instructions.md

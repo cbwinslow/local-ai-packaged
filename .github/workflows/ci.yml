@@ -59,6 +59,9 @@ jobs:
   # Security and Vulnerability Scanning
   security:
     name: Security Scanning
+    permissions:
+      contents: read
+      security-events: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

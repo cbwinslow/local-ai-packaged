@@ -1,13 +1,10 @@
 include:
   - ./extensions.yml
-  - ./supabase/docker/docker-compose.yml
   - ./docker-compose.traefik.yml
   - ./docker-compose.mcp.yml
 
 networks:
   localai:
-    driver: bridge
-  supabase:
     driver: bridge
   default:
     name: localai_default
@@ -505,23 +502,21 @@ services:
     depends_on:
      - ollama-gpu-amd
 
- dashboard:
-   build:
-     context: ./dashboard
-     dockerfile: Dockerfile
-   container_name: dashboard
-   restart: unless-stopped
-   ports:
-     - "3000:3000"
-   volumes:
-     - /var/run/docker.sock:/var/run/docker.sock:ro
-   environment:
-     - NODE_ENV=production
-     - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
-     - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
-     - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
-     - GITHUB_TOKEN=${GITHUB_TOKEN}
-   depends_on:
-     - supabase
-   networks:
-     - supabase
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+      - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - default

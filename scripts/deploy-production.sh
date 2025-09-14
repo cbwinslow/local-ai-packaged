@@ -106,9 +106,9 @@ setup_environment() {
     if [ ! -f .env ]; then
         log_info "Generating environment configuration..."
         if [ "$DEPLOYMENT_TYPE" = "production" ]; then
-            echo "y" | ./scripts/enhanced-generate-secrets.sh
+            ./scripts/enhanced-generate-secrets.sh --yes
         else
-            echo "n" | ./scripts/enhanced-generate-secrets.sh
+            ./scripts/enhanced-generate-secrets.sh --no
         fi
     else
         log_info "Using existing .env file"

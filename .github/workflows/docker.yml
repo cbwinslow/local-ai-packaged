@@ -1,4 +1,6 @@
 name: Docker Image Management
+permissions:
+  contents: read
 
 on:
   push:

@@ -1,6 +1,6 @@
 include:
   - ./extensions.yml
-  - ./supabase/docker/docker-compose.yml
+  # - ./supabase/docker/docker-compose.yml  # Comment out until Supabase is properly initialized
   - ./docker-compose.traefik.yml
   - ./docker-compose.mcp.yml
 
@@ -505,23 +505,63 @@ services:
     depends_on:
      - ollama-gpu-amd
 
- dashboard:
-   build:
-     context: ./dashboard
-     dockerfile: Dockerfile
-   container_name: dashboard
-   restart: unless-stopped
-   ports:
-     - "3000:3000"
-   volumes:
-     - /var/run/docker.sock:/var/run/docker.sock:ro
-   environment:
-     - NODE_ENV=production
-     - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
-     - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
-     - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
-     - GITHUB_TOKEN=${GITHUB_TOKEN}
-   depends_on:
-     - supabase
-   networks:
-     - supabase
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+      - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    # Comment out supabase dependency until properly configured
+    # depends_on:
+    #   - supabase
+    networks:
+      - localai
+
+# Named volumes for data persistence
+volumes:
+  flowise:
+    driver: local
+  langfuse-postgres:
+    driver: local
+  langfuse-redis:
+    driver: local
+  qdrant-data:
+    driver: local
+  neo4j-data:
+    driver: local
+  neo4j-logs:
+    driver: local
+  supabase-db:
+    driver: local
+  supabase-storage:
+    driver: local
+  ollama_storage:
+    driver: local
+  open-webui:
+    driver: local
+  qdrant_storage:
+    driver: local
+  langfuse_clickhouse_data:
+    driver: local
+  langfuse_clickhouse_logs:
+    driver: local
+  langfuse_minio_data:
+    driver: local
+  langfuse_postgres_data:
+    driver: local
+  valkey-data:
+    driver: local
+  agentic_data:
+    driver: local
+  n8n_storage:
+    driver: local

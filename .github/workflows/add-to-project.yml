@@ -1,0 +1,21 @@
+name: Add to Project
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  project:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v1
+        with:
+          project-url: https://github.com/orgs/OWNER/projects/1
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          # Update project-url and provide PROJECT_TOKEN with project write access

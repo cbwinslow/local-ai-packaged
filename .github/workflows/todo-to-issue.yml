@@ -1,0 +1,19 @@
+name: TODO to Issue
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  convert:
+    permissions:
+      contents: read
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Convert TODOs to issues
+        uses: alstr/todo-to-issue-action@v0.9.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-assigned: true

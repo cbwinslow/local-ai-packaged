@@ -1,0 +1,9 @@
+frontend:
+  - frontend/**
+backend:
+  - services/**
+  - mcp-servers/**
+docs:
+  - '**/*.md'
+workflows:
+  - .github/workflows/**

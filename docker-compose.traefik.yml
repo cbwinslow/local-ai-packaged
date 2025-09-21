@@ -1,12 +1,10 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   traefik:
     image: traefik:v3.0
     container_name: traefik
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
     cap_drop:
       - ALL
     cap_add:
@@ -97,4 +95,3 @@ services:
 networks:
   traefik-public:
     external: true
-

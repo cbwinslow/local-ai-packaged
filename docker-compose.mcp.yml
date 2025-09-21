@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 # =============================================================================
 # COMPREHENSIVE MCP (Model Context Protocol) SERVERS
@@ -14,56 +14,46 @@ services:
   # =============================================================================
 
   # Congress.gov MCP Server
-  mcp-congress-gov:
-    build:
-      context: ./mcp-servers/congress_gov_mcp
-      dockerfile: Dockerfile
-    container_name: mcp-congress-gov
-    restart: unless-stopped
-    environment:
-      - PORT=3000
-      - CONGRESS_GOV_API_KEY=${CONGRESS_GOV_API_KEY}
-      - NODE_ENV=production
-      - LOG_LEVEL=info
-    ports:
-      - "3001:3000"
-    volumes:
-      - mcp_congress_data:/app/data
-      - mcp_congress_logs:/app/logs
-    networks:
-      - default
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mcp-congress.rule=Host(`localhost`) && PathPrefix(`/mcp/congress`)"
-      - "traefik.http.services.mcp-congress.loadbalancer.server.port=3000"
+  # mcp-congress-gov:
+  #   build:
+  #     context: ./mcp-servers/congress_gov_mcp
+  #     dockerfile: Dockerfile
+  #   container_name: mcp-congress-gov
+  #   restart: unless-stopped
+  #   environment:
+  #     - PORT=3000
+  #     - CONGRESS_GOV_API_KEY=${CONGRESS_GOV_API_KEY}
+  #     - NODE_ENV=production
+  #     - LOG_LEVEL=info
+  #   ports:
+  #     - "3001:3000"
+  #   volumes:
+  #     - mcp_congress_data:/app/data
+  #     - mcp_congress_logs:/app/logs
+  #   networks:
+  #     - default
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.mcp-congress.rule=Host(`localhost`) && PathPrefix(`/mcp/congress`)"
+  #     - "traefik.http.services.mcp-congress.loadbalancer.server.port=3000"
 
   # Federal Register MCP Server
-  mcp-federal-register:
-    build:
-      context: ./mcp-servers/federal-register-mcp
-      dockerfile: Dockerfile
-    container_name: mcp-federal-register
-    restart: unless-stopped
-    environment:
-      - PORT=3001
-      - FEDERAL_REGISTER_API_KEY=${FEDERAL_REGISTER_API_KEY}
-      - NODE_ENV=production
-    ports:
-      - "3011:3001"
-    volumes:
-      - mcp_federal_data:/app/data
-    networks:
-      - default
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  # mcp-federal-register:
+  #   build:
+  #     context: ./mcp-servers/federal-register-mcp
+  #     dockerfile: Dockerfile
+  #   container_name: mcp-federal-register
+  #   restart: unless-stopped
+  #   environment:
+  #     - PORT=3001
+  #     - FEDERAL_REGISTER_API_KEY=${FEDERAL_REGISTER_API_KEY}
+  #     - NODE_ENV=production
+  #   ports
 
   # FEC (Federal Election Commission) MCP Server
   mcp-fec:

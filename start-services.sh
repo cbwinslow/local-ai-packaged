@@ -3,7 +3,7 @@ set -e
 
 # Load environment variables
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    export $(grep -v '^#' .env | grep '=' | xargs)
 else
     echo "Error: .env file not found. Please run traefik/update-env.sh first."
     exit 1

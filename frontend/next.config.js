@@ -1,14 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  output: 'standalone',
+  // Remove invalid experimental options
+  // No appDir or other unsupported flags
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  // Add Tailwind CSS support if needed
+  webpack: (config) => {
+    config.resolve.alias.canvaskit = false;
+    return config;
   },
 }
 

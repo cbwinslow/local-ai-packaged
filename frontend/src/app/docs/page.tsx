@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { Link } from 'next/link'
-import { ArrowLeftIcon, Search, Menu } from '@heroicons/react/24/outline'
+import Link from 'next/link'
+import { ArrowLeftIcon, MagnifyingGlassIcon as Search, Bars3Icon as Menu } from '@heroicons/react/24/outline'
+import { AlertCircle } from 'lucide-react'
 
 interface DocContent {
   content: string

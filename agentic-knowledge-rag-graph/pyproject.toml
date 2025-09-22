@@ -1,0 +1,52 @@
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-knowledge-rag-graph"
+version = "0.0.1"
+description = "Agentic RAG Graph for Local AI Package"
+dependencies = [
+    "fastapi", 
+    "uvicorn", 
+    "neo4j",
+    "pydantic",
+    "python-multipart",
+    "pytest >= 7.0",
+    "pytest-cov >= 4.0",
+    "pytest-asyncio >= 0.21",
+    "pytest-mock >= 3.10",
+]
+
+[project.optional-dependencies]
+dev = ["pre-commit", "black", "isort", "mypy", "ruff"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+testpaths = [
+    "tests/unit",
+    "tests/integration",
+    "tests/e2e"
+]
+addopts = [
+    "-rs",
+    "-v",
+    "--cov=.",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-report=term-missing",
+    "--cov-fail-under=80"
+]
+filterwarnings = [
+    "ignore::pytest.PytestCollectionWarning",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", "*/__init__.py"]
+include = ["*"]

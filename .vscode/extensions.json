@@ -1,0 +1,40 @@
+{
+  "recommendations": [
+    {
+      "id": "ms-python.debugpy",
+      "description": "Python Debugger (required for debugpy configs)"
+    },
+    {
+      "id": "ms-vscode.vscode-typescript-next",
+      "description": "TypeScript and JavaScript Language Features"
+    },
+    {
+      "id": "golang.go",
+      "description": "Go (required for Go debugging)"
+    },
+    {
+      "id": "ms-vscode-remote.remote-containers",
+      "description": "Dev Containers (for Docker attach)"
+    },
+    {
+      "id": "ms-vscode.docker",
+      "description": "Docker (for container management)"
+    },
+    {
+      "id": "redhat.java",
+      "description": "Extension Pack for Java"
+    },
+    {
+      "id": "bradlc.vscode-tailwindcss",
+      "description": "Tailwind CSS IntelliSense (for frontend)"
+    },
+    {
+      "id": "ms-python.vscode-pylance",
+      "description": "Pylance (Python language server)"
+    },
+    {
+      "id": "ms-vscode.test-adapter-converter",
+      "description": "Test Explorer UI"
+    }
+  ]
+}

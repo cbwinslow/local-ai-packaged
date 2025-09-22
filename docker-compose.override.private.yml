@@ -43,7 +43,7 @@ services:
 
   postgres:
     ports:
-      - 127.0.0.1:9016:5432
+      - 127.0.0.1:5433:5432
 
   redis:
     ports:
@@ -64,22 +64,12 @@ services:
   ollama-gpu-amd:
     ports:
       - 127.0.0.1:9021:11434
-  prometheus:
-    ports:
-      - 127.0.0.1:9022:9090
-  grafana:
-    ports:
-      - 127.0.0.1:9023:3000
-  loki:
-    ports:
-      - 127.0.0.1:9024:3100
-  opensearch:
-    ports:
-      - 127.0.0.1:9025:9200
+
   graylog:
     ports:
       - 127.0.0.1:9026:9000
       - 127.0.0.1:9027:12201/udp
+
   rabbitmq:
     ports:
       - 127.0.0.1:9028:5672

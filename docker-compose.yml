@@ -475,22 +475,113 @@ services:
     depends_on:
      - ollama-gpu-amd
 
-  dashboard:
-    build:
-      context: ./dashboard
-      dockerfile: Dockerfile
-    container_name: dashboard
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - 27017
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - mongo_data:/data/db
+    networks:
+      - default
+
+  neo4j:
+    image: neo4j:5.23.0
+    container_name: neo4j
+    restart: unless-stopped
+    expose:
+      - 7687
+      - 7474
     environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_SUPABASE_URL=http://localhost:3000
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
-      - SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - NEO4J_AUTH=${NEO4J_AUTH}
+    volumes:
+      - neo4j_data:/data
+      - ./neo4j/config:/conf
+      - ./neo4j/logs:/logs
+      - ./neo4j/plugins:/plugins
+    networks:
+      - default
+
+  graylog:
+    image: graylog/graylog:5.2
+    container_name: graylog
+    restart: unless-stopped
+    expose:
+      - 9000
+      - 12201/udp
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET}
+      - GRAYLOG_ROOT_PASSWORD_SHA2=sha256:8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb2e57f9b5d3f96d00
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9026/
+      - GRAYLOG_HTTP_PUBLISH_URI=http://graylog:9000/
+      - GRAYLOG_ALTERNATIVE_HTTP_PORTS=9000
+      - GRAYLOG_PASSWORD=${GRAYLOG_PASSWORD}
+    depends_on:
+      - mongo
+      - opensearch
+    volumes:
+      - graylog_data:/usr/share/graylog/data
+    networks:
+      - default
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - default
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+    networks:
+      - default
+    depends_on:
+      - opensearch
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    expose:
+      - 5672
+      - 15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - default
+
+  localai:
+    image: quay.io/go-skynet/local-ai:latest
+    container_name: localai
+    restart: unless-stopped
+    expose:
+      - 8080
+    environment:
+      - LOCALAI_API_KEY=${LOCALAI_API_KEY}
+    volumes:
+      - localai_data:/build/models
     networks:
       - default
 
@@ -587,3 +678,38 @@ volumes:
       type: none
       o: bind
       device: ${PWD}/volumes/agentic
+
+  mongo_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/mongo
+
+  neo4j_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/neo4j/data
+
+  graylog_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/graylog/data
+
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/rabbitmq
+
+  localai_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/localai

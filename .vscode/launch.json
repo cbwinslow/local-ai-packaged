@@ -1,0 +1,197 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Launch Java Program",
+      "mainClass": "${input:mainClass}",
+      "projectName": "${workspaceFolderBasename}"
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Python: Current File",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Python: Debug Tests",
+      "module": "pytest",
+      "args": ["tests/"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Python: Government Data Ingestion",
+      "program": "${workspaceFolder}/scripts/government-data-ingestion.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "POSTGRES_PASSWORD": "${env:POSTGRES_PASSWORD}",
+        "NEO4J_AUTH": "${env:NEO4J_AUTH}"
+      },
+      "args": ["--config", "${workspaceFolder}/config/ingestion.json"]
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Python: Agentic RAG Graph",
+      "program": "${workspaceFolder}/agentic-knowledge-rag-graph/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/agentic-knowledge-rag-graph",
+        "NEO4J_URI": "bolt://localhost:7687",
+        "POSTGRES_URL": "postgresql://postgres:${env:POSTGRES_PASSWORD}@localhost:5432/postgres"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Next.js: Launch Frontend",
+      "program": "${workspaceFolder}/frontend/node_modules/.bin/next",
+      "args": ["dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Local:.*?http://localhost:3000",
+        "uriFormat": "http://localhost:3000"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "n8n: Debug Workflow",
+      "program": "${workspaceFolder}/node_modules/.bin/n8n",
+      "args": ["start"],
+      "cwd": "${workspaceFolder}/n8n",
+      "console": "integratedTerminal",
+      "env": {
+        "N8N_ENCRYPTION_KEY": "${env:N8N_ENCRYPTION_KEY}",
+        "DB_TYPE": "postgresdb",
+        "DB_POSTGRESDB_HOST": "localhost"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Node.js: Attach to Process",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Langfuse: Attach (Docker)",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Open WebUI: Attach (Docker)",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app/backend",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "go",
+      "request": "launch",
+      "name": "Ollama: Debug Go Binary",
+      "program": "${workspaceFolder}/models/ollama",
+      "env": {
+        "OLLAMA_HOST": "0.0.0.0:11434"
+      }
+    },
+    {
+      "type": "go",
+      "request": "attach",
+      "name": "Supabase: Attach Go Services",
+      "port": 2345,
+      "host": "localhost"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Docker: Attach to Container (Node Fallback)",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Qdrant: Attach Container (Node Fallback)",
+      "port": 6333,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/qdrant"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "MinIO: Attach (S3 Debug, Node Fallback)",
+      "port": 9000,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/data"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Postgres/Supabase DB: Attach (Node Fallback)",
+      "port": 5432,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/db",
+      "remoteRoot": "/var/lib/postgresql/data"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "ClickHouse: Attach Analytics (Node Fallback)",
+      "port": 8123,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/var/lib/clickhouse"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Python Ingestion + Frontend",
+      "configurations": ["Python: Government Data Ingestion", "Next.js: Launch Frontend"]
+    },
+    {
+      "name": "Docker Services + n8n",
+      "configurations": ["Docker: Attach to Container (Node Fallback)", "n8n: Debug Workflow"]
+    }
+  ],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "mainClass",
+      "description": "Enter the fully qualified name of the main class to debug (e.g., com.example.Main)"
+    }
+  ]
+}

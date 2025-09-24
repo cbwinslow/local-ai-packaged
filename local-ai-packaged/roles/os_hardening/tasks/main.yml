@@ -1,0 +1,84 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Install essential packages
+  apt:
+    name:
+      - curl
+      - git
+      - python3-pip
+      - python3-venv
+      - postgresql-{{ postgres_version }}
+      - postgresql-contrib-{{ postgres_version }}
+      - openjdk-17-jre-headless
+      - nodejs
+      - npm
+      - ufw
+      - htop
+      - vim
+    state: present
+  become: true
+
+- name: Allow SSH through UFW
+  ufw:
+    rule: allow
+    port: "{{ ufw_ssh_port }}"
+    proto: tcp
+  become: true
+
+- name: Allow service ports through UFW
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ ufw_allowed_ports }}"
+  become: true
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+  become: true
+
+- name: Disable swap
+  systemd:
+    name: swapfile.swap
+    enabled: false
+    state: stopped
+  become: true
+  ignore_errors: true
+
+- name: Set timezone to UTC
+  timezone:
+    name: UTC
+  become: true
+
+- name: Set locale to en_US.UTF-8
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+  become: true
+
+- name: Create project base directory
+  file:
+    path: "{{ project_base_path }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Clone main project repo to remote
+  git:
+    repo: 'https://github.com/yourusername/local-ai-packaged.git'  # Replace with actual repo URL
+    dest: "{{ app_code_path }}"
+    version: main
+    force: true
+  become: true
+
+- name: Run generate-secrets.sh on remote
+  shell: cd "{{ app_code_path }}" && bash scripts/generate-secrets.sh
+  become: true
+  args:
+    creates: "{{ secrets_path }}/.secrets_generated"

@@ -1,0 +1,9 @@
+name: 'Build RAG Pipeline'
+description: 'Test RAG components'
+runs:
+  using: 'composite'
+  steps:
+    - run: poetry install
+      shell: bash
+    - run: pytest tests/rag/ -v --cov=agentic_knowledge_rag_graph
+      shell: bash

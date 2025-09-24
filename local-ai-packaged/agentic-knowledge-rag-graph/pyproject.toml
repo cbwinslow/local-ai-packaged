@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "agentic-rag"
+version = "0.1.0"
+description = "Agentic RAG backend for legislative analysis"
+authors = ["Roo <roo@example.com>"]
+readme = "README.md"
+packages = [{include = "agentic_knowledge_rag_graph"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "0.1.0"
+neo4j = "5.20.0"
+supabase = "2.0.0"
+qdrant-client = "1.7.0"
+crewai = "0.30.0"
+pydantic = "2.5.0"
+ollama = "0.1.0"
+fastapi = "0.104.0"
+uvicorn = "0.24.0"
+
+[tool.poetry.scripts]
+rag = "main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

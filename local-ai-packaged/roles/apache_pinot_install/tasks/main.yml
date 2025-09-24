@@ -1,0 +1,36 @@
+---
+- name: Download Apache Pinot
+  get_url:
+    url: https://archive.apache.org/dist/pinot/1.0.0/apache-pinot-1.0.0-bin.tar.gz
+    dest: /tmp/pinot-1.0.0-bin.tar.gz
+  become: true
+
+- name: Extract Pinot
+  unarchive:
+    src: /tmp/pinot-1.0.0-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: pinot
+    group: pinot
+  become: true
+
+- name: Configure Pinot
+  template:
+    src: pinot/conf/pinot-cluster.properties
+    dest: /opt/apache-pinot-1.0.0/conf/pinot-cluster.properties
+  become: true
+
+- name: Create Pinot user
+  user:
+    name: pinot
+    groups: pinot
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Start Pinot services
+  systemd:
+    name: pinot
+    state: started
+    enabled: true
+  become: true

@@ -1,0 +1,16 @@
+name: 'Deploy Frontend'
+description: 'Build and deploy Next.js'
+inputs:
+  vercel-token:
+    description: 'Vercel API token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: npm ci && npm run build
+      shell: bash
+    - uses: vercel/action@v1
+      with:
+        vercel-token: ${{ inputs.vercel-token }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

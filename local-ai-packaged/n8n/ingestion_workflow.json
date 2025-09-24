@@ -1,0 +1,74 @@
+{
+  "name": "Legislation Ingestion Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.congress.gov/v3/bill",
+        "options": {}
+      },
+      "id": "http-request-node",
+      "name": "Fetch Bill Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse bill text and call RAG ingest\nreturn { file_path: 'temp_bill.txt', content: items[0].json.text };"
+      },
+      "id": "code-node",
+      "name": "Prepare for RAG",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://backend:8000/rag/ingest",
+        "options": {},
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file_path",
+              "value": "={{ $json.file_path }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "id": "rag-ingest-node",
+      "name": "Ingest to RAG",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Fetch Bill Data": {
+      "main": [
+        [
+          {
+            "node": "Prepare for RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare for RAG": {
+      "main": [
+        [
+          {
+            "node": "Ingest to RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": 1
+}

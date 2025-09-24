@@ -1,0 +1,17 @@
+name: 'Setup Python Env'
+description: 'Install Poetry and run pre-commit'
+inputs:
+  python-version:
+    description: 'Python version'
+    required: true
+    default: '3.11'
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - run: pip install poetry pre-commit
+      shell: bash
+    - run: pre-commit install
+      shell: bash

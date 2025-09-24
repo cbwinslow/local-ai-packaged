@@ -1,0 +1,9 @@
+name: 'Scan Knowledge Graph'
+description: 'Validate Neo4j schema'
+runs:
+  using: 'composite'
+  steps:
+    - run: docker run --rm -v $(pwd)/neo4j:/import neo4j:5.20 cypher-shell -u neo4j -p password "CALL dbms.listConfig() YIELD name, value WHERE name = 'dbms.security.procedures.unrestricted' RETURN *;"
+      shell: bash
+    - run: pytest tests/graph/ -v
+      shell: bash

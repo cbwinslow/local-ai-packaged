@@ -1,0 +1,38 @@
+---
+- name: AI Agent Actions Playbook
+  hosts: all
+  become: yes
+  vars:
+    agent_action: "analyze_legislation"  # Param: ingest, query, etc.
+    crewai_config:
+      agents:
+        - role: "RAG Agent"
+          goal: "Perform RAG operations"
+          backstory: "AI agent for legislative analysis"
+  tasks:
+    - name: Install CrewAI if not present
+      pip:
+        name: crewai
+        state: present
+    - name: Run CrewAI agent task
+      script: /app/agentic-knowledge-rag-graph/run_agent.py {{ agent_action }}
+      environment:
+        NEO4J_URI: "{{ neo4j_uri }}"
+        QDRANT_URL: "{{ qdrant_url }}"
+        OPENAI_API_KEY: "{{ openai_api_key }}"
+      register: agent_output
+    - name: Log agent results
+      debug:
+        var: agent_output.stdout
+    - name: Integrate with n8n for workflow
+      uri:
+        url: "http://localhost:5678/webhook/agent-trigger"
+        method: POST
+        body_format: json
+        body: "{{ agent_output.stdout | from_json }}"
+      when: agent_action == "query"
+  handlers:
+    - name: Restart backend after agent run
+      systemd:
+        name: backend
+        state: restarted

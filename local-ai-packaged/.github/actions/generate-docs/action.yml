@@ -1,0 +1,11 @@
+name: 'Generate Docs'
+description: 'Build Swagger/Storybook'
+runs:
+  using: 'composite'
+  steps:
+    - run: poetry run uvicorn main:app --reload --reload-dir . --port 8001 &
+      shell: bash
+    - run: npm run storybook:build
+      shell: bash
+    - run: cp -r docs/api/ public/
+      shell: bash

@@ -1,0 +1,29 @@
+---
+- name: Download Apache Metron
+  get_url:
+    url: https://archive.apache.org/dist/metron/0.7.1/apache-metron-0.7.1-bin.tar.gz
+    dest: /tmp/metron-0.7.1-bin.tar.gz
+  become: true
+
+- name: Extract Metron
+  unarchive:
+    src: /tmp/metron-0.7.1-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: metron
+    group: metron
+  become: true
+
+- name: Configure Metron
+  template:
+    src: metron.cfg.j2
+    dest: /opt/apache-metron-0.7.1/config/metron.cfg
+  become: true
+
+- name: Create Metron user
+  user:
+    name: metron
+    groups: metron
+    shell: /bin/bash
+    create_home: yes
+  become: true

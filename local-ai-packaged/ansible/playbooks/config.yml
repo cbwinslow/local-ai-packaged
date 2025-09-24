@@ -1,0 +1,51 @@
+---
+- name: Configuration Management Playbook
+  hosts: all
+  become: yes
+  vars:
+    config_changes:
+      - service: backend
+        key: BACKEND_PORT
+        value: 8001  # Example modification
+      - service: neo4j
+        key: NEO4J_AUTH
+        value: neo4j/newpass
+  tasks:
+    - name: Update backend config
+      lineinfile:
+        path: /app/.env
+        regexp: '^BACKEND_PORT='
+        line: "BACKEND_PORT={{ config_changes[0].value }}"
+      when: config_changes[0].service == 'backend'
+      notify: restart backend
+    - name: Update Neo4j auth
+      neo4j_config:
+        key: dbms.security.auth_enabled
+        value: true
+      notify: restart neo4j
+    - name: Apply Supabase RLS policies
+      postgresql_query:
+        db: postgres
+        query: |
+          CREATE POLICY "RAG access" ON rag_documents
+          FOR ALL USING (auth.uid() = user_id);
+        login_user: postgres
+        login_password: "{{ postgres_password }}"
+    - name: Configure n8n workflows
+      copy:
+        src: ../n8n/ingestion_workflow.json
+        dest: /home/node/.n8n/workflows/ingestion.json
+      notify: restart n8n
+  handlers:
+    - name: Restart backend
+      systemd:
+        name: backend
+        state: restarted
+    - name: Restart Neo4j
+      systemd:
+        name: neo4j
+        state: restarted
+    - name: Restart n8n
+      systemd:
+        name: n8n
+        state: restarted

@@ -1,0 +1,36 @@
+---
+- name: Download Apache Presto
+  get_url:
+    url: https://archive.apache.org/dist/presto/0.292/presto-server-0.292.tar.gz
+    dest: /tmp/presto-server-0.292.tar.gz
+  become: true
+
+- name: Extract Presto
+  unarchive:
+    src: /tmp/presto-server-0.292.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: presto
+    group: presto
+  become: true
+
+- name: Configure Presto
+  template:
+    src: config.properties.j2
+    dest: /opt/presto-server-0.292/etc/config.properties
+  become: true
+
+- name: Create Presto user
+  user:
+    name: presto
+    groups: presto
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Start Presto
+  systemd:
+    name: presto
+    state: started
+    enabled: true
+  become: true

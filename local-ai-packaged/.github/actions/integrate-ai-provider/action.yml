@@ -1,0 +1,18 @@
+name: 'Integrate AI Provider'
+description: 'Swap providers via env'
+inputs:
+  provider:
+    description: 'Provider name'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        if [ "${{ inputs.provider }}" = "openai" ]; then
+          export LLM_PROVIDER=openai
+          export OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+        else
+          export LLM_PROVIDER=ollama
+        fi
+        poetry run python -c "from main import app; print('Provider set')"
+      shell: bash

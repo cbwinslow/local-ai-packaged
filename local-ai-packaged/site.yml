@@ -1,0 +1,64 @@
+---
+- name: Bare Metal Deployment for Local AI Packaged - Phase 1
+  hosts: production
+  gather_facts: true
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  roles:
+    - os_hardening
+
+  tasks:
+    - name: Create roles directory if not exists
+      file:
+        path: "{{ playbook_dir }}/roles"
+        state: directory
+        mode: '0755'
+
+    - name: Verify SSH connection
+      ping:
+
+    - name: Run generate-secrets if not done
+      shell: |
+        if [ ! -f "{{ secrets_path }}/.secrets_generated" ]; then
+          cd "{{ app_code_path }}" && bash scripts/generate-secrets.sh
+          touch "{{ secrets_path }}/.secrets_generated"
+        fi
+      args:
+        executable: /bin/bash
+      register: secrets_gen
+      changed_when: secrets_gen.rc == 0
+
+    - name: Install Neo4j
+      include_role:
+        name: neo4j_install
+
+    - name: Install Postgres
+      include_role:
+        name: postgres_install
+
+    - name: Deploy code and configs
+      include_role:
+        name: code_deploy
+
+    - name: Setup OpenLegislation schemas
+      include_role:
+        name: schema_setup
+
+    - name: Start services
+      include_role:
+        name: service_start
+
+  post_tasks:
+    - name: Verify deployment
+      shell: |
+        systemctl is-active --quiet postgresql || echo "Postgres not active"
+        systemctl is-active --quiet neo4j || echo "Neo4j not active"
+        echo "Deployment complete. Check logs for errors."
+      register: verification
+      failed_when: false
+
+    - name: Display verification output
+      debug:
+        var: verification.stdout_lines

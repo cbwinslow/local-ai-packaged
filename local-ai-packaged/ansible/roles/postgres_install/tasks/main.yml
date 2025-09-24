@@ -1,0 +1,53 @@
+- name: Install Postgres
+  apt:
+    name: postgresql
+    state: present
+    update_cache: yes
+
+- name: Configure Postgres
+  template:
+    src: postgresql.conf.j2
+    dest: /etc/postgresql/{{ postgres_version }}/main/postgresql.conf
+  vars:
+    listen_addresses: '*'
+    port: 5432
+  notify: restart postgres
+
+- name: Start Postgres
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Create RAG database
+  postgresql_db:
+    name: rag_db
+    state: present
+    login_user: postgres
+    login_password: "{{ postgres_password }}"
+
+- name: Create RAG user
+  postgresql_user:
+    db: rag_db
+    name: rag_user
+    password: "{{ rag_password }}"
+    priv: ALL
+    state: present
+    login_user: postgres
+    login_password: "{{ postgres_password }}"
+
+- name: Run Supabase schema migration
+  postgresql_query:
+    db: rag_db
+    query_file: /path/to/supabase/migrate_schema.sql
+    login_user: postgres
+    login_password: "{{ postgres_password }}"
+
+- name: Enable RLS on RAG tables
+  postgresql_query:
+    db: rag_db
+    query: |
+      ALTER TABLE rag_documents ENABLE ROW LEVEL SECURITY;
+      CREATE POLICY "User access" ON rag_documents FOR ALL USING (auth.uid() = user_id);
+    login_user: postgres
+    login_password: "{{ postgres_password }}"

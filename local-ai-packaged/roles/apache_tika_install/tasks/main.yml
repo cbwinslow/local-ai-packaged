@@ -1,0 +1,39 @@
+---
+- name: Download Apache Tika
+  get_url:
+    url: https://archive.apache.org/dist/tika/tika-app-2.9.2.jar
+    dest: /opt/tika-app-2.9.2.jar
+  become: true
+
+- name: Create Tika user
+  user:
+    name: tika
+    groups: tika
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Create systemd service for Tika
+  copy:
+    content: |
+      [Unit]
+      Description=Apache Tika Server
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=tika
+      ExecStart=/usr/bin/java -jar /opt/tika-app-2.9.2.jar --host=0.0.0.0 --port=9998
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/tika.service
+  become: true
+
+- name: Start and enable Tika service
+  systemd:
+    name: tika
+    state: started
+    enabled: true
+  become: true

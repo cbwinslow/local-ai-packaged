@@ -1,0 +1,48 @@
+---
+- name: Monitoring Setup Playbook
+  hosts: all
+  become: yes
+  roles:
+    - prometheus_install  # Create role for Prometheus
+    - grafana_install  # Create role for Grafana
+    - sentry_install
+  vars:
+    prometheus_scrape_configs:
+      - job_name: 'backend'
+        static_configs:
+          - targets: ['localhost:8000']
+        metrics_path: '/metrics'  # Assume backend exposes
+      - job_name: 'neo4j'
+        static_configs:
+          - targets: ['localhost:7474']
+    grafana_admin_password: "admin123"  # Secure in vault
+  tasks:
+    - name: Configure Prometheus scrape
+      template:
+        src: prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+      notify: restart prometheus
+    - name: Add Grafana datasources
+      uri:
+        url: "http://localhost:3000/api/datasources"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ grafana_admin_token }}"
+        body_format: json
+        body: "{{ prometheus_datasource_json }}"
+    - name: Setup Sentry projects
+      sentry_project:
+        api_user: "{{ sentry_api_user }}"
+        api_key: "{{ sentry_api_key }}"
+        organization: local-ai
+        project: rag-backend
+        state: present
+  handlers:
+    - name: Restart Prometheus
+      systemd:
+        name: prometheus
+        state: restarted
+    - name: Restart Grafana
+      systemd:
+        name: grafana-server
+        state: restarted

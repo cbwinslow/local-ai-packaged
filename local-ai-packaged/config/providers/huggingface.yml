@@ -1,0 +1,7 @@
+provider: huggingface
+api_key: ${HF_TOKEN}
+base_url: https://api-inference.huggingface.co/models
+model: sentence-transformers/all-MiniLM-L6-v2
+task: feature-extraction
+fallback: local
+enabled: true

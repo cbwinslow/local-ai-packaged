@@ -1,0 +1,6 @@
+---
+- name: Restart Airflow
+  systemd:
+    name: airflow
+    state: restarted
+  become: true

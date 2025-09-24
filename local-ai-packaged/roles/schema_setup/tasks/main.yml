@@ -1,0 +1,46 @@
+---
+- name: Copy Neo4j schema Cypher to remote
+  copy:
+    src: "{{ openlegislation_schema_cypher }}"
+    dest: /tmp/openlegislation-schema.cypher
+    mode: '0644'
+  become: true
+
+- name: Apply Neo4j schema
+  shell: |
+    cypher-shell -u neo4j -p "{{ neo4j_password }}" < /tmp/openlegislation-schema.cypher
+  become: true
+  become_user: neo4j
+  no_log: true
+
+- name: Copy Supabase schema SQL to remote
+  copy:
+    src: "{{ openlegislation_supabase_sql }}"
+    dest: /tmp/openlegislation-schema.sql
+    mode: '0644'
+  become: true
+
+- name: Apply Supabase schema
+  shell: |
+    psql -U supabase -d supabase -f /tmp/openlegislation-schema.sql
+  become: true
+  become_user: postgres
+  environment:
+    PGPASSWORD: "{{ postgres_password }}"
+  no_log: true
+
+- name: Add RLS to Supabase tables
+  shell: |
+    psql -U supabase -d supabase -c "
+    ALTER TABLE members ENABLE ROW LEVEL SECURITY;
+    CREATE POLICY member_access ON members FOR ALL USING (true);  # Adjust for production RLS
+    ALTER TABLE bills ENABLE ROW LEVEL SECURITY;
+    CREATE POLICY bill_access ON bills FOR ALL USING (true);
+    ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
+    CREATE POLICY vote_access ON votes FOR ALL USING (true);
+    "
+  become: true
+  become_user: postgres
+  environment:
+    PGPASSWORD: "{{ postgres_password }}"
+  no_log: true

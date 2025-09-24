@@ -1,0 +1,44 @@
+---
+- name: Backup Playbook
+  hosts: all
+  become: yes
+  vars:
+    backup_dir: /backups/{{ ansible_date_time.date }}
+    retention_days: 30
+  tasks:
+    - name: Create backup dir
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+    - name: Backup Postgres
+      postgresql_db:
+        name: postgres
+        state: dump
+        dest: "{{ backup_dir }}/postgres_{{ ansible_date_time.epoch }}.sql"
+        login_user: postgres
+        login_password: "{{ postgres_password }}"
+      register: pg_backup
+    - name: Backup Neo4j
+      shell: neo4j-admin dump --database=neo4j --to={{ backup_dir }}/neo4j_{{ ansible_date_time.epoch }}.dump
+      environment:
+        NEO4J_AUTH: "{{ neo4j_auth }}"
+      register: neo_backup
+    - name: Backup Qdrant
+      shell: curl -X POST "http://localhost:6333/collections/legislation_docs/snapshots" -H "api-key: {{ qdrant_api_key }}" | jq -r '.snapshot_name' | xargs -I {} curl -X GET "http://localhost:6333/collections/legislation_docs/snapshots/{}/download" -o "{{ backup_dir }}/qdrant_{}.tar.gz"
+      register: qdrant_backup
+    - name: Clean old backups
+      find:
+        paths: /backups
+        age: "{{ retention_days }}d"
+        recurse: yes
+      register: old_backups
+    - name: Remove old backups
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ old_backups.files }}"
+  handlers:
+    - name: Notify backup success
+      debug:
+        msg: "Backups completed: {{ backup_dir }}"

@@ -1,0 +1,32 @@
+---
+- name: Install Qdrant
+  block:
+    - name: Add Qdrant repo
+      apt_repository:
+        repo: deb https://packages.qdrant.io/debian/ bookworm main
+        state: present
+        filename: qdrant
+    - name: Add Qdrant GPG key
+      apt_key:
+        url: https://packages.qdrant.io/debian/gpg.key
+        state: present
+    - name: Install Qdrant
+      apt:
+        name: qdrant
+        state: present
+        update_cache: yes
+    - name: Configure Qdrant
+      template:
+        src: qdrant-config.yml.j2
+        dest: /etc/qdrant/config/production.yaml
+      notify: restart qdrant
+    - name: Start Qdrant service
+      systemd:
+        name: qdrant
+        state: started
+        enabled: yes
+  handlers:
+    - name: Restart Qdrant
+      systemd:
+        name: qdrant
+        state: restarted

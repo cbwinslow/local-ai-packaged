@@ -1,0 +1,36 @@
+---
+- name: Download Apache Ranger
+  get_url:
+    url: https://archive.apache.org/dist/ranger/2.5.0/apache-ranger-2.5.0-bin.tar.gz
+    dest: /tmp/ranger-2.5.0-bin.tar.gz
+  become: true
+
+- name: Extract Ranger
+  unarchive:
+    src: /tmp/ranger-2.5.0-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: ranger
+    group: ranger
+  become: true
+
+- name: Configure Ranger
+  template:
+    src: ranger-admin-site.xml.j2
+    dest: /opt/apache-ranger-2.5.0/ews/webapp/WEB-INF/classes/conf/ranger-admin-site.xml
+  become: true
+
+- name: Create Ranger user
+  user:
+    name: ranger
+    groups: ranger
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Start Ranger services
+  systemd:
+    name: ranger
+    state: started
+    enabled: true
+  become: true

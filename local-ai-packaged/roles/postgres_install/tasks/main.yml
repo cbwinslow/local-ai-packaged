@@ -1,0 +1,77 @@
+---
+- name: Install Postgres
+  apt:
+    name:
+      - postgresql-{{ postgres_version }}
+      - postgresql-contrib-{{ postgres_version }}
+      - python3-psycopg2
+    state: present
+    update_cache: true
+  become: true
+
+- name: Ensure Postgres is started and enabled
+  systemd:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: Create Postgres user for Supabase
+  postgresql_user:
+    name: supabase
+    password: "{{ postgres_password }}"
+    role_attr_flags: CREATEDB,LOGIN
+    state: present
+  become: true
+  become_user: postgres
+  no_log: true
+
+- name: Create Supabase database
+  postgresql_db:
+    name: supabase
+    owner: supabase
+    state: present
+  become: true
+  become_user: postgres
+
+- name: Configure Postgres for remote access
+  lineinfile:
+    path: /etc/postgresql/{{ postgres_version }}/main/postgresql.conf
+    regexp: '^#listen_addresses ='
+    line: 'listen_addresses = "*"'
+    backup: yes
+  become: true
+  notify: restart postgres
+
+- name: Update Postgres pg_hba.conf for remote
+  lineinfile:
+    path: /etc/postgresql/{{ postgres_version }}/main/pg_hba.conf
+    line: 'host all all 0.0.0.0/0 md5'
+    insertafter: '^# IPv4 local connections:'
+  become: true
+  notify: restart postgres
+
+- name: Copy OpenLegislation Supabase SQL script
+  copy:
+    src: "{{ openlegislation_supabase_sql }}"
+    dest: /tmp/openlegislation-schema.sql
+    mode: '0644'
+  become: true
+  when: openlegislation_supabase_sql is defined
+
+- name: Apply OpenLegislation schema to Supabase
+  shell: |
+    psql -U supabase -d supabase -f /tmp/openlegislation-schema.sql
+  become: true
+  become_user: postgres
+  environment:
+    PGPASSWORD: "{{ postgres_password }}"
+  no_log: true
+  when: openlegislation_supabase_sql is defined
+
+- name: Restart Postgres after config changes
+  systemd:
+    name: postgresql
+    state: restarted
+  become: true
+  listen: restart postgres

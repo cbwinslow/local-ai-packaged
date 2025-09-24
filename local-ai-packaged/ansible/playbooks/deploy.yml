@@ -1,0 +1,46 @@
+---
+- name: Full Deployment Playbook
+  hosts: all
+  become: yes
+  roles:
+    - os_hardening
+    - postgres_install
+    - neo4j_install
+    - qdrant_install  # Assume role exists or create
+    - apache_solr_install  # For search if needed
+    - crewai_install
+    - apache_airflow_install  # For ETL
+    - sentry_install  # For monitoring
+    - schema_setup
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  post_tasks:
+    - name: Start services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - postgresql
+        - neo4j
+        - qdrant
+        - airflow-webserver
+        - sentry-web
+    - name: Health check services
+      uri:
+        url: "http://localhost:{{ item.port }}/health"
+        method: GET
+        status_code: 200
+      loop:
+        - { name: 'backend', port: 8000 }
+        - { name: 'neo4j', port: 7474 }
+      register: health_result
+      failed_when: health_result.status != 200
+  handlers:
+    - name: Restart services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - postgresql
+        - neo4j

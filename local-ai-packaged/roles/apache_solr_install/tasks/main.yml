@@ -1,0 +1,20 @@
+---
+- name: Install Apache Solr
+  apt:
+    name: solr
+    state: present
+  become: true
+
+- name: Configure Solr
+  template:
+    src: solr.xml.j2
+    dest: /etc/default/solr.in.sh
+  become: true
+  notify: Restart Solr
+
+- name: Start and enable Solr service
+  systemd:
+    name: solr
+    state: started
+    enabled: true
+  become: true

@@ -1,0 +1,19 @@
+name: 'Notify Team'
+description: 'Slack notification on failure'
+inputs:
+  channel:
+    description: 'Slack channel'
+    required: true
+  message:
+    description: 'Message'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: ${{ inputs.channel }}
+        text: ${{ inputs.message }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

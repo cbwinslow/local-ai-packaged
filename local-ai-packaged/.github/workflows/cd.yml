@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install -g semantic-release @semantic-release/github
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+  deploy-staging:
+    needs: semantic-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+      - name: Create kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo '${{ secrets.KUBECONFIG }}' > ~/.kube/config
+      - name: Deploy to staging
+        run: kubectl apply -f k8s/staging/

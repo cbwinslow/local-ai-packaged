@@ -1,0 +1,2 @@
+Sample legislative text for ingestion testing.
+Bill X: Introduced by Legislator Y on 2025-09-01. Amends section 123 for AI regulations. Key entities: Bill X, Legislator Y, AI regulations.

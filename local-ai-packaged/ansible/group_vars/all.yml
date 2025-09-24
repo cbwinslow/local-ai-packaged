@@ -1,0 +1,75 @@
+---
+# General Ansible variables for bare metal deployment
+ansible_python_interpreter: /usr/bin/python3
+
+# Server details
+remote_server_ip: "100.90.23.59"
+remote_user: "ubuntu"
+remote_ssh_key: "~/.ssh/id_rsa"
+
+# Paths on remote server
+project_base_path: "/opt/local-ai-packaged"
+neo4j_data_path: "/var/lib/neo4j"
+postgres_data_path: "/var/lib/postgresql/15/main"
+app_code_path: "{{ project_base_path }}/code"
+secrets_path: "{{ project_base_path }}/secrets"
+
+# Versions
+neo4j_version: "5.20.0"
+postgres_version: "15"
+python_version: "3.12"
+node_version: "20"
+
+# Services ports (base, adjust if conflicts)
+neo4j_bolt_port: 7687
+postgres_port: 5432
+n8n_port: 5678
+ollama_port: 11434
+flowise_port: 3000
+frontend_port: 3000
+
+# Secrets (abstracted, generate via generate-secrets.sh or vault)
+twitter_bearer_token: "{{ vault_twitter_bearer_token }}"
+neo4j_password: "{{ vault_neo4j_password }}"
+postgres_password: "{{ vault_postgres_password }}"
+supabase_jwt_secret: "{{ vault_supabase_jwt_secret }}"
+
+# OpenLegislation adaptation
+openlegislation_schema_cypher: "{{ app_code_path }}/neo4j/openlegislation-schema.cypher"
+openlegislation_supabase_sql: "{{ app_code_path }}/supabase/openlegislation-schema.sql"
+
+# Compliance
+ufw_ssh_port: 22
+ufw_allowed_ports: ["{{ neo4j_bolt_port }}", "{{ postgres_port }}", "{{ n8n_port }}", "{{ ollama_port }}", "{{ flowise_port }}", "{{ frontend_port }}"]
+
+# Shared vars for all hosts
+ansible_user: ubuntu  # Or your user
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+
+# Services URLs for communication
+neo4j_uri: bolt://localhost:7687
+neo4j_auth: neo4j/password  # Secure with vault
+qdrant_url: http://localhost:6333
+postgres_host: localhost
+postgres_port: 5432
+postgres_db: postgres
+postgres_user: postgres
+postgres_password: password  # Vault
+
+# Backend config
+backend_port: 8000
+backend_hosts:
+  - localhost
+
+# Monitoring
+prometheus_port: 9090
+grafana_port: 3000
+sentry_url: http://localhost:9000
+
+# AI Agents
+crewai_llm: openai  # or ollama
+openai_api_key: sk-your-key
+
+# Backups
+backup_dir: /backups
+retention_days: 30

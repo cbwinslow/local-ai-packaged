@@ -1,0 +1,318 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - neo4j
+      - qdrant
+      - postgres
+      - airflow
+      - nifi
+      - solr
+      - spark
+      - flink
+      - beam
+      - druid
+      - pinot
+      - cassandra
+      - hive
+      - tika
+      - nutch
+      - atlas
+      - metron
+      - pulsar
+      - presto
+      - oozie
+      - ranger
+      - ambari
+      - sentry
+      - crewai
+      - opensearch
+      - grafana
+      - loki
+      - rabbitmq
+      - prometheus
+      - localai
+      - localrecall
+      - graphite
+    networks:
+      - apache-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    networks:
+      - apache-net
+
+  neo4j:
+    image: neo4j:5.20
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    env_file:
+      - .env
+    volumes:
+      - neo4j-data:/data
+    networks:
+      - apache-net
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - apache-net
+
+  postgres:
+    image: supabase/postgres:15.1.0.147
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - apache-net
+
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    env_file:
+      - .env
+    networks:
+      - apache-net
+
+  airflow:
+    image: apache/airflow:2.9.0
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - airflow-dags:/opt/airflow/dags
+    networks:
+      - apache-net
+
+  nifi:
+    image: apache/nifi:2.0.0
+    ports:
+      - "8443:8443"
+    networks:
+      - apache-net
+
+  solr:
+    image: solr:9
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr-data:/var/solr
+    networks:
+      - apache-net
+
+  spark:
+    image: bitnami/spark:3.5
+    ports:
+      - "8081:8081"
+    environment:
+      - SPARK_MODE=master
+    networks:
+      - apache-net
+
+  flink:
+    image: flink:1.18
+    ports:
+      - "8082:8081"
+    networks:
+      - apache-net
+
+  beam:
+    image: apache/beam_java12:2.55.0
+    networks:
+      - apache-net
+
+  druid:
+    image: apache/druid:29.0.0
+    ports:
+      - "8888:8888"
+    networks:
+      - apache-net
+
+  pinot:
+    image: apache/pinot:1.0.0
+    ports:
+      - "9000:9000"
+    networks:
+      - apache-net
+
+  cassandra:
+    image: cassandra:4.1
+    ports:
+      - "9042:9042"
+    networks:
+      - apache-net
+
+  hive:
+    image: apache/hive:4.0.0
+    ports:
+      - "9083:9083"
+    networks:
+      - apache-net
+
+  tika:
+    image: apache/tika:2.9.2
+    ports:
+      - "9998:9998"
+    networks:
+      - apache-net
+
+  nutch:
+    image: apache/nutch:1.19
+    networks:
+      - apache-net
+
+  atlas:
+    image: apache/atlas:2.3.0
+    ports:
+      - "21000:21000"
+    networks:
+      - apache-net
+
+  metron:
+    image: apache/metron:0.7.1
+    ports:
+      - "5000:5000"
+    networks:
+      - apache-net
+
+  pulsar:
+    image: apache/pulsar:3.0.0
+    ports:
+      - "6650:6650"
+      - "8083:8080"
+    networks:
+      - apache-net
+
+  presto:
+    image: trinodb/trino:428
+    ports:
+      - "8084:8080"
+    networks:
+      - apache-net
+
+  oozie:
+    image: apache/oozie:5.2.0
+    ports:
+      - "11000:11000"
+    networks:
+      - apache-net
+
+  ranger:
+    image: apache/ranger:2.5.0
+    ports:
+      - "6080:6080"
+    networks:
+      - apache-net
+
+  ambari:
+    image: apache/ambari:2.7.5
+    ports:
+      - "8085:8080"
+    networks:
+      - apache-net
+
+  sentry:
+    image: sentry:23.5.0
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    networks:
+      - apache-net
+
+  crewai:
+    build: .
+    networks:
+      - apache-net
+
+  opensearch:
+    image: opensearchproject/opensearch:2.12.0
+    ports:
+      - "9200:9200"
+    networks:
+      - apache-net
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    ports:
+      - "3001:3000"
+    networks:
+      - apache-net
+
+  loki:
+    image: grafana/loki:3.0.0
+    ports:
+      - "3100:3100"
+    networks:
+      - apache-net
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - apache-net
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - apache-net
+
+  localai:
+    image: quay.io/go-skynet/local-ai:latest
+    ports:
+      - "8086:8080"
+    networks:
+      - apache-net
+
+  localrecall:
+    build: .
+    networks:
+      - apache-net
+
+  graphite:
+    image: graphiteapp/graphite-statsd:1.2.0
+    ports:
+      - "2003:2003"
+      - "8087:80"
+    networks:
+      - apache-net
+
+volumes:
+  neo4j-data:
+  qdrant-data:
+  postgres-data:
+  airflow-dags:
+  solr-data:
+
+networks:
+  apache-net:
+    driver: bridge

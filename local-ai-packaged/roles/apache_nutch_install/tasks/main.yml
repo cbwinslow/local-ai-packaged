@@ -1,0 +1,29 @@
+---
+- name: Download Apache Nutch
+  get_url:
+    url: https://archive.apache.org/dist/nutch/1.19/apache-nutch-1.19-bin.tar.gz
+    dest: /tmp/nutch-1.19-bin.tar.gz
+  become: true
+
+- name: Extract Nutch
+  unarchive:
+    src: /tmp/nutch-1.19-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: nutch
+    group: nutch
+  become: true
+
+- name: Configure Nutch
+  template:
+    src: nutch-site.xml.j2
+    dest: /opt/apache-nutch-1.19/conf/nutch-site.xml
+  become: true
+
+- name: Create Nutch user
+  user:
+    name: nutch
+    groups: nutch
+    shell: /bin/bash
+    create_home: yes
+  become: true

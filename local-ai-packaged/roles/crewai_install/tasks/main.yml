@@ -1,0 +1,25 @@
+---
+- name: Install Python virtualenv for CrewAI
+  pip:
+    name: virtualenv
+    state: present
+  become: true
+
+- name: Create virtualenv for CrewAI
+  command: virtualenv /opt/crewai-env
+  become: true
+
+- name: Activate virtualenv and install CrewAI
+  pip:
+    name: crewai
+    virtualenv: /opt/crewai-env
+    virtualenv_command: /opt/crewai-env/bin/pip
+  become: true
+
+- name: Create CrewAI user
+  user:
+    name: crewai
+    groups: crewai
+    shell: /bin/bash
+    create_home: yes
+  become: true

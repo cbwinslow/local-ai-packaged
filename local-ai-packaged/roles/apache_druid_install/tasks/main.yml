@@ -1,0 +1,36 @@
+---
+- name: Download Apache Druid
+  get_url:
+    url: https://archive.apache.org/dist/druid/29.0.0/apache-druid-29.0.0-bin.tar.gz
+    dest: /tmp/druid-29.0.0-bin.tar.gz
+  become: true
+
+- name: Extract Druid
+  unarchive:
+    src: /tmp/druid-29.0.0-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: druid
+    group: druid
+  become: true
+
+- name: Configure Druid
+  template:
+    src: druid/conf/druid/single-server/microquickstart/jvm.config
+    dest: /opt/apache-druid-29.0.0/conf/druid/single-server/microquickstart/jvm.config
+  become: true
+
+- name: Create Druid user
+  user:
+    name: druid
+    groups: druid
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Start Druid services
+  systemd:
+    name: druid
+    state: started
+    enabled: true
+  become: true

@@ -1,0 +1,28 @@
+---
+- name: Download Apache Beam SDK
+  get_url:
+    url: https://archive.apache.org/dist/beam/2.55.0/apache-beam-sdk_2.12-2.55.0.tar.gz
+    dest: /tmp/beam-sdk.tar.gz
+  become: true
+
+- name: Extract Beam SDK
+  unarchive:
+    src: /tmp/beam-sdk.tar.gz
+    dest: /opt
+    remote_src: yes
+    owner: beam
+    group: beam
+  become: true
+
+- name: Set JAVA_HOME for Beam
+  lineinfile:
+    path: /opt/apache-beam-2.55.0/conf/beam-env.sh
+    line: "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
+    create: yes
+  become: true
+
+- name: Install Beam Python bindings
+  pip:
+    name: apache-beam[gcp]==2==2.55.0
+    executable: /usr/bin/python3
+  become: true

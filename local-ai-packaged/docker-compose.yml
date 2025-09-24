@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - neo4j
+      - qdrant
+      - postgres
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+
+  neo4j:
+    image: neo4j:5.20
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    env_file:
+      - .env
+    volumes:
+      - neo4j-data:/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  postgres:
+    image: supabase/postgres:15.1.0.147
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    env_file:
+      - .env
+
+volumes:
+  neo4j-data:
+  qdrant-data:
+  postgres-data:

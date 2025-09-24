@@ -1,0 +1,27 @@
+---
+- name: Add Sentry repo
+  apt_repository:
+    repo: 'deb https://downloads.sentry.io/apt/debian generic main'
+    state: present
+  become: true
+
+- name: Install Sentry
+  apt:
+    name: sentry
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Configure Sentry
+  template:
+    src: sentry.conf.py.j2
+    dest: /etc/sentry/sentry.conf.py
+  become: true
+  notify: Restart Sentry
+
+- name: Start and enable Sentry service
+  systemd:
+    name: sentry
+    state: started
+    enabled: true
+  become: true

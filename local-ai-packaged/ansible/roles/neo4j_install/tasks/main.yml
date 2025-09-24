@@ -1,0 +1,44 @@
+- name: Install Neo4j
+  apt:
+    name: neo4j
+    state: present
+    update_cache: yes
+
+- name: Configure Neo4j
+  template:
+    src: neo4j.conf.j2
+    dest: /etc/neo4j/neo4j.conf
+  vars:
+    dbms_connector_bolt_enabled: true
+    dbms_connector_bolt_listen_address: 0.0.0.0:7687
+    dbms.security.auth_enabled: true
+  notify: restart neo4j
+
+- name: Start Neo4j
+  systemd:
+    name: neo4j
+    state: started
+    enabled: yes
+
+- name: Wait for Neo4j ready
+  uri:
+    url: "http://localhost:7474"
+    method: GET
+    status_code: 200
+  register: neo4j_health
+  until: neo4j_health.status == 200
+  retries: 10
+  delay: 5
+
+- name: Create RAG database
+  neo4j_db:
+    name: rag_db
+    state: present
+    login_user: neo4j
+    login_password: "{{ neo4j_password }}"
+
+- name: Add indexes for entities
+  neo4j_query:
+    query: "CREATE INDEX ON :Document(entities);"
+    login_user: neo4j
+    login_password: "{{ neo4j_password }}"

@@ -1,0 +1,43 @@
+---
+- name: Install Grafana for Monitoring
+  block:
+    - name: Add Grafana repo
+      apt_repository:
+        repo: deb https://packages.grafana.com/oss/deb stable main
+        state: present
+        filename: grafana
+    - name: Add Grafana GPG key
+      apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+        update_cache: yes
+    - name: Start Grafana
+      systemd:
+        name: grafana-server
+        state: started
+        enabled: yes
+    - name: Configure Grafana datasource (Prometheus)
+      uri:
+        url: "http://localhost:3000/api/datasources"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer admin:admin"  # Change password
+        body: |
+          {
+            "name": "Prometheus",
+            "type": "prometheus",
+            "url": "http://localhost:9090",
+            "access": "proxy",
+            "isDefault": true
+          }
+      register: grafana_ds
+  handlers:
+    - name: Restart Grafana
+      systemd:
+        name: grafana-server
+        state: restarted

@@ -1,0 +1,37 @@
+---
+- name: Install CrewAI for AI Agents
+  block:
+    - name: Install Python deps
+      pip:
+        name:
+          - crewai
+          - langchain
+          - langchain-community
+          - langchain-openai
+          - neo4j
+          - qdrant-client
+        state: present
+        virtualenv: /opt/crewai-venv
+        virtualenv_command: python3 -m venv
+    - name: Create CrewAI config
+      template:
+        src: crewai_config.py.j2
+        dest: /opt/crewai-venv/config.py
+      vars:
+        llm_provider: "{{ crewai_llm }}"
+        neo4j_uri: "{{ neo4j_uri }}"
+        qdrant_url: "{{ qdrant_url }}"
+    - name: Setup AI agent script
+      copy:
+        src: run_agent.py
+        dest: /opt/crewai-venv/run_agent.py
+        mode: '0755'
+    - name: Test CrewAI agent
+      shell: /opt/crewai-venv/bin/python /opt/crewai-venv/run_agent.py test
+      register: crewai_test
+      failed_when: crewai_test.rc != 0
+  handlers:
+    - name: Restart CrewAI service
+      systemd:
+        name: crewai-agent
+        state: restarted

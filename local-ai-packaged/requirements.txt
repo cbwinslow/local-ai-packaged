@@ -1,0 +1,15 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+langchain==0.1.20
+langchain-community==0.3.27
+langchain-core==0.1.52
+langchain-openai==0.0.10  # For OpenAI if needed; replace with langchain-ollama for local
+langchain-ollama==0.0.2  # For local Ollama
+neo4j==5.15.0
+qdrant-client==1.7.1
+supabase==2.4.20240911
+crewai==0.30.11
+python-dotenv==1.0.0
+pytest==7.4.4
+pre-commit==3.6.0

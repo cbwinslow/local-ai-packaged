@@ -1,0 +1,34 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Install Apache Airflow
+  apt:
+    name: apache-airflow
+    state: present
+  become: true
+
+- name: Configure Airflow
+  template:
+    src: airflow.cfg.j2
+    dest: /etc/airflow/airflow.cfg
+    owner: airflow
+    group: airflow
+  become: true
+  notify: Restart Airflow
+
+- name: Start and enable Airflow service
+  systemd:
+    name: airflow
+    state: started
+    enabled: true
+  become: true
+
+- name: Install Airflow dependencies
+  pip:
+    name: apache-airflow[postgres,celery]
+    executable: /usr/bin/python3
+  become: true
+  become_user: airflow

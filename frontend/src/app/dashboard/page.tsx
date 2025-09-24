@@ -72,7 +72,7 @@ export default function DashboardPage() {
         </div>
         <div className="bg-gray-800 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Knowledge Graph</h2>
-          <GraphViewer />
+          <GraphViewer data={[]} />
         </div>
       </div>
     </div>

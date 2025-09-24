@@ -1,43 +1,43 @@
 # Comprehensive Repository Documentation
 
 ## Table of Contents
-- [Comprehensive Repository Documentation](#comprehensive-repository-documentation)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Repository Structure](#repository-structure)
-  - [Technology Stack](#technology-stack)
-  - [Architecture](#architecture)
-  - [Processes and Procedures](#processes-and-procedures)
-    - [Installation and Setup](#installation-and-setup)
-    - [Service Deployment](#service-deployment)
-    - [RAG AI Agent Workflow](#rag-ai-agent-workflow)
-    - [Configuration Management](#configuration-management)
-    - [Port Management](#port-management)
-  - [Services and Components](#services-and-components)
-    - [Core Services](#core-services)
-    - [Supabase Stack](#supabase-stack)
-    - [AI and Workflow Services](#ai-and-workflow-services)
-    - [Observability and Utilities](#observability-and-utilities)
-  - [Docker Configuration](#docker-configuration)
-    - [Docker Compose Files](#docker-compose-files)
-    - [Volumes and Networks](#volumes-and-networks)
-    - [Container Orchestration](#container-orchestration)
-  - [Diagrams](#diagrams)
-    - [High-Level Architecture](#high-level-architecture)
-    - [Class Definitions](#class-definitions)
-    - [RAG Workflow Sequence](#rag-workflow-sequence)
-    - [Docker Network Topology](#docker-network-topology)
-    - [Service Dependencies](#service-dependencies)
-    - [SQL Tables and ERD](#sql-tables-and-erd)
-  - [Additional Coverage](#additional-coverage)
-    - [Ancillary Files](#ancillary-files)
-    - [Security Considerations](#security-considerations)
-    - [Potential Improvements](#potential-improvements)
-  - [Changelog](#changelog)
-  - [Indexes](#indexes)
+
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Processes and Procedures](#processes-and-procedures)
+  - [Installation and Setup](#installation-and-setup)
+  - [Service Deployment](#service-deployment)
+  - [RAG AI Agent Workflow](#rag-ai-agent-workflow)
+  - [Configuration Management](#configuration-management)
+  - [Port Management](#port-management)
+- [Services and Components](#services-and-components)
+  - [Core Services](#core-services)
+  - [Supabase Stack](#supabase-stack)
+  - [AI and Workflow Services](#ai-and-workflow-services)
+  - [Observability and Utilities](#observability-and-utilities)
+- [Docker Configuration](#docker-configuration)
+  - [Docker Compose Files](#docker-compose-files)
+  - [Volumes and Networks](#volumes-and-networks)
+  - [Container Orchestration](#container-orchestration)
+- [Diagrams](#diagrams)
+  - [High-Level Architecture](#high-level-architecture)
+  - [Class Definitions](#class-definitions)
+  - [RAG Workflow Sequence](#rag-workflow-sequence)
+  - [Docker Network Topology](#docker-network-topology)
+  - [Service Dependencies](#service-dependencies)
+  - [SQL Tables and ERD](#sql-tables-and-erd)
+- [Additional Coverage](#additional-coverage)
+  - [Ancillary Files](#ancillary-files)
+  - [Security Considerations](#security-considerations)
+  - [Potential Improvements](#potential-improvements)
+- [Changelog](#changelog)
+- [Indexes](#indexes)
 
 ## Overview
-The "local-ai-packaged" repository is a self-hosted AI development environment designed for building local Retrieval-Augmented Generation (RAG) AI agents. It provides a complete stack for low-code AI workflow automation using n8n, integrated with Supabase for database and authentication, Ollama for local LLMs, and supporting services like vector databases (Qdrant, PGVector), graph databases (Neo4j), search engines (SearxNG), and observability tools (Langfuse). The setup emphasizes privacy, offline operation, and ease of use for developers building AI agents without cloud dependencies.
+
+The "local-ai-packaged" repository is a self-hosted AI development environment for building local Retrieval-Augmented Generation (RAG) AI agents. It provides a complete stack for low-code AI workflow automation using n8n, integrated with Supabase for database and authentication, Ollama for local LLMs, and supporting services like vector databases (Qdrant, PGVector), graph databases (Neo4j), search engines (SearxNG), and observability tools (Langfuse). The setup emphasizes privacy, offline operation, and ease of use for developers building AI agents without cloud dependencies.
 
 Key features:
 - **Local RAG AI Agents**: Agentic workflows that handle document ingestion, vector storage, and intelligent querying across text and tabular data.
@@ -76,6 +76,7 @@ The repository is curated from the original n8n self-hosted AI starter kit with 
 Full licenses in respective repositories; this project aggregates under Apache 2.0 compatibility.
 
 ## Repository Structure
+
 The project is organized into directories for core configurations, services, and utilities:
 
 - **Root Level**:
@@ -115,6 +116,7 @@ The project is organized into directories for core configurations, services, and
 Total files: ~100, primarily YAML/JSON configs, Python scripts, and n8n workflows. No CI/CD pipelines or Terraform IaC; Docker Compose serves as primary infrastructure definition.
 
 ## Technology Stack
+
 - **Orchestration**: Docker Compose (v2+), Python 3.x (management scripts).
 - **Backend/Database**: Supabase (Postgres 15+, pgvector extension), Qdrant (vector DB), Neo4j (graph DB), Valkey/Redis (caching), MinIO (S3-compatible storage), ClickHouse (analytics).
 - **AI/ML**: Ollama (local LLMs: Qwen2.5, Nomic-Embed), Langfuse (LLM observability).
@@ -128,6 +130,7 @@ Total files: ~100, primarily YAML/JSON configs, Python scripts, and n8n workflow
 Dependencies managed via Docker images; no package managers like npm/pip in root (Supabase uses pnpm).
 
 ## Architecture
+
 The system follows a layered architecture:
 
 1. **Presentation Layer**: Web UIs (n8n:5678, Open WebUI:3000, Flowise:3001, Supabase Studio via proxy).
@@ -142,6 +145,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 ## Processes and Procedures
 
 ### Installation and Setup
+
 **Prerequisites**: Docker/Docker Desktop (v20+), Python 3.8+, Git, Bitwarden CLI (for secrets).
 
 **Step-by-Step**:
@@ -162,7 +166,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 - Migrations: db/migrations/*.sql (apply via `psql` or Supabase Studio).
 
 **Secrets Management**:
-- All secrets in Bitwarden (see [docs/secrets-setup.md](docs/secrets-setup.md)): Folders like "Local AI Package/Supabase".
+- All secrets in Bitwarden (see [Secrets Setup](docs/secrets-setup.md)): Folders like "Local AI Package/Supabase".
 - Repeatable: `./scripts/populate-env-from-bitwarden.sh && source .env` (no regeneration).
 - Cloudflare: For prod, use `wrangler secret put SUPABASE_JWT_SECRET` in wrangler.toml.
 
@@ -171,6 +175,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 **Best Practices**: chmod 600 .env; Backup vault; Rotate annually; Use public env only with TLS; Monitor via Grafana (http://localhost:8010, admin/admin).
 
 ### Service Deployment
+
 **Workflow**: Managed by [`start_services.py`](start_services.py).
 1. Clone/update Supabase submodule.
 2. Copy `.env` to Supabase docker dir.
@@ -186,6 +191,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 **Best Practices**: Use `--environment public` for cloud (closes non-80/443 ports); Update via `docker compose pull && down/up`.
 
 ### RAG AI Agent Workflow
+
 **Description**: [`V3_Local_Agentic_RAG_AI_Agent.json`](n8n/backup/workflows/V3_Local_Agentic_RAG_AI_Agent.json) implements agentic RAG for document querying.
 
 **Ingestion Process**:
@@ -209,6 +215,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 **Best Practices**: Run table creation nodes once (document_metadata, document_rows); Use shared volume for files; Tune chunk size for docs.
 
 ### Configuration Management
+
 **Tool**: [`config-manager.py`](config-manager.py) evaluates storage options.
 
 **Process**:
@@ -225,6 +232,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 **Best Practices**: Git-track configs; Validate schemas; Hot-reload in services.
 
 ### Port Management
+
 **Tool**: [`port-manager.py`](port-manager.py) resolves Docker port conflicts.
 
 **Process**:
@@ -243,6 +251,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 ## Services and Components
 
 ### Core Services
+
 - **n8n** (image: n8nio/n8n:latest): Low-code workflow engine. Ports: 5678 (internal), 9003 (private). Env: DB=postgres (Supabase), webhook URL. Deps: n8n-import (workflows/credentials). Communication: HTTP to Ollama/Qdrant/Supabase; Scales: Single instance. Monitoring: Langfuse integration.
 - **Ollama** (image: ollama/ollama:latest): Local LLM inference. Ports: 11434. Profiles: cpu/gpu-nvidia/gpu-amd (ROCm). Env: Context=8192, max models=2. Volumes: ollama_storage. Deps: None. Communication: HTTP API. Scaling: GPU-accelerated; Pull init models (qwen2.5:7b, nomic-embed).
 - **Supabase** (included compose): Full backend stack. See [Supabase Stack](#supabase-stack). Proxy via Caddy:8005.
@@ -258,6 +267,7 @@ Data Flow: Documents → File Trigger → Ingestion (chunk/embed/store in PGVect
 All sources are U.S. Government (public domain); No private data ingested.
 
 ### Supabase Stack
+
 Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compose.yml):
 - **studio** (supabase/studio): Dashboard. Port: 3000 (proxied). Deps: analytics. Env: SUPABASE_URL/KEYS. Health: API profile fetch.
 - **kong** (kong:2.8.1): API gateway. Ports: 8000/8443. Volumes: kong.yml. Env: Plugins (auth/cors). Deps: analytics. Communication: Upstream to auth/rest/etc.
@@ -276,13 +286,16 @@ Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compo
 **Inter-Service**: Kong routes to auth/rest/storage; All use shared DB; Realtime subscribes to DB changes.
 
 ### AI and Workflow Services
+
 - **flowise** (flowiseai/flowise): AI agent builder. Port: 3001. Env: FLOWISE_USERNAME/PASSWORD. Volumes: ~/.flowise. Entry: sleep then start.
 - **open-webui** (ghcr.io/open-webui/open-webui:main): Chat UI. Port: 8080. Volumes: open-webui data. Extra hosts: host.docker.internal.
 - **qdrant** (qdrant/qdrant): Vector DB. Ports: 6333/6334. Volumes: qdrant_storage.
 - **neo4j** (neo4j:latest): Graph DB. Ports: 7473/7474/7687. Volumes: logs/config/data/plugins. Env: NEO4J_AUTH.
 - **n8n-import** (n8n:latest): Imports workflows/credentials. Volumes: ./n8n/backup. Command: import from /backup. One-time.
+- **agentic-rag** (Build from ./agentic-knowledge-rag-graph/Dockerfile): RAG API. Port: 8000. Env: NEO4J_URI/AUTH, POSTGRES_URL, QDRANT_URL, OLLAMA_URL. Volumes: agentic_data, ./shared. Deps: postgres, qdrant, neo4j, ollama. Communication: HTTP to Ollama/Qdrant/Supabase; Scales: Single instance. Monitoring: Langfuse integration.
 
 ### Observability and Utilities
+
 - **langfuse-web/worker** (langfuse/langfuse:3): LLM tracing. Ports: 3000/3030. Deps: postgres/minio/redis/clickhouse. Env: DATABASE_URL, S3_*, CLICKHOUSE_*.
 - **searxng** (searxng/searxng:latest): Search. Port: 8080. Volumes: ./searxng. Env: SEARXNG_BASE_URL, UWSGI_*.
 - **Support Services**: postgres (langfuse), redis/valkey, minio, clickhouse (langfuse stack).
@@ -296,6 +309,7 @@ Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compo
 ## Docker Configuration
 
 ### Docker Compose Files
+
 - **Main** ([`docker-compose.yml`](docker-compose.yml)): Includes extensions.yml and supabase/docker/docker-compose.yml. Defines volumes (n8n_storage, ollama_storage, etc.), anchors (x-n8n, x-ollama), services (flowise, open-webui, n8n, qdrant, neo4j, caddy, langfuse stack, searxng, ollama profiles). Profiles: cpu/gpu-nvidia/gpu-amd. Healthchecks: wget/pg_isready/redis-cli. Caps: Drop ALL, add NET_BIND_SERVICE.
 - **Supabase** ([`supabase/docker/docker-compose.yml`](supabase/docker/docker-compose.yml)): 13 services (studio to supavisor). Multi-stage init via SQL volumes. Healthchecks for all. Volumes: db/data, functions, storage. Env heavy (JWT, SMTP, S3).
 - **Overrides**:
@@ -308,18 +322,21 @@ Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compo
 **Security Scans**: None automated; Manual via `docker scout` recommended. No vuln scans in scripts.
 
 ### Volumes and Networks
+
 **Volumes** (persistent):
 - n8n_storage, ollama_storage, qdrant_storage, open-webui, flowise (app data).
 - caddy-data/config (TLS/certs).
 - langfuse_postgres_data, langfuse_clickhouse_data/logs, langfuse_minio_data (observability).
 - Supabase: db/data, storage, functions, logs/vector.yml.
 - valkey-data (Redis).
+- agentic_data: RAG graph data.
 
 **Networks**: Default Docker bridge (implicit). No custom networks; All services communicate via service names (e.g., n8n → db:5432).
 
 **Persistence Strategies**: Named volumes for state; Bind mounts for configs/scripts (e.g., ./n8n/backup, ./searxng). Backup: Docker volume export or git for configs.
 
 ### Container Orchestration
+
 **Build/Run**: `docker compose up -d --profile <profile>`. Init: n8n-import completes before n8n; Ollama-pull before ollama. Depends_on: Langfuse on DBs (healthy); Supabase db on vector.
 **Runtime**: Restart: unless-stopped/always. Resource Limits: GPU res for ollama; Cap drops for security (caddy/searxng). Health: Interval 3-5s, retries 3-10.
 **Management**: `service-manager.py` for status/start/stop/logs; `docker compose down -v` for cleanup.
@@ -328,6 +345,7 @@ Catalog from [`supabase/docker/docker-compose.yml`](supabase/docker/docker-compo
 ## Diagrams
 
 ### High-Level Architecture
+
 ```mermaid
 graph TB
     subgraph "External Access"
@@ -373,6 +391,7 @@ graph TB
 ```
 
 ### Class Definitions
+
 **Database Models** (from [`db/models.py`](db/models.py); SQLAlchemy + Pydantic):
 - **APIKey**: Stores API keys (id: UUID, name, api_key, service_name: congress_gov/govinfo, rate_limit, is_active). Relationships: api_calls (APICallLog).
 - **APICallLog**: Logs calls (id, api_key_id, service_name, endpoint, method, status_code, response_time_ms, success, error_message, headers/body JSONB, ip_address, created_at). Indexes: service/created_at/api_key.
@@ -400,6 +419,7 @@ graph TB
 **Legend**: Solid arrows = HTTP/DB connections; Dashed = Optional (e.g., search).
 
 ### RAG Workflow Sequence
+
 ```mermaid
 sequenceDiagram
     participant F as File Trigger
@@ -420,6 +440,7 @@ sequenceDiagram
 ```
 
 ### Docker Network Topology
+
 ```mermaid
 graph LR
     subgraph "Docker Network (bridge)"
@@ -440,6 +461,7 @@ graph LR
 ```
 
 ### Service Dependencies
+
 ```mermaid
 graph TD
     N8N[n8n] --> DB[Supabase DB]
@@ -458,6 +480,7 @@ graph TD
 ```
 
 ### SQL Tables and ERD
+
 **Schema** (from [`db/migrations/001_initial_schema.sql`](db/migrations/001_initial_schema.sql); 362 lines):
 - Extensions: uuid-ossp, pgcrypto.
 - Tables: api_keys (id/name/api_key/service/rate_limit/active/timestamps), api_call_logs (id/api_key_id/service/endpoint/method/status/time/success/error/headers/body/ip/user/timestamp; indexes: service/created/api_key).
@@ -512,20 +535,22 @@ erDiagram
     }
 ```
 
-**Version**: v1.1 (2025-09-10; enhanced with classes/queue/ERD/sources/licenses).
+**Version**: v1.2 (2025-09-22; enhanced with new docs links, updated services, changelog).
 
 ## Additional Coverage
 
 ### Ancillary Files
+
 - **Environment**: [`.env`](.env) (secrets: POSTGRES_PASSWORD, JWT_SECRET, ANON_KEY); Backups (.env.backup.*).
 - **Scripts**: [`deploy-legislative-ai.sh`](deploy-legislative-ai.sh) (cloud deploy?), [`fix-jwt-problem.sh`](fix-jwt-problem.sh) (JWT fixes).
 - **n8n Tools**: [`Create_Google_Doc.json`](n8n-tool-workflows/Create_Google_Doc.json) (webhook → Google Drive create), [`Get_Postgres_Tables.json`](n8n-tool-workflows/Get_Postgres_Tables.json) (list public tables).
 - **Reports**: [`docker_status.py`](reports/docker_status.py) (status checks), [`yaml_validate.py`](reports/yaml_validate.py) (config validation).
-- **Other**: [`tasks.md`](tasks.md) (TODOs), [`errors.md`](errors.md) (common issues), [`extensions.yml`](extensions.yml) (Docker extensions), [`prometheus.yml`](prometheus.yml) (basic scraping), LICENSE, .gitignore.
+- **Other**: [`tasks.md`](tasks.md) (TODOs), [`errors.md`](docs/errors.md) (common issues), [`extensions.yml`](extensions.yml) (Docker extensions), [`prometheus.yml`](prometheus.yml) (basic scraping), LICENSE, .gitignore.
 
 No CI/CD (GitHub Actions in .github/ empty); IaC limited to Docker Compose (declarative services/volumes).
 
 ### Security Considerations
+
 - **Secrets**: Use [`fix-supabase-env.sh`](fix-supabase-env.sh) for random generation; Avoid @ in passwords; Store .env securely (gitignore'd).
 - **Proxy**: Caddy auto-TLS; Public env limits ports; Cap drops (ALL except NET_BIND_SERVICE).
 - **DB**: Supabase roles/JWT; No exposed DB ports in public.
@@ -536,6 +561,7 @@ No CI/CD (GitHub Actions in .github/ empty); IaC limited to Docker Compose (decl
 **Improvements**: Add secrets scanning (git-secrets); RBAC in n8n; Vault for dynamic secrets; OWASP scans.
 
 ### Potential Improvements
+
 - **CI/CD**: Add GitHub Actions for image builds/tests/deploy (e.g., to Kubernetes).
 - **Monitoring**: Full Prometheus/Grafana stack; Alerting on service health.
 - **Scaling**: Docker Swarm/K8s manifests; Auto-scaling for n8n workers.
@@ -545,10 +571,13 @@ No CI/CD (GitHub Actions in .github/ empty); IaC limited to Docker Compose (decl
 - **Security**: Add Falco for runtime security; Rotate secrets periodically.
 
 ## Changelog
+
 - **v1.0 (2025-09-10)**: Initial comprehensive documentation. Covered all files/services; Added Mermaid diagrams.
+- **v1.1 (2025-09-22)**: Enhanced with new docs (services.md, deployment.md, etc.), updated links, standardized structure.
 - **Future**: Update post major releases (e.g., Supabase v2, n8n updates).
 
 ## Indexes
+
 **Services Index**:
 - n8n: [Processes](#service-deployment), Ports 5678
 - Supabase: [Stack](#supabase-stack), Proxy 8005
@@ -561,4 +590,4 @@ No CI/CD (GitHub Actions in .github/ empty); IaC limited to Docker Compose (decl
 **Cross-References**: See [RAG Workflow](#rag-ai-agent-workflow) for n8n details; [Docker](#docker-configuration) for volumes.
 
 ---
-*Generated by Sonoma Documentation Writer. Last Updated: 2025-09-10.*
+*Generated by Roo Code Documentation Writer. Last Updated: 2025-09-22.*

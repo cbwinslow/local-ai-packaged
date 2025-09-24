@@ -1,193 +1,148 @@
-# 🚀 Quick Start Guide - Enhanced Local AI Package
+# 🚀 Quick Start Guide - Local AI Package
+
+Get the Local AI Package running in minutes. This guide covers cloning, secrets setup, launch, and first use for legislative analysis.
 
 ## Prerequisites
 
-Before getting started, ensure you have:
+- **System**: Linux/macOS (WSL2 for Windows); 16GB+ RAM, 50GB+ SSD space.
+- **Software**: Docker 20.10+, Docker Compose 2+, Git, Python 3.10+.
+- **Optional**: NVIDIA/AMD GPU (for acceleration); Bitwarden CLI (for secrets).
+- **API Keys**: Congress.gov (free registration); optional: OpenAI, SERPAPI.
 
-- **Docker** 20.10+ with Docker Compose
-- **Git** for repository cloning  
-- **Python 3.8+** for the installer scripts
-- **4GB+ RAM** (8GB+ recommended)
-- **20GB+ disk space**
+Install Bitwarden CLI (recommended for secrets):
+```bash
+wget -qO- https://downloads.bitwarden.com/cli/Bitwarden_Installer.sh | bash
+```
 
-## 🎯 30-Second Quick Start
+Verify Docker:
+```bash
+docker --version && docker compose version
+```
+
+## Step 1: Clone Repository
 
 ```bash
-# Clone and enter the repository
-git clone https://github.com/cbwinslow/local-ai-packaged.git
+git clone -b stable https://github.com/coleam00/local-ai-packaged.git
 cd local-ai-packaged
-
-# Run the one-click installer
-python3 install.py
-
-# Start all services  
-python3 start_services.py
-
-# Open your browser
-open http://localhost
 ```
 
-## 📋 What the Installer Does
+## Step 2: Secrets Management
 
-The `install.py` script automatically:
+Use Bitwarden for secure, repeatable secrets (no regeneration needed).
 
-1. ✅ **Checks requirements** (Docker, Git, Python)
-2. ✅ **Generates secure secrets** for all services
-3. ✅ **Creates .env file** with proper configuration
-4. ✅ **Sets up directories** for persistent data
-5. ✅ **Configures networking** for service communication
-6. ✅ **Prepares SSL certificates** for production use
+1. Authenticate Bitwarden:
+   ```bash
+   bw login  # Enter email/2FA
+   export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)
+   ```
 
-## 🔧 Installation Options
+2. Migrate/Store Secrets (one-time if new):
+   ```bash
+   ./scripts/migrate-secrets-to-bitwarden.sh  # Stores .env values in vault
+   ```
 
-### Basic Installation
+3. Populate `.env`:
+   ```bash
+   ./scripts/populate-env-from-bitwarden.sh
+   source .env
+   ```
+
+4. Validate:
+   ```bash
+   ./scripts/validate_env.sh
+   ```
+
+For production, use Cloudflare Secrets (Wrangler CLI). See [Secrets Setup](secrets-setup.md).
+
+**Critical Vars**: POSTGRES_PASSWORD, JWT_SECRET, ANON_KEY, NEO4J_AUTH (all 32+ hex chars).
+
+## Step 3: Launch Services
+
+Use the idempotent launch script for safe, multi-run startup.
+
+### Basic Launch (CPU, Local Dev)
 ```bash
-python3 install.py
-# Follow prompts, use defaults for local development
+./scripts/start-all-services.sh
 ```
 
-### Production Installation
+### GPU Launch
 ```bash
-python3 install.py
-# When prompted:
-# - Answer "y" for production domains
-# - Enter your domain name
-# - Enter your email for SSL certificates
+./scripts/start-all-services.sh -p gpu-nvidia  # Or gpu-amd
 ```
 
-### With GPU Support
+### Production Launch
 ```bash
-# For NVIDIA GPUs
-python3 start_services.py --profile gpu-nvidia
-
-# For AMD GPUs (Linux only)
-python3 start_services.py --profile gpu-amd
+./scripts/start-all-services.sh -e public  # Exposes only 80/443
 ```
 
-### Public Deployment
+### Specific Services
 ```bash
-# Secure configuration for cloud deployment
-python3 start_services.py --environment public
+./scripts/start-all-services.sh -s "n8n,frontend,postgres"
 ```
 
-## 🌐 Service Access
+The script:
+- Checks requirements/ports.
+- Pulls images.
+- Starts infrastructure (Postgres, Neo4j, Qdrant).
+- Launches Supabase, AI services (Ollama, n8n), apps (frontend).
+- Runs health checks.
+- Sets up monitoring (Grafana: admin/admin).
 
-After installation, access your services:
+Wait ~2-5 min for init (Ollama pulls models). Logs: `./logs/launch_*.log`.
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Dashboard** | http://localhost | Main control panel |
-| **N8N** | http://localhost/n8n | Workflow automation |
-| **Chat UI** | http://localhost/openwebui | Talk to your AI |
-| **Flowise** | http://localhost/flowise | Visual AI workflows |
-| **Database** | http://localhost/supabase | Data management |
-| **Analytics** | http://localhost/langfuse | AI observability |
-| **Graph DB** | http://localhost/neo4j | Knowledge graphs |
-| **RAG API** | http://localhost/agentic | Advanced AI features |
-
-## 🛠️ Common Commands
-
+For legislative features:
 ```bash
-# View all running services
-docker compose -p localai ps
-
-# Check service logs
-docker compose -p localai logs [service-name]
-
-# Restart a specific service
-docker compose -p localai restart [service-name]
-
-# Stop all services
-docker compose -p localai down
-
-# Update to latest versions
-docker compose -p localai pull
-python3 start_services.py
+./scripts/deploy-legislative-ai.sh  # Adds DB schema, queues, sample workflows
 ```
 
-## 🐛 Quick Troubleshooting
+## Step 4: Verify Setup
 
-### Services Won't Start
+Check status:
 ```bash
-# Check Docker is running
-docker info
-
-# Check logs for errors
-docker compose -p localai logs
-
-# Reset everything
-docker compose -p localai down -v
-python3 start_services.py
+docker compose ps  # All "Up"
+./scripts/health-check.sh  # Services healthy
 ```
 
-### Can't Access Services
-```bash
-# Check Traefik is running
-curl http://localhost:8080/ping
+Access points (private env; public via domain):
+- **Dashboard**: http://localhost:3000 (Next.js frontend).
+- **n8n**: http://localhost:5678 (setup local account; import workflows from `./n8n/backup`).
+- **Supabase Studio**: http://localhost:8005 (DASHBOARD_PASSWORD from .env).
+- **Open WebUI**: http://localhost:3001 (chat with Ollama; add n8n_pipe function).
+- **Flowise**: http://localhost:3002 (AI agents).
+- **Grafana**: http://localhost:3003 (monitoring; admin/admin).
+- **Neo4j Browser**: http://localhost:7474 (NEO4J_AUTH from .env).
+- **Qdrant Dashboard**: http://localhost:6333.
 
-# Verify network connectivity
-docker network ls | grep localai
-```
+Test ingestion:
+1. Add file to `./shared` (triggers n8n RAG workflow).
+2. Or curl n8n webhook: `curl -X POST http://localhost:5678/webhook/test -d '{"query": "HR1 summary"}'`.
 
-### Port Conflicts
-```bash
-# Find what's using port 80/443
-sudo lsof -i :80
-sudo lsof -i :443
+Verify DB: `docker exec -it postgres psql -U postgres -d postgres -c "SELECT * FROM legislative.bills LIMIT 1;"`.
 
-# Stop conflicting services
-sudo systemctl stop apache2  # Example
-```
+## Step 5: First Use - Analyze Legislation
 
-## 🔐 Security Notes
+1. **Ingest Data**: In n8n (5678), activate `V3_Local_Agentic_RAG_AI_Agent.json`; trigger Congress ingestion.
+2. **Query**: Dashboard search: "Bipartisan votes on healthcare bills."
+3. **Graph Viz**: Neo4j query: `MATCH (p:Politician)-[:SPONSORED]->(b:Bill) RETURN p, b LIMIT 10`.
+4. **Monitor**: Grafana for metrics; Langfuse (3004) for traces.
 
-- **Secrets are auto-generated** - Save them securely!
-- **Default passwords changed** - Check your .env file
-- **SSL enabled in production** - Use real domains
-- **Firewall configured** - Only necessary ports open
+See [Ingestion Guide](INGESTION_GUIDE.md) for sources; [Workflows](workflows.md) for agents.
 
-## 📊 Resource Usage
+## Troubleshooting
 
-### Minimum Requirements
-- **CPU**: 2 cores
-- **RAM**: 4GB
-- **Disk**: 20GB
-- **Network**: Broadband
+- **Services Fail**: `docker compose logs -f <service>`; check ports (`lsof -i :5432`).
+- **Supabase Errors**: Regenerate JWT: `./fix-jwt-problem.sh`; see [errors.md](errors.md).
+- **GPU Issues**: Fallback to CPU; verify drivers.
+- **Secrets**: Re-run populate script; validate no placeholders.
+- **Ports**: `./scripts/port-conflict-resolver.sh`.
 
-### Recommended for Production
-- **CPU**: 4+ cores
-- **RAM**: 8GB+
-- **Disk**: 50GB+ SSD
-- **Network**: High-speed internet
+Upgrades: `git pull && docker compose pull && ./scripts/start-all-services.sh --force-recreate`.
 
-## 🎯 Next Steps
+## Next Steps
 
-1. **Explore the Dashboard** - http://localhost
-2. **Create your first workflow** - N8N at http://localhost/n8n
-3. **Chat with AI models** - Open WebUI at http://localhost/openwebui
-4. **Monitor performance** - Langfuse at http://localhost/langfuse
-5. **Build knowledge graphs** - Neo4j at http://localhost/neo4j
+- Customize workflows in n8n.
+- Add API keys (Congress.gov) in dashboard.
+- Explore [Comprehensive Docs](COMPREHENSIVE-REPOSITORY-DOCUMENTATION.md).
+- Scale: Add workers (`python scripts/worker.py`).
 
-## 📞 Getting Help
-
-- **Documentation**: Check README_ENHANCED.md
-- **Logs**: `docker compose -p localai logs`
-- **Issues**: GitHub repository issues
-- **Community**: Discussion forums
-
-## 🔄 Updates
-
-```bash
-# Pull latest code
-git pull origin main
-
-# Update containers
-docker compose -p localai pull
-
-# Restart services
-python3 start_services.py
-```
-
----
-
-**Ready to build amazing AI applications? Start exploring your new Local AI Package! 🚀**
+Ready for AI-powered legislative analysis! 🚀

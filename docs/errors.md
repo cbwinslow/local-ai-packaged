@@ -1,142 +1,170 @@
-# Supabase Container Errors - Troubleshooting Report
+# Monitoring, Reports, and Troubleshooting
 
-## Current Status
-- ✅ supabase-postgrest: Up and running (listening on 0.0.0.0:3000->3000/tcp)
-- ❌ supabase-vector: Created status (failed to start)
-- ❌ supabase-imgproxy: Created status (failed to start)
-- ❌ supabase-kong: Not visible (likely failed to start)
-- ❌ supabase-db: Not visible (likely failed to start)
+This guide addresses common errors, monitoring setup, and report generation for the Local AI Package. It expands on Supabase-specific issues to cover the full stack (n8n, Ollama, queues, etc.) and includes monitoring with Grafana/Prometheus/Langfuse.
 
-## Root Causes Identified
+For service details, see [Services](services.md). For deployment issues, see [Deployment](deployment.md).
 
-### 1. Missing Environment Variables
-The following environment variables are set to placeholder values and need to be properly generated:
+## Table of Contents
 
-```bash
-LOGFLARE_PUBLIC_ACCESS_TOKEN=your-super-secret-and-long-logflare-key-public
-LOGFLARE_PRIVATE_ACCESS_TOKEN=your-super-secret-and-long-logflare-key-private
-```
+1. [Common Errors and Solutions](#common-errors-and-solutions)
+2. [Monitoring Setup](#monitoring-setup)
+3. [Report Generation](#report-generation)
+4. [Troubleshooting Tools](#troubleshooting-tools)
 
-### 2. Invalid JWT Tokens
-The JWT tokens appear to contain invalid characters that will cause parsing errors:
+## Common Errors and Solutions
 
-```bash
-ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+### Supabase Errors
 
-### 3. Missing Supabase Database Service
-The main `supabase-db` service may have failed to start, causing dependent services to fail.
+- **Pooler Restarting**: Connection pooler crashes.
+  - **Cause**: Invalid JWT, env mismatch, or special chars in passwords (e.g., "@").
+  - **Solution**: Run `./fix-jwt-problem.sh`; regenerate secrets: `./scripts/generate-secrets.sh`. Clear volumes if needed: `docker compose down -v`.
+  - **Verification**: `docker logs supabase-pooler` stable; `curl http://localhost:8000/health` returns OK.
 
-## Solutions Applied
+- **Analytics Startup Failure**: Analytics container fails after password change.
+  - **Cause**: Cached credentials in DB.
+  - **Solution**: `docker compose down -v` to reset volumes, then restart services.
+  - **Prevention**: Use Bitwarden for consistent secrets; avoid special chars.
 
-### Step 1: Generate Proper LogFlare Tokens
-```bash
-# Generate secure tokens
-LOGFLARE_PUBLIC_ACCESS_TOKEN=$(openssl rand -hex 32)
-LOGFLARE_PRIVATE_ACCESS_TOKEN=$(openssl rand -hex 32)
-```
+- **Service Unavailable (Kong/Auth)**: API gateway or auth errors.
+  - **Cause**: DB not ready or JWT expiration.
+  - **Solution**: Restart: `docker compose restart kong auth`; ensure POSTGRES_PASSWORD consistent across .env files.
+  - **Verification**: `docker logs supabase-kong` shows requests; `curl -H "apikey: ${ANON_KEY}" http://localhost:8000/rest/v1/ -H "apikey: ${SERVICE_ROLE_KEY}" http://localhost:8000/rest/v1/rpc/admin/`.
 
-### Step 2: Generate New JWT Keys
-```bash
-# Generate new JWT secret
-JWT_SECRET=$(openssl rand -hex 32)
+- **Realtime Unhealthy**: WebSocket service issues.
+  - **Cause**: DB encryption key mismatch.
+  - **Solution**: Verify DB_ENC_KEY in .env; restart realtime: `docker compose restart realtime`.
 
-# Generate new API keys using the Supabase CLI
-```
+### n8n Errors
 
-### Step 3: Clean Restart
-```bash
-# Stop all containers
-docker compose down -v
+- **Workflow Import Fails**: Credentials or workflows not loading.
+  - **Cause**: Invalid DB connection or missing files in ./n8n/backup.
+  - **Solution**: Restart n8n-import: `docker compose restart n8n-import`; check logs: `docker logs n8n-import`.
+  - **Verification**: In n8n UI (http://localhost:5678), workflows are listed.
 
-# Clean up volumes if needed
-docker system prune -a
+- **Webhook Not Triggering**: File triggers or webhooks fail.
+  - **Cause**: Shared volume not mounted or webhook URL wrong.
+  - **Solution**: Ensure `./shared` exists; set WEBHOOK_URL=http://localhost:5678 in .env; restart n8n.
+  - **Verification**: `curl -X POST http://localhost:5678/webhook/test -d '{}'`.
 
-# Start fresh
-docker compose up -d
-```
+### Ollama Errors
 
-## Common Supabase Container Errors
+- **Model Pull Fails**: Models not downloading.
+  - **Cause**: Network or storage issues.
+  - **Solution**: Manual pull: `docker exec ollama ollama pull qwen2.5:7b-instruct-q4_K_M`.
+  - **Verification**: `docker exec ollama ollama list` shows models.
 
-Based on Context7 documentation:
+- **GPU Not Used**: Inference on CPU despite GPU profile.
+  - **Cause**: Docker GPU not enabled or drivers missing.
+  - **Solution**: Verify `nvidia-smi`; restart with `--profile gpu-nvidia`; fallback to cpu.
+  - **Verification**: `docker exec ollama nvidia-smi` (GPU profile).
 
-### Postgres Connection Issues
-- **Error**: Prepared statement already exists
-- **Solution**: Add `pgbouncer=true` to connection string
+### Queue and Worker Errors
 
-### Authentication Failures
-- **Error**: Password authentication failed
-- **Solution**: Ensure POSTGRES_PASSWORD is correct and consistent
+- **Tasks Stuck in Pending**: Workers not processing.
+  - **Cause**: Worker not running or DB lock timeout.
+  - **Solution**: Start worker: `python scripts/worker.py --task-types bill_ingest`; check RabbitMQ UI (http://localhost:15672) for queue depth.
+  - **Verification**: `docker exec postgres psql -U postgres -c "SELECT COUNT(*) FROM tasks WHERE status = 'pending';"`.
 
-### Container Dependency Failures
-- **Error**: Healthcheck fails
-- **Solution**: Ensure services start in correct order (db → analytics → others)
+- **Dead Letter Queue**: Persistent failures.
+  - **Cause**: Max retries exceeded.
+  - **Solution**: Query failed tasks: `SELECT * FROM tasks WHERE status = 'failed' ORDER BY updated_at DESC;`; manual retry or cleanup.
+  - **Verification**: Worker logs: `python scripts/worker.py --log-level DEBUG`.
 
-### Network Issues
-- **Error**: Container networking conflicts
-- **Solution**: Check for port conflicts and network configuration
+### General Errors
 
-## Next Steps
+- **Port Conflicts**: Service fails to bind.
+  - **Solution**: `./scripts/port-conflict-resolver.sh resolve`; or manual `lsof -i :5432` and kill conflicting processes.
+  - **Verification**: `docker compose ps` shows no conflicts.
 
-1. ✅ **COMPLETED:** Generate proper environment variables and clean JWT tokens
-2. ✅ **COMPLETED:** Fix Kong YAML parsing error (line 31:5)
-3. 🔄 **IN PROGRESS:** Verify Auth service segmentation fault
-4. 🔄 **IN PROGRESS:** Check remaining services (storage, pooler, realtime)
+- **Volume Permissions**: Data not persisting.
+  - **Cause**: Docker user lacks write access.
+  - **Solution**: `sudo chown -R $USER:$USER volumes/`; restart.
+  - **Verification**: Create test file in `./shared`, restart, check if persists.
 
-## Resolution Summary
+- **Memory Issues**: Ollama or workers OOM.
+  - **Solution**: Increase limits in docker-compose.yml (e.g., memory: 4G for ollama); use smaller models.
+  - **Verification**: `docker stats` shows RAM < limits.
 
-### Kong YAML Parsing Fixed ✅
-- **Problem**: Kong failed with "did not find expected node content" at line 31:5
-- **Root Cause**: JWT tokens contained special characters (`<`, `>`, `|`, `^`, etc.) that broke YAML parsing
-- **Solution**: Regenerated JWT tokens using base64url encoding without special characters
-- **Result**: Kong now starts successfully and reaches "health: starting" state
+## Monitoring Setup
 
-### Auth Service Segmentation Fault ⚠️
-- **Problem**: Auth service crashes with nil pointer dereference in URL parsing
-- **Root Cause**: Segmentation fault during database migration URL parsing
-- **Status**: Still investigating, needs container startup to diagnose further
+The stack includes built-in monitoring for performance and debugging.
 
-### Current Status
-✅ Kong: Starting properly (major improvement)
-✅ Most Supabase services: Running healthy
-⚠️ Auth: Still restarting with segmentation fault
-⚠️ Storage: Created but not started
-⚠️ Pooler: Created but not started
-⚠️ Realtime: Running but unhealthy
+### Grafana/Prometheus
 
-## Outstanding Issues
+1. **Start**: Included in start-all-services.sh (ports 3003/9090 private).
+   - Config: prometheus.yml scrapes n8n, ollama, rabbitmq metrics.
 
-1. **Auth Service Fix**: Need to resolve segmentation fault
-2. **Storage Service**: Need to start service
-3. **Pooler Service**: Need to start service
-4. **Realtime Health**: Need to investigate unhealthy status
+2. **Access**: http://localhost:3003 (admin/admin).
+3. **Dashboards**:
+   - **Service Health**: Up/down status, response times.
+   - **Resource Usage**: CPU/RAM per container (docker stats exporter).
+   - **Queue Depth**: RabbitMQ queue lengths (prometheus-rabbitmq-exporter if added).
+   - **DB Metrics**: Postgres connections, query times (postgres_exporter).
+   - **AI Metrics**: Ollama inference latency, model loads.
 
-## Commands to Complete Setup
+4. **Setup Custom Dashboards**:
+   - Import JSON from community (e.g., n8n dashboard).
+   - Add panels: Add data source (Prometheus:9090), query `up{job="n8n"}` for uptime.
 
-```bash
-# Check current status
-python3 reports/docker_status.py
-docker ps -a -f name=supabase
+### Langfuse
 
-# Monitor Kong startup (should now work)
-docker logs -f supabase-kong
+- **Purpose**: LLM observability (traces, spans for n8n agents).
+- **Access**: http://localhost:3004 (init user from .env or default).
+- **Integration**: n8n nodes send traces automatically; view traces for RAG queries.
+- **Metrics**: Request latency, token usage, error rates for Ollama calls.
 
-# Once Kong is healthy, start remaining services
-docker start supabase-storage supabase-pooler
-```
+### Reports
 
-## Monitoring Commands
+Generated by scripts in `./reports/`; run via cron for scheduled.
 
-```bash
-# Check all Supabase containers
-docker ps -a -f name=supabase
+- **docker_status.py**: Container health/status.
+  ```bash
+  python reports/docker_status.py  # JSON output
+  ```
 
-# View logs for specific service
-docker logs supabase-kong
-docker logs supabase-auth
-docker logs supabase-db
+- **system_health.py**: System resources (CPU, RAM, disk).
+  ```bash
+  python reports/system_health.py --output json > health.json
+  ```
 
-# Check Docker Compose status
-docker compose ps
-docker compose logs
+- **network_monitor.py**: Network connectivity between services.
+  ```bash
+  python reports/network_monitor.py
+  ```
+
+- **generate_reports.py**: Full suite (health, network, queue stats).
+  ```bash
+  python scripts/generate_reports.py  # Outputs to reports/generated/
+  ```
+
+- **trivy-scan.md**: Security scan results (run `trivy image --exit-code 0 --no-progress --format markdown . > reports/trivy-scan.md`).
+- **yaml_validate.py**: Config validation.
+
+View reports in `./reports/generated/` (JSON, Markdown, TXT). Integrate with Grafana for dashboards.
+
+### Log Aggregation
+
+- **Docker Logs**: `docker compose logs -f <service>` for real-time.
+- **Graylog**: http://localhost:9000 (admin/admin); GELF input for services.
+- **Loki** (extensions): Scrapes logs; query in Grafana.
+
+## Troubleshooting Tools
+
+- **health-check.sh**: Overall system health (curl/psql/redis-cli).
+  ```bash
+  ./scripts/health-check.sh --check-all
+  ```
+
+- **validate_env.sh**: Env var validation.
+- **reports/docker_status.py**: Container status.
+- **docker compose ps/logs**: Service-specific.
+
+Common workflow:
+1. Run `./scripts/health-check.sh`.
+2. Check Grafana (3003) for metrics.
+3. View Langfuse traces for AI issues.
+4. Query DB: `docker exec postgres psql -U postgres -c "SELECT * FROM tasks WHERE status = 'failed';"`.
+
+For persistent issues, see individual service logs or [Services](services.md).
+
+This ensures reliable monitoring and quick error resolution for production use.

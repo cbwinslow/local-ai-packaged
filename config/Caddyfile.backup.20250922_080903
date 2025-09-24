@@ -135,10 +135,6 @@ import /etc/caddy/addons/*.conf
   reverse_proxy localai:8080
 }
 
-opendiscourse.net {
-  reverse_proxy frontend:3000
-}
-
 # Prometheus
 :8009 {
   reverse_proxy prometheus:9090

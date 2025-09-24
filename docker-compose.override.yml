@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  caddy:
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TAILSCALE_IP=100.90.23.59  # For homelab

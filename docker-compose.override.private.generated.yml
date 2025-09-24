@@ -1,5 +1,5 @@
 # Auto-generated port conflict resolution for private environment
-# Generated on Wed Sep 24 04:14:18 AM EDT 2025
+# Generated on Wed Sep 24 06:52:39 AM EDT 2025
 # This file resolves port conflicts by remapping services to available ports
 
 version: '3.8'

@@ -1,0 +1,78 @@
+---
+- name: Create namespace for local-ai
+  kubernetes.core.k8s:
+    name: local-ai
+    api_version: v1
+    kind: Namespace
+    state: present
+  tags: deploy
+
+- name: Copy K8s manifests to server
+  synchronize:
+    src: k8s/
+    dest: /tmp/k8s/
+  delegate_to: localhost
+  tags: deploy
+
+- name: Apply main K8s manifests
+  kubernetes.core.k8s:
+    state: present
+    src: /tmp/k8s/
+    namespace: local-ai
+  tags: deploy
+
+- name: Apply Supabase K8s manifests
+  kubernetes.core.k8s:
+    state: present
+    src: /tmp/k8s/supabase/
+    namespace: local-ai
+  tags: deploy
+
+- name: Generate and apply secrets
+  block:
+    - name: Run generate-secrets.sh on server
+      shell: |
+        cd {{ project_dir }}
+        ./scripts/generate-secrets.sh --yes
+      tags: secrets
+
+    - name: Create K8s secret from .env
+      kubernetes.core.k8s:
+        state: present
+        name: app-secrets
+        namespace: local-ai
+        type: Opaque
+        data:
+          POSTGRES_PASSWORD: "{{ lookup('env', 'POSTGRES_PASSWORD') | b64encode }}"
+          JWT_SECRET: "{{ lookup('env', 'JWT_SECRET') | b64encode }}"
+          # Add other secrets as needed
+  tags: secrets
+
+- name: Port conflict resolution for NodePort services
+  block:
+    - name: Check for port conflicts
+      shell: |
+        for port in {{ base_ports.values() | list | join(' ') }}; do
+          if netstat -tuln | grep -q ":$port "; then
+            echo "Port $port in use, assigning NodePort"
+            # Example for n8n: patch service to use dynamic NodePort
+            kubectl patch service n8n -n local-ai --type='json' -p='[{"spec":{"type":"NodePort","ports":[{"nodePort":{{ ansible_facts.default_ipv4.address | ipaddr('net') | int + 30000 }}}}]'
+          fi
+        done
+      register: port_check
+      changed_when: false
+      tags: ports
+
+    - name: Apply port patches if conflicts found
+      shell: |
+        kubectl patch service -n local-ai --type='json' -p='[{"spec":{"type":"NodePort"}}]' --dry-run=client -o yaml | kubectl apply -f -
+      when: port_check.stdout | length > 0
+      tags: ports
+
+- name: Verify deployment
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: local-ai
+  register: pods
+  failed_when: pods.resources | selectattr('status.phase', 'equalto', 'Running') | list | length < 10  # Adjust threshold
+  tags: verify

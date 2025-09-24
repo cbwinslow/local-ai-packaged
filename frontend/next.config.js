@@ -6,8 +6,21 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'cdn.jsdelivr.net',  // For icons and assets
       },
+      {
+        protocol: 'https',
+        hostname: 'unpkg.com',  // For library assets
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.com',  // For GitHub-hosted images
+      },
+      // Add more trusted domains as needed (e.g., your CDN)
+      // {
+      //   protocol: 'https',
+      //   hostname: 'your-cdn.com',
+      // },
     ],
   },
   // Add Tailwind CSS support if needed

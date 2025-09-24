@@ -1,0 +1,87 @@
+# Caddyfile for Local AI Packaged
+# Reverse proxy with TLS, auth middleware, and plugins for Supabase/n8n/Ollama
+# Run Caddy with: docker run -d -p 80:80 -p 443:443 -v $(pwd):/etc/caddy -v caddy_data:/data caddy caddy run --config /etc/caddy/Caddyfile
+
+{
+  # Global options
+  email blaine.winslow@gmail.com  # For Let's Encrypt
+  auto_https off  # Use Tailscale for TLS or manual
+}
+
+# Main site
+:80 {
+  # Middleware: Rate limiting, logging
+  rate_limit {
+    zone mylimit {
+      key {remote_host}
+      events 100
+      window 1m
+    }
+  }
+  log {
+    output file /data/access.log
+  }
+
+  # Forward auth for Supabase (optional, if using auth helpers)
+  forward_auth /auth {
+    uri http://localhost:8000/auth/check  # Supabase auth endpoint
+    copy_headers Remote-User Remote-Groups Remote-Name
+  }
+
+  # Routes
+  reverse_proxy /supabase* localhost:8000 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /n8n* localhost:5678 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /ollama* localhost:11434 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /qdrant* localhost:6333 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /neo4j* localhost:7474 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  reverse_proxy /frontend* localhost:3000 {
+    header_up Host {host}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+    header_up X-Forwarded-Proto {scheme}
+  }
+
+  # Default to frontend
+  reverse_proxy localhost:3000
+}
+
+# HTTPS for production (Tailscale or public)
+:443 {
+  tls internal  # Or cert /path/to/cert.pem /path/to/key.pem for custom
+  reverse_proxy /supabase* localhost:8000
+  reverse_proxy /n8n* localhost:5678
+  reverse_proxy /ollama* localhost:11434
+  reverse_proxy /qdrant* localhost:6333
+  reverse_proxy /neo4j* localhost:7474
+  reverse_proxy /frontend* localhost:3000
+}

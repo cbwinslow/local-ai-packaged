@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: DevOps AI
+  description: Install K3s on Ubuntu for Local AI Packaged
+  company: Local AI
+  license: Apache 2.0
+  min_ansible_version: "2.9"
+  github_branch: main
+  issue_tracker_url: https://github.com/coleam00/local-ai-packaged/issues
+  license_file: LICENSE
+  dependencies: []
+  galaxy_tags: [k3s, kubernetes, devops]

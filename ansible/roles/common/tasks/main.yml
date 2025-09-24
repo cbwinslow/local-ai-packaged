@@ -1,0 +1,114 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: always
+
+- name: Install required packages (curl, wget, ca-certificates)
+  apt:
+    name:
+      - curl
+      - wget
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - software-properties-common
+    state: present
+  tags: always
+
+- name: Install Docker
+  block:
+    - name: Add Docker GPG apt key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+        keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch={{ ansible_architecture }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        filename: docker
+
+    - name: Install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker service is started and enabled
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Ensure Docker socket permissions
+      file:
+        path: /var/run/docker.sock
+        state: file
+        mode: '0660'
+        group: docker
+  tags: always
+
+- name: Install Ansible (if not present, for potential internal use)
+  apt:
+    name: ansible
+    state: present
+  tags: always
+
+- name: Install Kompose for Compose to K8s conversion
+  get_url:
+    url: https://github.com/kubernetes/kompose/releases/download/{{ kompose_version }}/kompose-linux-amd64
+    dest: /usr/local/bin/kompose
+    mode: '0755'
+  tags: kompose
+
+- name: Ensure kubectl is available (install via snap or apt for k3s compat)
+  apt:
+    name: kubectl
+    state: present
+  tags: always
+
+- name: Clone repository to project_dir
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ project_dir }}"
+    version: stable
+    update: yes
+  tags: always
+
+- name: Create .env from example if not exists
+  copy:
+    src: "{{ project_dir }}/.env.example"
+    dest: "{{ project_dir }}/.env"
+    remote_src: yes
+    force: no
+  tags: always
+
+- name: Run generate-secrets.sh to populate .env
+  shell: |
+    cd {{ project_dir }}
+    ./scripts/generate-secrets.sh --yes
+  environment:
+    BW_PASSWORD: "{{ bw_password | default(omit) }}"  # Assume user sets or prompt
+  tags: secrets
+
+- name: Validate .env after generation
+  shell: |
+    cd {{ project_dir }}
+    ./scripts/validate_env.sh
+  register: validate_result
+  failed_when: validate_result.rc != 0
+  tags: always

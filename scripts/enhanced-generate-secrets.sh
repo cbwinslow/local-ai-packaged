@@ -73,93 +73,18 @@ GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-12)
 # Langfuse specific
 LANGFUSE_SALT=$(openssl rand -hex 16)
 
-echo -e "${GREEN}✅ Core secrets generated${NC}"
+# RabbitMQ credentials
+RABBITMQ_USER=$(openssl rand -hex 8)
+RABBITMQ_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 
-# =============================================================================
-# GENERATE PROPER JWT TOKENS
-# =============================================================================
-echo -e "${BLUE}🔐 Generating JWT tokens...${NC}"
+# Graylog credentials
+GRAYLOG_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
+GRAYLOG_PASSWORD_SECRET=$(openssl rand -hex 32)
 
-# Function to generate a proper JWT token
-generate_jwt_token() {
-    local role=$1
-    local secret=$2
-    local header='{"alg":"HS256","typ":"JWT"}'
-    local payload="{\"iss\":\"supabase\",\"ref\":\"local-ai-packaged\",\"role\":\"$role\",\"iat\":$(date +%s),\"exp\":$(($(date +%s) + 31536000))}"
-    
-    # Base64 encode header and payload
-    local header_b64=$(echo -n "$header" | base64 | tr -d '=' | sed 's/+/-/g' | sed 's/\//_/g')
-    local payload_b64=$(echo -n "$payload" | base64 | tr -d '=' | sed 's/+/-/g' | sed 's/\//_/g')
-    
-    # Create signature
-    local signature=$(echo -n "${header_b64}.${payload_b64}" | openssl dgst -sha256 -hmac "$secret" -binary | base64 | tr -d '=' | sed 's/+/-/g' | sed 's/\//_/g')
-    
-    echo "${header_b64}.${payload_b64}.${signature}"
-}
+# Compute Graylog SHA256
+GRAYLOG_ROOT_PASSWORD_SHA2="sha256:$(echo -n "$GRAYLOG_PASSWORD" | sha256sum | cut -d' ' -f1)"
 
-# Generate proper JWT tokens
-ANON_JWT=$(generate_jwt_token "anon" "$JWT_SECRET")
-SERVICE_ROLE_JWT=$(generate_jwt_token "service_role" "$JWT_SECRET")
-
-echo -e "${GREEN}✅ JWT tokens generated${NC}"
-
-# =============================================================================
-# CLOUD INTEGRATION SETUP
-# =============================================================================
-echo -e "${BLUE}☁️  Cloud Integration Setup${NC}"
-echo
-echo "This script can help set up cloud integrations for permanent storage:"
-echo "1. Cloudflare (Free tier: Workers, R2 Storage, D1 Database)"
-echo "2. Oracle Cloud Infrastructure (Always Free tier: 20GB Block Storage, Autonomous Database)"
-echo "3. Azure (Free tier: 12 months of services)"
-echo
-
-read -p "Do you want to configure cloud integrations? (y/n): " cloud_setup
-if [ "$cloud_setup" = "y" ] || [ "$cloud_setup" = "Y" ]; then
-    echo
-    echo -e "${YELLOW}Cloud Integration Notes:${NC}"
-    echo "• Cloudflare: Visit https://dash.cloudflare.com to get API tokens"
-    echo "• Oracle OCI: Visit https://cloud.oracle.com to get credentials"
-    echo "• Azure: Visit https://portal.azure.com to get credentials"
-    echo
-    echo "These will be set as placeholder values - update them with your actual credentials:"
-    
-    # Cloudflare placeholders
-    CLOUDFLARE_API_TOKEN="your-cloudflare-api-token"
-    CLOUDFLARE_ZONE_ID="your-cloudflare-zone-id"
-    CLOUDFLARE_ACCOUNT_ID="your-cloudflare-account-id"
-    
-    # Oracle OCI placeholders
-    OCI_TENANCY_ID="your-oci-tenancy-id"
-    OCI_USER_ID="your-oci-user-id"
-    OCI_FINGERPRINT="your-oci-fingerprint"
-    OCI_REGION="us-ashburn-1"
-    
-    # Azure placeholders
-    AZURE_CLIENT_ID="your-azure-client-id"
-    AZURE_CLIENT_SECRET="your-azure-client-secret"
-    AZURE_TENANT_ID="your-azure-tenant-id"
-    AZURE_SUBSCRIPTION_ID="your-azure-subscription-id"
-else
-    # Set empty values for cloud integrations
-    CLOUDFLARE_API_TOKEN=""
-    CLOUDFLARE_ZONE_ID=""
-    CLOUDFLARE_ACCOUNT_ID=""
-    OCI_TENANCY_ID=""
-    OCI_USER_ID=""
-    OCI_FINGERPRINT=""
-    OCI_REGION=""
-    AZURE_CLIENT_ID=""
-    AZURE_CLIENT_SECRET=""
-    AZURE_TENANT_ID=""
-    AZURE_SUBSCRIPTION_ID=""
-fi
-
-# =============================================================================
-# GENERATE .ENV FILE
-# =============================================================================
-echo -e "${BLUE}📄 Creating .env file...${NC}"
-
+# Write to .env
 cat > .env << EOF
 # =============================================================================
 # Local AI Package - Complete Environment Configuration
@@ -180,8 +105,8 @@ DOCKER_PROJECT_NAME=localai
 # =============================================================================
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 JWT_SECRET=${JWT_SECRET}
-ANON_KEY=${ANON_JWT}
-SERVICE_ROLE_KEY=${SERVICE_ROLE_JWT}
+ANON_KEY=${ANON_KEY}
+SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
 ENCRYPTION_KEY=${ENCRYPTION_KEY}
 NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
 SECRET_KEY_BASE=${SECRET_KEY_BASE}
@@ -269,6 +194,15 @@ LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID=minio
 LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT=http://localhost:9090
 LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE=true
 LANGFUSE_S3_MEDIA_UPLOAD_PREFIX=media/
+
+LANGFUSE_S3_BATCH_EXPORT_ENABLED=false
+LANGFUSE_S3_BATCH_EXPORT_BUCKET=langfuse
+LANGFUSE_S3_BATCH_EXPORT_PREFIX=exports/
+LANGFUSE_S3_BATCH_EXPORT_REGION=auto
+LANGFUSE_S3_BATCH_EXPORT_ENDPOINT=http://minio:9000
+LANGFUSE_S3_BATCH_EXPORT_EXTERNAL_ENDPOINT=http://localhost:9090
+LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID=minio
+LANGFUSE_S3_BATCH_EXPORT_FORCE_PATH_STYLE=true
 
 # =============================================================================
 # SEARCH & DISCOVERY

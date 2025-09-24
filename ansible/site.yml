@@ -1,0 +1,28 @@
+---
+- name: Deploy Local AI Packaged to K3s
+  hosts: production
+  become: yes
+  gather_facts: yes
+  pre_tasks:
+    - name: Ensure project dir exists
+      file:
+        path: "{{ project_dir }}"
+        state: directory
+        mode: '0755'
+
+  roles:
+    - common
+    - k3s_install
+    - k8s_deploy
+
+  post_tasks:
+    - name: Verify deployment
+      shell: kubectl get pods -A
+      register: pod_status
+      failed_when: "'Running' not in pod_status.stdout"
+      tags: verify
+
+    - name: Show K3s cluster info
+      shell: kubectl cluster-info
+      register: cluster_info
+      tags: verify

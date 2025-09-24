@@ -1,6 +1,7 @@
+version: "3.8"
+
 include:
   - ./extensions.yml
-  - ./docker-compose.traefik.yml
 
 networks:
   localai:
@@ -67,15 +68,6 @@ services:
     entrypoint: /bin/sh -c "sleep 3; flowise start"
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.flowise.rule=Host(`${FLOWISE_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/flowise`)"
-      - "traefik.http.routers.flowise.entrypoints=websecure"
-      - "traefik.http.routers.flowise.tls=true"
-      - "traefik.http.routers.flowise.tls.certresolver=letsencrypt"
-      - "traefik.http.services.flowise.loadbalancer.server.port=3001"
-      - "traefik.http.middlewares.flowise-stripprefix.stripprefix.prefixes=/flowise"
-      - "traefik.http.routers.flowise.middlewares=flowise-stripprefix@docker"
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -89,15 +81,6 @@ services:
       - open-webui:/app/backend/data
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.openwebui.rule=Host(`${WEBUI_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/openwebui`)"
-      - "traefik.http.routers.openwebui.entrypoints=websecure"
-      - "traefik.http.routers.openwebui.tls=true"
-      - "traefik.http.routers.openwebui.tls.certresolver=letsencrypt"
-      - "traefik.http.services.openwebui.loadbalancer.server.port=8080"
-      - "traefik.http.middlewares.openwebui-stripprefix.stripprefix.prefixes=/openwebui"
-      - "traefik.http.routers.openwebui.middlewares=openwebui-stripprefix@docker"
 
   n8n-import:
     <<: *service-n8n
@@ -124,15 +107,6 @@ services:
         condition: service_completed_successfully
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.n8n.rule=Host(`${N8N_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/n8n`)"
-      - "traefik.http.routers.n8n.entrypoints=websecure"
-      - "traefik.http.routers.n8n.tls=true"
-      - "traefik.http.routers.n8n.tls.certresolver=letsencrypt"
-      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
-      - "traefik.http.middlewares.n8n-stripprefix.stripprefix.prefixes=/n8n"
-      - "traefik.http.routers.n8n.middlewares=n8n-stripprefix@docker"
 
   qdrant:
     image: qdrant/qdrant:v1.10.1
@@ -227,15 +201,6 @@ services:
       LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.langfuse.rule=Host(`${LANGFUSE_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/langfuse`)"
-      - "traefik.http.routers.langfuse.entrypoints=websecure"
-      - "traefik.http.routers.langfuse.tls=true"
-      - "traefik.http.routers.langfuse.tls.certresolver=letsencrypt"
-      - "traefik.http.services.langfuse.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.langfuse-stripprefix.stripprefix.prefixes=/langfuse"
-      - "traefik.http.routers.langfuse.middlewares=langfuse-stripprefix@docker"
 
   clickhouse:
     image: clickhouse/clickhouse-server:24.8
@@ -356,15 +321,6 @@ services:
         max-file: "1"
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.searxng.rule=Host(`${SEARXNG_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/searxng`)"
-      - "traefik.http.routers.searxng.entrypoints=websecure"
-      - "traefik.http.routers.searxng.tls=true"
-      - "traefik.http.routers.searxng.tls.certresolver=letsencrypt"
-      - "traefik.http.services.searxng.loadbalancer.server.port=8080"
-      - "traefik.http.middlewares.searxng-stripprefix.stripprefix.prefixes=/searxng"
-      - "traefik.http.routers.searxng.middlewares=searxng-stripprefix@docker"
 
   # Agentic Knowledge RAG Graph service
   agentic-rag:
@@ -389,15 +345,6 @@ services:
       - qdrant
     networks:
       - default
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.agentic.rule=Host(`${AGENTIC_HOSTNAME:-localhost}`) || Host(`localhost`) && PathPrefix(`/agentic`)"
-      - "traefik.http.routers.agentic.entrypoints=websecure"
-      - "traefik.http.routers.agentic.tls=true"
-      - "traefik.http.routers.agentic.tls.certresolver=letsencrypt"
-      - "traefik.http.services.agentic.loadbalancer.server.port=8000"
-      - "traefik.http.middlewares.agentic-stripprefix.stripprefix.prefixes=/agentic"
-      - "traefik.http.routers.agentic.middlewares=agentic-stripprefix@docker"
 
   # Frontend Next.js application
   frontend:
@@ -418,14 +365,28 @@ services:
       - postgres
     networks:
       - default
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      - default
+    depends_on:
+      - postgres
+      - n8n
+      - ollama
+      - qdrant
+      - neo4j
+      - frontend
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${FRONTEND_HOSTNAME:-localhost}`) || Host(`localhost`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.enable=false"  # Disable Traefik for Caddy
 
   ollama-cpu:
     profiles: ["cpu"]
@@ -720,3 +681,10 @@ volumes:
       type: none
       o: bind
       device: ${PWD}/volumes/opensearch
+
+  caddy_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/volumes/caddy

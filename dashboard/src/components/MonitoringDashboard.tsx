@@ -24,6 +24,13 @@ interface Alert {
   service: string;
 }
 
+/**
+ * Render a system monitoring dashboard showing services, metrics, alerts, and logs.
+ *
+ * The component uses local mock data, maintains loading and last-updated state, and automatically refreshes its data every 30 seconds.
+ *
+ * @returns A React element that displays the monitoring dashboard UI (services grid, system metrics, recent alerts, and service logs).
+ */
 export function MonitoringDashboard() {
   const [services, setServices] = useState<ServiceStatus[]>([]);
   const [metrics, setMetrics] = useState<Record<string, Metric[]>>({});

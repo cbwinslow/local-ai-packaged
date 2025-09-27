@@ -88,7 +88,14 @@ class Config:
     
     @classmethod
     def to_dict(cls) -> Dict[str, Any]:
-        """Convert config to dictionary, excluding sensitive information."""
+        """
+        Return a dictionary representation of the Config class with sensitive values redacted.
+        
+        Builds a mapping of class-level configuration attributes to their values by including only attributes whose names are all uppercase, skipping private attributes, non-uppercase names, and callables. Attributes whose names contain "key", "password", or "secret" are redacted: if the value is truthy it is replaced with '***REDACTED***', otherwise set to None.
+        
+        Returns:
+            Dict[str, Any]: Dictionary of configuration names to values or redacted placeholders.
+        """
         config_dict = {}
         for key, value in cls.__dict__.items():
             if key.startswith('_') or callable(value) or key.isupper() is False:

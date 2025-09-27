@@ -4,6 +4,13 @@ import { useUser } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
+/**
+ * Render the authentication page that redirects signed-in users to the root and displays a themed sign-in interface for unauthenticated users.
+ *
+ * When a user is present the component navigates to '/' and shows a brief "Redirecting..." indicator; otherwise it renders a centered sign-in UI configured with ThemeSupa, GitHub and Google providers, and links to Terms of Service and Privacy Policy.
+ *
+ * @returns A JSX element containing either a redirecting indicator (when a user exists) or the themed sign-in UI with social providers and legal links.
+ */
 export default function AuthPage() {
   const user = useUser()
   const router = useRouter()

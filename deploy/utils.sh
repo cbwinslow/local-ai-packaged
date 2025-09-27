@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 # Global vars (override in caller)
 LOG_FILE="${LOG_FILE:-/tmp/deploy.log}"
 
-# Logging function
+# log writes a timestamped, level-prefixed message to LOG_FILE and prints a colorized, level-prefixed message to stdout (sent to stderr when level is ERROR).
 log() {
     local level="$1"
     shift
@@ -26,7 +26,7 @@ log() {
     esac
 }
 
-# Backup function
+# backup_file creates a timestamped backup of the given file (appends `.backup.YYYYMMDD_HHMMSS`) if the file exists.
 backup_file() {
     local file="$1"
     if [ -f "$file" ]; then
@@ -36,7 +36,7 @@ backup_file() {
     fi
 }
 
-# Dependency check function (enhanced validation)
+# check_dependency verifies that a command is available; logs an error with an installation hint and exits if the command is missing, otherwise logs success.
 check_dependency() {
     local dep="$1"
     local install_cmd="$2"
@@ -47,7 +47,7 @@ check_dependency() {
     log SUCCESS "$dep available"
 }
 
-# Auto-detect environment
+# detect_environment detects the deployment environment and echoes one of: "proxmox" (if `pct` is available), "cloudflare" (if `cloudflared` is available), "local" (if `docker` is available), or "remote" otherwise.
 detect_environment() {
     if command -v pct >/dev/null 2>&1; then
         echo "proxmox"
@@ -60,7 +60,7 @@ detect_environment() {
     fi
 }
 
-# Parallel execution helper (for pulls, etc.)
+# run_parallel runs multiple commands concurrently, waits for all to finish, and logs completion.
 run_parallel() {
     local cmds=("$@")
     for cmd in "${cmds[@]}"; do
@@ -70,7 +70,7 @@ run_parallel() {
     log SUCCESS "Parallel tasks completed"
 }
 
-# Rollback helper (extendable)
+# rollback performs environment-specific rollback actions for the given target (local, proxmox, cloudflare, remote) and logs completion.
 rollback() {
     local target="$1"
     case "$target" in
@@ -82,7 +82,7 @@ rollback() {
     log WARN "Rollback for $target complete"
 }
 
-# Self-healing: check and restart failed services (Docker example)
+# self_heal checks for Docker services with status 'Exited' when TARGET is "local" and restarts any found, logging a WARN message.
 self_heal() {
     if [ "$TARGET" = "local" ]; then
         local failed=$(docker compose ps | grep "Exited" | awk '{print $1}')

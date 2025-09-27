@@ -17,7 +17,7 @@ INTERACTIVE=false
 DRY_RUN=false
 LOG_FILE="$REPO_ROOT/deploy_$(date +%Y%m%d_%H%M%S).log"
 
-# Execute pre/post deploy hooks from config
+# execute_pre_post_hooks runs the `pre_deploy` or `post_deploy` hook commands defined in the current target's configuration, skips execution in dry-run mode, and logs hook failures without aborting.
 execute_pre_post_hooks() {
     local phase="$1"  # pre_deploy or post_deploy
     local hooks=$(echo "$TARGET_CONFIG" | jq -r ".${phase} // empty" | jq -r '.[]')
@@ -38,7 +38,7 @@ execute_pre_post_hooks() {
     done
 }
 
-# Validate dependencies (using utils)
+# validate_deps validates that the external tools required by the current TARGET are available and logs installation hints for any missing tools.
 validate_deps() {
     log INFO "Validating dependencies..."
     check_dependency "jq" "Install with: sudo apt install jq"
@@ -62,7 +62,7 @@ validate_deps() {
     log SUCCESS "Dependencies validated"
 }
 
-# Load config (JSON)
+# load_config loads the target's configuration from CONFIG_FILE, exports each config key as an uppercased environment variable, sources REPO_ROOT/.env if present, and exits with an error if the config file or the target section is missing.
 load_config() {
     if [ ! -f "$CONFIG_FILE" ]; then
         log ERROR "Config file $CONFIG_FILE not found. Create from config.example.json."
@@ -84,7 +84,7 @@ load_config() {
     log SUCCESS "Config loaded for $TARGET from $CONFIG_FILE"
 }
 
-# Interactive mode
+# interactive_setup presents interactive prompts to select a deployment target and, when INTERACTIVE is true, collects target-specific connection details (Proxmox host/password, Cloudflare token, remote host and SSH key).
 interactive_setup() {
     if [ "$INTERACTIVE" = true ]; then
         log INFO "Interactive mode enabled"
@@ -120,7 +120,8 @@ interactive_setup() {
 
 # Deploy functions (modular, integrate existing scripts)
 
-# Local deployment (config-driven with Docker Compose)
+# deploy_local deploys the repository locally using Docker Compose according to the current target configuration, running configured pre_deploy and post_deploy hooks, backing up .env and docker-compose.yml, pulling/building and starting the configured services, then performing a basic health check and exiting non-zero if services fail to start.
+# If DRY_RUN is true, the pull/build/up actions are skipped while hooks and backups are still simulated/logged.
 deploy_local() {
     log INFO "Starting local deployment..."
     # Backup key files
@@ -148,7 +149,7 @@ deploy_local() {
     fi
 }
 
-# Proxmox deployment (provision VM, config-driven)
+# deploy_proxmox provisions and configures a Proxmox VM from TARGET_CONFIG, runs configured pre/post-deploy hooks inside the VM, syncs the repository into the VM, and reports deployment success.
 deploy_proxmox() {
     log INFO "Starting Proxmox deployment..."
     local VM_ID=$(pct nextid)
@@ -178,7 +179,8 @@ deploy_proxmox() {
     log SUCCESS "Proxmox VM $VM_ID deployed at $host"
 }
 
-# Cloudflare deployment (local + tunnel, config-driven)
+# deploy_cloudflare deploys the target by performing the local deployment and then provisioning a Cloudflare Tunnel for the target host.
+# It creates the named tunnel if absent, configures DNS routing for the configured hostname, writes the tunnel ingress configuration to ~/.cloudflared/config.yml, starts cloudflared as a background process (logging to /var/log/cloudflared.log), and executes the target's post_deploy hooks.
 deploy_cloudflare() {
     log INFO "Starting Cloudflare deployment..."
     deploy_local  # Base local deploy
@@ -201,7 +203,7 @@ deploy_cloudflare() {
     log SUCCESS "Cloudflare tunnel active on $HOSTNAME"
 }
 
-# Remote deployment (rsync + SSH, config-driven)
+# deploy_remote synchronizes the repository to a remote host using rsync, executes configured pre_deploy hooks over SSH, invokes the remote deploy/master.sh non-interactively (target local), and then executes configured post_deploy hooks.
 deploy_remote() {
     log INFO "Starting remote deployment..."
     local DEPLOY_PATH=$(echo "$TARGET_CONFIG" | jq -r '.deploy_path')
@@ -217,7 +219,7 @@ deploy_remote() {
     log SUCCESS "Remote deployment to $host complete"
 }
 
-# Rollback (using utils)
+# rollback performs a rollback of the current TARGET by invoking the utils rollback helper and logging progress.
 rollback() {
     log WARN "Rolling back deployment for $TARGET..."
     ::rollback "$TARGET"
@@ -265,7 +267,7 @@ case "$TARGET" in
     *) log ERROR "Unknown target: $TARGET"; exit 1 ;;
 esac
 
-# Post-deployment verification (config-driven health checks)
+# run_health_checks performs post-deployment verification by executing health checks defined in the target configuration (or running target-specific fallback checks) and triggers rollback if any check fails.
 run_health_checks() {
     log INFO "Running health checks..."
     sleep 10

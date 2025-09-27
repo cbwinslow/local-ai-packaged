@@ -167,53 +167,9 @@ generate_graylog_password_secret() {
     generate_hex 32
 }
 
-# Main function to generate all secrets
-generate_all_secrets() {
-    # Check if output is being redirected (not a terminal)
-    if [[ -t 1 ]]; then
-        echo -e "${YELLOW}Generating all secrets...${NC}"
-    fi
-
-    # Generate JWT_SECRET first as it's needed for JWT tokens
-    JWT_SECRET=$(generate_jwt_secret)
-
-    echo "N8N_ENCRYPTION_KEY=$(generate_n8n_encryption_key)"
-    echo "N8N_USER_MANAGEMENT_JWT_SECRET=$(generate_n8n_user_management_jwt_secret)"
-    echo "POSTGRES_PASSWORD=$(generate_postgres_password)"
-    echo "JWT_SECRET=$JWT_SECRET"
-    echo "ANON_KEY=\"$(generate_anon_key "$JWT_SECRET")\""
-    echo "SERVICE_ROLE_KEY=\"$(generate_service_role_key "$JWT_SECRET")\""
-    echo "DASHBOARD_USERNAME=$(generate_dashboard_username)"
-    echo "DASHBOARD_PASSWORD=$(generate_dashboard_password)"
-    echo "POOLER_TENANT_ID=$(generate_pooler_tenant_id)"
-    echo "NEO4J_AUTH=neo4j/$(generate_neo4j_password)"
-    echo "CLICKHOUSE_PASSWORD=$(generate_clickhouse_password)"
-    echo "MINIO_ROOT_PASSWORD=$(generate_minio_root_password)"
-    echo "LANGFUSE_SALT=$(generate_langfuse_salt)"
-    echo "NEXTAUTH_SECRET=$(generate_nextauth_secret)"
-    echo "ENCRYPTION_KEY=$(generate_encryption_key)"
-    echo "SECRET_KEY_BASE=$(generate_secret_key_base)"
-    echo "VAULT_ENC_KEY=$(generate_vault_enc_key)"
-    echo "LOGFLARE_PUBLIC_ACCESS_TOKEN=$(generate_logflare_public_access_token)"
-    echo "LOGFLARE_PRIVATE_ACCESS_TOKEN=$(generate_logflare_private_access_token)"
-    echo "FLOWISE_USERNAME=$(generate_flowise_username)"
-    echo "FLOWISE_PASSWORD=$(generate_flowise_password)"
-    echo "GRAFANA_ADMIN_PASSWORD=$(generate_grafana_admin_password)"
-    echo "PROMETHEUS_PASSWORD=$(generate_prometheus_password)"
-    echo "RABBITMQ_USER=$(generate_rabbitmq_user)"
-    echo "RABBITMQ_PASSWORD=$(generate_rabbitmq_password)"
-    echo "GRAYLOG_PASSWORD=$(generate_graylog_password)"
-    echo "QDRANT_API_KEY=$(generate_qdrant_api_key)"
-    echo "SEARXNG_SECRET_KEY=$(generate_searxng_secret_key)"
-    echo "LOCALAI_API_KEY=$(generate_localai_api_key)"
-    echo "GRAYLOG_PASSWORD_SECRET=$(generate_graylog_password_secret)"
-
-    if [[ -t 1 ]]; then
-        echo -e "${GREEN}✅ All secrets generated${NC}"
-    fi
-}
-
-# If script is run directly, generate all secrets
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    generate_all_secrets
-fi
+# This script is now intended to be sourced as a library of functions.
+# The main execution has been removed.
+# To generate a specific secret, source this script and call the desired function.
+# Example:
+#   source ./generate-secrets.sh
+#   MY_KEY=$(generate_hex 32)

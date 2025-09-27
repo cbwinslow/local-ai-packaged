@@ -52,14 +52,25 @@ For GPU: Install NVIDIA/AMD drivers; enable Docker GPU support.
    cd local-ai-packaged
    ```
 
-2. **Secrets Management** (Bitwarden recommended):
-   - Install Bitwarden CLI: `wget -qO- https://downloads.bitwarden.com/cli/Bitwarden_Installer.sh | bash`.
-   - Authenticate: `bw login` then `export BW_SESSION=$(bw unlock --raw --passwordenv BW_PASSWORD)`.
-   - Migrate existing secrets: `./scripts/migrate-secrets-to-bitwarden.sh`.
-   - Populate `.env`: `./scripts/populate-env-from-bitwarden.sh && source .env`.
-   - Validate: `./scripts/validate_env.sh`.
+2. **Setup Environment Variables**:
+   All environment variables are defined in `.env.example`. You must create a `.env` file with the correct values before launching the services.
 
-   For production, use Cloudflare Secrets via Wrangler.
+   - **Using Bitwarden (Recommended)**:
+     1. Install the Bitwarden CLI if you haven't already.
+     2. Log in to your Bitwarden account (`bw login`).
+     3. Run the population script: `./scripts/populate-env-from-bitwarden.sh`.
+        - The script will prompt for your master password to unlock the vault.
+        - It reads `.env.example`, fetches corresponding secrets (prefixed with `localai_` in your vault), and creates a `.env` file.
+        - For secrets not found in Bitwarden (like API keys), it will insert a placeholder. You must edit the `.env` file to add these manually.
+
+   - **Without Bitwarden**:
+     1. Run the script with the `--generate-missing` flag: `./scripts/populate-env-from-bitwarden.sh --generate-missing`.
+     2. This will create a `.env` file with newly generated internal secrets.
+     3. You must manually edit the `.env` file to add your external API keys (e.g., `OPENAI_API_KEY`).
+
+   - **Validation**: After creating the `.env` file, you can optionally validate it by running `./scripts/validate_env.sh`.
+
+   For production, consider fetching secrets from a secure vault like Bitwarden or Cloudflare Secrets.
 
 3. **Launch Services**:
    - Development: `./scripts/start-all-services.sh` (defaults: CPU, private).

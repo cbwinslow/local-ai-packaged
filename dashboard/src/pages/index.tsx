@@ -40,6 +40,16 @@ type CoreService = {
   readonly priority: number
 }
 
+/**
+ * Renders the system dashboard that aggregates container statuses, recent health metrics, and vulnerability summaries.
+ *
+ * The component fetches Docker container data, Supabase system health entries, and vulnerability summaries, then
+ * displays system-wide statistics (uptime, vulnerabilities, active users), a service status grid, recent activity,
+ * performance overview (CPU and memory), quick actions, and AI agent tool status cards.
+ *
+ * @returns The dashboard UI as a JSX element showing uptime, per-service status and timestamps, recent activity,
+ * performance metrics, vulnerability counts, and AI tool controls.
+ */
 export default function Overview() {
   const [dockerContainers, setDockerContainers] = useState<DockerContainer[]>([])
   const [healthMetrics, setHealthMetrics] = useState<HealthMetric[]>([])

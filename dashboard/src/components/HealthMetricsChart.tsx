@@ -18,6 +18,16 @@ interface HealthData {
   responseTime: MetricPoint[]
 }
 
+/**
+ * Render an interactive line chart for health metrics with metric and time-range controls.
+ *
+ * Fetches metric data from /api/metrics/health for the selected metric (`cpu`, `memory`, `responseTime`)
+ * and time range (`1h`, `6h`, `24h`) and updates the chart automatically (refetch interval: 30s).
+ * The UI includes metric selection buttons, time-range buttons, a formatted X-axis, a trend indicator,
+ * loading and error states, a no-data placeholder, and a data summary (peak, current, data points).
+ *
+ * @returns A React element containing the health metrics chart and its controls.
+ */
 export function HealthMetricsChart() {
   const [selectedMetric, setSelectedMetric] = useState<'cpu' | 'memory' | 'responseTime'>('cpu')
   const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h'>('6h')

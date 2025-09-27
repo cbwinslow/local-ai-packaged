@@ -59,10 +59,28 @@ class APIKey(Base):
     api_calls = relationship("APICallLog", back_populates="api_key_rel")
     
     def __repr__(self):
+        """
+        Return a concise developer-facing representation of the APIKey.
+        
+        Returns:
+            str: A string in the format "<APIKey(name='...', service='...')>" containing the APIKey's `name` and `service_name`.
+        """
         return f"<APIKey(name='{self.name}', service='{self.service_name}')>"
     
     @validates('service_name')
     def validate_service_name(self, key, service_name):
+        """
+        Validate that `service_name` is one of the allowed external service identifiers.
+        
+        Parameters:
+            service_name (str): The name of the external service to validate.
+        
+        Returns:
+            str: The validated `service_name` unchanged.
+        
+        Raises:
+            ValueError: If `service_name` is not one of: congress_gov, govinfo, usaspending, federal_register.
+        """
         valid_services = ['congress_gov', 'govinfo', 'usaspending', 'federal_register']
         if service_name not in valid_services:
             raise ValueError(f"Invalid service name. Must be one of: {', '.join(valid_services)}")
@@ -101,6 +119,20 @@ class APICallLog(Base):
     )
     
     def to_dict(self):
+        """
+        Serialize the APICallLog instance into a dictionary of its primary public fields.
+        
+        Returns:
+            dict: Mapping with keys:
+                - 'id' (str): UUID of the log as a string.
+                - 'service_name' (str): Name of the external service.
+                - 'endpoint' (str): API endpoint path or URL.
+                - 'method' (str): HTTP method used for the call.
+                - 'status_code' (int|None): HTTP response status code, if available.
+                - 'response_time_ms' (int|None): Response time in milliseconds, if available.
+                - 'success' (bool|None): Whether the call was marked successful, if available.
+                - 'created_at' (str|None): ISO 8601 timestamp of creation, or None if unset.
+        """
         return {
             'id': str(self.id),
             'service_name': self.service_name,
@@ -164,6 +196,12 @@ class CongressBill(Base):
     )
     
     def __repr__(self):
+        """
+        Provide the canonical string representation of the CongressBill including its `bill_id` and `title`.
+        
+        Returns:
+            str: A string in the form "<CongressBill(<bill_id>: <title>)>".
+        """
         return f"<CongressBill({self.bill_id}: {self.title})>"
 
 
@@ -198,6 +236,12 @@ class CongressBillAction(Base):
     )
     
     def __repr__(self):
+        """
+        Provide a concise developer-facing string representation of the CongressBillAction.
+        
+        Returns:
+            str: A string containing the bill_id, action_date, and the first 50 characters of action_text (followed by an ellipsis).
+        """
         return f"<CongressBillAction({self.bill_id}: {self.action_date} - {self.action_text[:50]}...)>"
 
 
@@ -221,6 +265,12 @@ class CongressBillSubject(Base):
     )
     
     def __repr__(self):
+        """
+        Return a concise developer-facing representation of the CongressBillSubject showing its bill_id and a truncated subject.
+        
+        Returns:
+            str: A string containing the bill_id and the subject truncated to 50 characters.
+        """
         return f"<CongressBillSubject({self.bill_id}: {self.subject[:50]}...)>"
 
 
@@ -253,6 +303,12 @@ class CongressBillCosponsor(Base):
     )
     
     def __repr__(self):
+        """
+        Return a concise developer-facing representation of the cosponsor.
+        
+        Returns:
+            str: Formatted as "<CongressBillCosponsor(bill_id: name)>" where `bill_id` is the associated bill's id and `name` is the cosponsor's name.
+        """
         return f"<CongressBillCosponsor({self.bill_id}: {self.name})>"
 
 
@@ -312,6 +368,12 @@ class CongressMember(Base):
     roles = relationship("CongressMemberRole", back_populates="member", cascade="all, delete-orphan")
     
     def __repr__(self):
+        """
+        Return a concise, human-readable representation of the CongressMember for debugging and logging.
+        
+        Returns:
+            str: A string in the format "<CongressMember(FirstName LastName)>".
+        """
         return f"<CongressMember({self.first_name} {self.last_name})>"
 
 
@@ -371,6 +433,12 @@ class CongressMemberRole(Base):
     )
     
     def __repr__(self):
+        """
+        Concise developer-facing representation of the CongressMemberRole.
+        
+        Returns:
+            str: A string formatted as "<CongressMemberRole(member_id: chamber congressth)>", with this instance's `member_id`, `chamber`, and `congress` values substituted.
+        """
         return f"<CongressMemberRole({self.member_id}: {self.chamber} {self.congress}th)>"
 
 
@@ -395,6 +463,12 @@ class GovInfoCollection(Base):
     download_queue = relationship("GovInfoDownloadQueue", back_populates="collection", cascade="all, delete-orphan")
     
     def __repr__(self):
+        """
+        Return a concise string representation of the GovInfoCollection instance.
+        
+        Returns:
+            str: A string in the form "<GovInfoCollection(<collection_code>: <collection_name>)>" where <collection_code> and <collection_name> are the instance's values.
+        """
         return f"<GovInfoCollection({self.collection_code}: {self.collection_name})>"
 
 
@@ -432,6 +506,12 @@ class GovInfoPackage(Base):
     )
     
     def __repr__(self):
+        """
+        Provide a concise developer-facing string identifying the GovInfoPackage instance.
+        
+        Returns:
+            A string formatted as "<GovInfoPackage(package_id: first 50 characters of title...)>".
+        """
         return f"<GovInfoPackage({self.package_id}: {self.title[:50]}...)>"
 
 
@@ -465,6 +545,12 @@ class GovInfoDownloadQueue(Base):
     )
     
     def __repr__(self):
+        """
+        Provide a concise string representation of the GovInfoDownloadQueue instance.
+        
+        Returns:
+            str: A string in the form "<GovInfoDownloadQueue(package_id: status)>" where `package_id` and `status` are the instance's package identifier and current queue status.
+        """
         return f"<GovInfoDownloadQueue({self.package_id}: {self.status})>"
 
 
@@ -498,6 +584,12 @@ class GovInfoDocument(Base):
     )
     
     def __repr__(self):
+        """
+        Return a concise developer-facing representation of the GovInfoDocument including its package_id and the first 50 characters of the title.
+        
+        Returns:
+            str: A string suitable for debugging, formatted as "<GovInfoDocument(package_id: title...)>".
+        """
         return f"<GovInfoDocument({self.package_id}: {self.title[:50]}...)>"
 
 class Task(Base):
@@ -536,6 +628,12 @@ class Task(Base):
     )
     
     def __repr__(self):
+        """
+        Return a concise developer-facing representation of the Task showing its id, task type, and status.
+        
+        Returns:
+            repr_str (str): A string formatted as "<Task(id=<id>, type=<task_type>, status=<status>)>".
+        """
         return f"<Task(id={self.id}, type={self.task_type}, status={self.status})>"
 
 # Create a dictionary of all models for easy access

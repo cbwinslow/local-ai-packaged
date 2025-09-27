@@ -12,6 +12,17 @@ interface VulnerabilitySummary {
   servicesAffected: string[]
 }
 
+/**
+ * API route that returns a summary of Trivy vulnerability scan results.
+ *
+ * Accepts only GET requests; responds with status 405 for other methods. Reads
+ * the file at `reports/trivy-scan.md`; if the file is missing responds with
+ * 404 and a summary with zeroed counts. Parses the report to count total,
+ * critical, high, medium, and low severities, counts entries with available
+ * fixes, and collects a unique list of affected services/images. On success
+ * responds with a 200 and a `VulnerabilitySummary`. On parsing or I/O errors
+ * responds with a 500 and a zeroed summary including an `error` message.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<VulnerabilitySummary>

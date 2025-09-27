@@ -47,7 +47,14 @@ metadata = MetaData()
 
 @contextmanager
 def get_db():
-    """Provide a transactional scope around a series of operations."""
+    """
+    Provide a transactional database session to callers.
+    
+    Yields a SQLAlchemy session bound to the module's engine. The session's transaction is committed when the caller completes normally; if an exception occurs, the transaction is rolled back and the exception is re-raised. The session is closed on exit in all cases.
+    
+    Returns:
+        session (Session): A SQLAlchemy Session configured from SessionLocal.
+    """
     db = SessionLocal()
     try:
         yield db
@@ -60,7 +67,11 @@ def get_db():
         db.close()
 
 def init_db():
-    ""
+    """
+    Initialize the database schema by importing model modules and creating any missing tables.
+    
+    Imports the application's model modules to ensure models are registered with SQLAlchemy, then invokes Base.metadata.create_all(bound to the configured engine) to create tables that do not yet exist. Logs completion when finished. Intended to be called during application startup.
+    """
     Initialize the database by creating all tables.
     This should be called during application startup.
     ""

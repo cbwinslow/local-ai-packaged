@@ -65,6 +65,17 @@ const SERVICE_TEMPLATES = {
   },
 }
 
+/**
+ * Page component for viewing and editing a Docker Compose–style configuration.
+ *
+ * Loads the current compose config and environment variables, provides UI to add and edit services
+ * (including templates, ports, volumes, environment variables, and advanced settings), and supports
+ * import/export of the configuration as JSON. Saving persists changes via API mutations and triggers
+ * a Docker Compose reload; basic validation is performed before saving (compose version, service images,
+ * and ports format).
+ *
+ * @returns The rendered configuration management UI as a React element.
+ */
 export default function ConfigPage() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('services')

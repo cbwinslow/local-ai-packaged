@@ -28,6 +28,13 @@ interface QueryResult {
   error?: string;
 }
 
+/**
+ * Render the Data Explorer page containing a SQL editor and a results grid.
+ *
+ * Protects the page by redirecting unauthenticated users to `/auth/signin`. Provides a SQL editor to submit queries to `/api/query` using the session access token, displays returned rows and columns in a paginated grid, and surfaces execution errors and a loading state.
+ *
+ * @returns The React element for the Data Explorer page, including the SQL editor, execute control, and results grid
+ */
 export default function DataExplorer() {
   const { data: session, status } = useSession();
   const router = useRouter();

@@ -20,6 +20,16 @@ const navigation: NavigationItem[] = [
   { name: 'Chatbot', href: '/chatbot', icon: '🤖' },
 ]
 
+/**
+ * Renders a responsive dashboard layout with a left sidebar, mobile menu toggle, and main content area.
+ *
+ * The sidebar contains the provided navigation links and a user area that shows the signed-in user's
+ * avatar initial, email, and a sign-out button; when no user is present a Sign In link is shown.
+ * On small screens the sidebar is toggleable and an overlay is displayed while open.
+ *
+ * @param children - Content to render inside the main scrollable content area
+ * @returns The rendered dashboard layout element containing the sidebar, header controls, and main content
+ */
 export function Layout({ children }: { children: React.ReactNode }) {
   const user = useUser()
   const [sidebarOpen, setSidebarOpen] = useState(false)

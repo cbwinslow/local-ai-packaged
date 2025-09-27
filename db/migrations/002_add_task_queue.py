@@ -18,6 +18,11 @@ depends_on = None
 
 def upgrade():
     # Create enum types
+    """
+    Add database schema for a task/ job queue used by background processing.
+    
+    Creates three PostgreSQL ENUM types (task_status, task_priority, task_type), a `tasks` table with comprehensive task metadata and lifecycle columns (including self-referential parent_task_id, payload/metadata JSONB, priority/status, retry counters, scheduling and locking fields, and timestamps), multiple indexes for common query patterns (including two partial indexes for pending and retryable tasks), and a trigger+function that updates `updated_at` on row updates.
+    """
     op.execute("""
     CREATE TYPE task_status AS ENUM (
         'pending',
@@ -124,6 +129,11 @@ def upgrade():
 
 def downgrade():
     # Drop trigger and function
+    """
+    Revert the task queue migration by removing the tasks table and all related database objects.
+    
+    Drops the BEFORE UPDATE trigger and its trigger function that maintain updated_at, removes all indexes (including the two partial priority indexes), drops the tasks table, and removes the PostgreSQL enum types `task_status`, `task_priority`, and `task_type`.
+    """
     op.execute('DROP TRIGGER IF EXISTS update_tasks_updated_at ON tasks')
     op.execute('DROP FUNCTION IF EXISTS update_updated_at_column()')
     

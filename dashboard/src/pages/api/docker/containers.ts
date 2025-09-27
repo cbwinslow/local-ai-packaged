@@ -5,6 +5,16 @@ const docker = new Docker({
   socketPath: '/var/run/docker.sock',
 })
 
+/**
+ * HTTP GET handler that returns a list of Docker containers enriched with health status and uptime.
+ *
+ * Responds with:
+ * - 200: JSON array of container objects containing Id, Names, Image, State (Status, Running, StartedAt), Labels, Mounts, plus `healthStatus` ("up" when running) and `uptime` (milliseconds, 0 when not running).
+ * - 405: JSON `{ error: 'Method not allowed' }` for non-GET requests.
+ * - 500: JSON `{ error: 'Failed to fetch container information', details: string }` on Docker API errors.
+ *
+ * The returned list includes stopped containers and is limited to 50 entries.
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

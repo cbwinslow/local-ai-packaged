@@ -33,6 +33,17 @@ api_key_cookie = APIKeyCookie(name=API_KEY_NAME, auto_error=False)
 
 # Initialize Supabase client
 def get_supabase() -> SupabaseClient:
+    """
+    Create and return a Supabase client configured from environment variables.
+    
+    Reads SUPABASE_URL and SUPABASE_SERVICE_KEY from the environment and returns a connected SupabaseClient.
+    
+    Returns:
+        SupabaseClient: A client configured with SUPABASE_URL and SUPABASE_SERVICE_KEY.
+    
+    Raises:
+        RuntimeError: If SUPABASE_URL or SUPABASE_SERVICE_KEY is not set in the environment.
+    """
     supabase_url = os.getenv("SUPABASE_URL")
     supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
     if not supabase_url or not supabase_key:
@@ -47,6 +58,20 @@ async def get_api_key(
     supabase: SupabaseClient = Depends(get_supabase)
 ) -> str:
     # Check API key in query params, headers, or cookies
+    """
+    Validate an API key supplied via query parameter, header, or cookie and return it if it exists and is active.
+    
+    Parameters:
+        api_key_query (str): API key provided as a query parameter.
+        api_key_header (str): API key provided in an HTTP header.
+        api_key_cookie (str): API key provided in a cookie.
+    
+    Returns:
+        str: The validated API key.
+    
+    Raises:
+        HTTPException: 403 Forbidden if no API key is provided or if the provided key is not found or not active.
+    """
     api_key = api_key_query or api_key_header or api_key_cookie
     if not api_key:
         raise HTTPException(
@@ -78,6 +103,22 @@ async def log_audit_event(
     metadata: dict = None,
     user_id: str = None
 ):
+    """
+    Record an audit event to the Supabase `audit_logs` table.
+    
+    Parameters:
+        request (Request): Incoming HTTP request used to extract client IP and User-Agent.
+        action (str): Action name or verb describing the event (e.g., "create_api_key", "query").
+        resource_type (str): Type of resource acted upon (e.g., "api_key", "document").
+        resource_id (str, optional): Identifier of the resource related to the event.
+        metadata (dict, optional): Arbitrary additional data to store with the event.
+        user_id (str, optional): Identifier of the user who performed the action.
+    
+    Notes:
+        - The function persists an audit record with fields for action, resource type/id, metadata,
+          client IP, user agent, and user ID.
+        - Errors during logging are caught and emitted to the module logger; they are not propagated.
+    """
     try:
         # Get client IP and user agent
         client_host = request.client.host if request.client else None
@@ -171,7 +212,14 @@ connections = {
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize and cleanup connections"""
+    """
+    Provide a FastAPI lifespan context that initializes external connections on startup and cleans them up on shutdown.
+    
+    This async context manager awaits initialize_connections() before yielding control to the application, and awaits cleanup_connections() after the application shutdown sequence completes.
+    
+    Parameters:
+        app (FastAPI): The FastAPI application instance for which this lifespan is applied.
+    """
     await initialize_connections()
     yield
     await cleanup_connections()
@@ -179,7 +227,16 @@ async def lifespan(app: FastAPI):
 # Initialize FastAPI app with lifespan
 # API Key Generation
 def generate_api_key(prefix: str = "sk_", length: int = 32) -> str:
-    """Generate a secure API key."""
+    """
+    Generate an API key composed of a fixed prefix followed by a random sequence of characters.
+    
+    Parameters:
+    	prefix (str): String to prepend to the generated key.
+    	length (int): Number of random characters to append after the prefix.
+    
+    Returns:
+    	api_key (str): The generated key consisting of `prefix` + `length` random characters drawn from ASCII letters, digits, and the characters `- . _ ~`.
+    """
     alphabet = string.ascii_letters + string.digits + "-._~"
     random_chars = ''.join(secrets.choice(alphabet) for _ in range(length))
     return f"{prefix}{random_chars}"
@@ -204,7 +261,13 @@ app.add_middleware(
 )
 
 async def initialize_connections():
-    """Initialize connections to external services"""
+    """
+    Establishes and registers connections to external services (Neo4j, PostgreSQL, Qdrant, Ollama).
+    
+    Attempts to create clients/drivers and stores successful connections in the module-level `connections` dictionary.
+    After connecting, invokes `setup_data_structures()` to prepare required collections, indexes, and schemas.
+    Individual connection failures are logged as warnings; a failure during the overall initialization is logged as an error.
+    """
     global connections
     
     try:
@@ -262,7 +325,11 @@ async def initialize_connections():
         logger.error(f"❌ Failed to initialize connections: {e}")
 
 async def cleanup_connections():
-    """Clean up connections"""
+    """
+    Close and release active external database connections stored in the module-level `connections` dictionary.
+    
+    Closes the Neo4j driver and PostgreSQL connection in `connections` if they are present; leaves other entries unchanged.
+    """
     global connections
     
     if connections["neo4j_driver"]:
@@ -271,7 +338,11 @@ async def cleanup_connections():
         connections["postgres_conn"].close()
 
 async def setup_data_structures():
-    """Set up initial data structures"""
+    """
+    Ensure required persistent structures exist for Qdrant and Neo4j.
+    
+    Creates a Qdrant collection named "documents" configured for 384‑dim cosine vectors if it does not already exist, and creates Neo4j uniqueness constraints for Document.id and Entity.id plus indexes on Document.title and Entity.name. Failures during individual provider setups are logged and do not raise.
+    """
     try:
         # Create Qdrant collection if it doesn't exist
         if connections["qdrant_client"]:
@@ -307,13 +378,29 @@ async def setup_data_structures():
         logger.error(f"❌ Failed to set up data structures: {e}")
 
 def get_neo4j_driver():
-    """Dependency to get Neo4j driver"""
+    """
+    Provide the active Neo4j driver connection or raise an HTTP 503 if unavailable.
+    
+    Returns:
+        The active Neo4j driver instance.
+    
+    Raises:
+        HTTPException: Raised with status code 503 when the Neo4j driver is not connected.
+    """
     if not connections["neo4j_driver"]:
         raise HTTPException(status_code=503, detail="Neo4j service unavailable")
     return connections["neo4j_driver"]
 
 def get_qdrant_client():
-    """Dependency to get Qdrant client"""
+    """
+    Provide the active Qdrant client connection for dependency injection.
+    
+    Returns:
+        The connected Qdrant client instance.
+    
+    Raises:
+        HTTPException: with status code 503 when the Qdrant service is unavailable.
+    """
     if not connections["qdrant_client"]:
         raise HTTPException(status_code=503, detail="Qdrant service unavailable")
     return connections["qdrant_client"]
@@ -326,7 +413,17 @@ def get_ollama_client():
 
 @app.get("/", response_model=Dict[str, Any])
 async def root():
-    """Root endpoint with service information"""
+    """
+    Return basic service status, availability of external integrations, and primary endpoint paths.
+    
+    Returns:
+        dict: Service overview containing:
+            - message (str): Human-readable service status message.
+            - status (str): Overall service health ("healthy" or "degraded").
+            - version (str): Service version string.
+            - services (dict): Booleans indicating whether each external service is connected: keys "neo4j", "postgres", "qdrant", "ollama".
+            - endpoints (dict): Paths for primary API endpoints: "health", "documents", "query", "graph", and "collections".
+    """
     return {
         "message": "Agentic Knowledge RAG Graph service is running",
         "status": "healthy",
@@ -348,7 +445,19 @@ async def root():
 
 @app.get("/health", response_model=HealthStatus)
 async def health_check():
-    """Detailed health check"""
+    """
+    Perform a comprehensive health check of external services and return an aggregated status.
+    
+    Checks Neo4j, Qdrant, Ollama, and PostgreSQL for connectivity and basic responsiveness, and marks overall status as "healthy" or "degraded" when any service check fails.
+    
+    Returns:
+        dict: Aggregated health information with keys:
+            - status (str): "healthy" or "degraded".
+            - timestamp (datetime): Time when the check was performed.
+            - services (dict): Per-service statuses keyed by service name; values are
+              "healthy", "not_connected", or "unhealthy: <error_excerpt>" (first 50 chars).
+            - version (str): Service version identifier.
+    """
     health_status = {
         "status": "healthy",
         "timestamp": datetime.now(),
@@ -413,7 +522,16 @@ async def create_api_key(
     request: Request,
     current_user_id: str = Depends(get_api_key)
 ):
-    """Create a new API key with the specified permissions."""
+    """
+    Create a new API key and persist it to Supabase.
+    
+    Parameters:
+        key_data (APIKeyCreate): Desired API key name, optional expiration, and scopes.
+        request (Request): Incoming HTTP request (used for audit logging).
+    
+    Returns:
+        dict: Metadata for the created API key including the generated `key` (returned only at creation), `name`, `scopes`, `expires_at`, `created_at`, `last_used_at` (null), and `is_active`.
+    """
     try:
         # Generate a new API key
         api_key = generate_api_key()
@@ -461,7 +579,24 @@ async def add_document(
     request: Request,
     api_key: str = Depends(get_api_key)
 ):
-    """Add a document to the knowledge base"""
+    """
+    Ingests a document into the knowledge base, persists its metadata to Neo4j when available, and schedules background embedding processing.
+    
+    If the incoming document has no `id`, a fallback id is generated from the document content. When a Neo4j driver is connected, the document's metadata (title, content, metadata, tags, timestamps) is persisted. An asynchronous background task is scheduled to generate and store embeddings for the document.
+    
+    Parameters:
+        document (Document): Document payload containing optional `id`, `content`, optional `title`, `metadata`, and `tags`.
+        background_tasks (BackgroundTasks): FastAPI BackgroundTasks instance used to schedule embedding generation.
+    
+    Returns:
+        dict: A status object with keys:
+            - `id`: the provided document id or the generated fallback id,
+            - `status`: processing status string (always `"processing"` on success),
+            - `message`: human-readable status message.
+    
+    Raises:
+        HTTPException: Raises a 500 HTTPException if an unexpected error occurs while adding the document.
+    """
     try:
         import time
         start_time = time.time()
@@ -512,7 +647,16 @@ async def add_document(
         raise HTTPException(status_code=500, detail=str(e))
 
 async def process_document_embeddings(document_id: str, content: str, metadata: Dict[str, Any]):
-    """Background task to process document embeddings"""
+    """
+    Generate an embedding for a document and upsert it into the Qdrant "documents" collection when available.
+    
+    Creates a 384-dimensional embedding (mocked) and attempts to store it as a Point in the "documents" Qdrant collection with payload containing the document content and metadata. On success logs an informational message; on Qdrant failures logs a warning; on unexpected errors logs an error.
+    
+    Parameters:
+        document_id (str): Unique identifier for the document; used as the vector point id.
+        content (str): Raw document content to include in the stored payload.
+        metadata (Dict[str, Any]): Arbitrary metadata to include in the stored payload.
+    """
     try:
         # This would generate embeddings using a sentence transformer or Ollama
         # For now, we'll use a mock embedding
@@ -548,7 +692,21 @@ async def query_knowledge_base(
     request: Request,
     api_key: str = Depends(get_api_key)
 ):
-    """Query the knowledge base using RAG"""
+    """
+    Execute a retrieval-augmented generation (RAG) search and return a consolidated answer.
+    
+    Performs optional vector similarity search (Qdrant) and graph-context retrieval (Neo4j) based on the provided Query, attempts to generate a refined answer via Ollama if available, and records audit events for the request and completion. The returned RAGResponse contains the original query text, the produced answer, retrieved sources, graph context, a confidence score, processing time, and a request identifier.
+    
+    Parameters:
+        query (Query): Query payload containing the search text, filters, result limit, and flags for vector and graph context.
+        request (Request): FastAPI request object used for audit logging and extracting client information.
+    
+    Returns:
+        RAGResponse: Aggregated response including `query`, `answer`, `sources`, `graph_context`, `confidence`, `processing_time`, and `request_id`.
+    
+    Raises:
+        HTTPException: Raised with status 500 on unexpected processing errors.
+    """
     try:
         import time
         start_time = datetime.now()
@@ -673,7 +831,26 @@ async def get_graph_nodes(
     node_type: Optional[str] = QueryParam(None),
     limit: int = QueryParam(100, ge=1, le=1000)
 ):
-    """Get nodes from the knowledge graph"""
+    """
+    Retrieve nodes from the Neo4j knowledge graph, optionally filtered by node label.
+    
+    Parameters:
+        node_type (Optional[str]): If provided, only nodes with this label are returned.
+        limit (int): Maximum number of nodes to return (1–1000).
+    
+    Returns:
+        dict: {
+            "nodes": List[dict] — each node has keys:
+                "id" (str): node identifier,
+                "labels" (List[str]): node labels,
+                "properties" (dict): node properties;
+            "count" (int): number of nodes returned,
+            "status" (str): "success" or "neo4j_unavailable"
+        }
+    
+    Raises:
+        HTTPException: with status code 500 if an unexpected error occurs while querying the graph.
+    """
     try:
         if not connections["neo4j_driver"]:
             return {"nodes": [], "count": 0, "status": "neo4j_unavailable"}
@@ -715,7 +892,23 @@ async def get_graph_nodes(
 
 @app.get("/collections/", response_model=Dict[str, Any])
 async def list_collections():
-    """List available Qdrant collections"""
+    """
+    Return a summary of Qdrant collections available to the service.
+    
+    If the Qdrant client is not connected, returns an empty collections list and status "qdrant_unavailable".
+    Otherwise returns a list of collections with each entry containing:
+    - name: collection name
+    - vectors_count: number of vectors in the collection (0 if not available)
+    
+    Returns:
+        dict: {
+            "collections": List[{"name": str, "vectors_count": int}],
+            "status": str  # "success" or "qdrant_unavailable"
+        }
+    
+    Raises:
+        HTTPException: with status_code 500 if an unexpected error occurs while listing collections.
+    """
     try:
         if not connections["qdrant_client"]:
             return {"collections": [], "status": "qdrant_unavailable"}

@@ -13,6 +13,19 @@ interface ServiceStatusCardProps {
   color: string
 }
 
+/**
+ * Render a status card that displays a Docker service's health, metrics, and controls.
+ *
+ * The card polls the backend for container information, shows status (up/down/unknown) with
+ * dynamic color and icon, displays CPU, memory and uptime when available, and provides
+ * an action to start or restart the service when expanded.
+ *
+ * @param serviceName - Human-readable service name shown in the card header
+ * @param dockerName - Container identifier used to locate the matching Docker container on the backend
+ * @param icon - Icon component rendered next to the service name
+ * @param color - CSS class(es) applied to the icon to control its color (e.g., Tailwind classes)
+ * @returns The rendered service status card as a JSX element
+ */
 export function ServiceStatusCard({ 
   serviceName, 
   dockerName, 

@@ -28,4 +28,15 @@ build/
 tmp/
 temp/
 .DS_Store
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Bitwarden and secret files
+bw.zip
+.env.backup.*
+INTEGRATION_TEST_REPORT_*.md
 *.tmp

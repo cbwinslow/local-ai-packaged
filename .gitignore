@@ -1,4 +1,7 @@
 .env
+.env.backup
+.env.local
+.env.*.local
 volumes/
 shared/
 neo4j/
@@ -6,3 +9,6 @@ shared-backup/
 .env.test
 searxng/settings.yml
 searxng/uwsgi*
+
+# Temporary secret files
+/tmp/local-ai-secrets-*.txt

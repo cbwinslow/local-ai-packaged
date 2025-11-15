@@ -213,7 +213,7 @@ def main():
     
     def fetch_and_update(secret_name: str, is_required: bool = True):
         """Fetch secret and update .env file"""
-        print(f"  Fetching {secret_name}... ", end='', flush=True)
+        print(f"  Fetching secret... ", end='', flush=True)
         value = get_secret(secret_name, session)
         
         if value:

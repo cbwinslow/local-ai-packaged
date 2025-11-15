@@ -1,0 +1,271 @@
+name: Deploy with Bitwarden Secrets
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'GPU profile to use'
+        required: true
+        default: 'cpu'
+        type: choice
+        options:
+          - cpu
+          - gpu-nvidia
+          - gpu-amd
+          - none
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'private'
+        type: choice
+        options:
+          - private
+          - public
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bitwarden CLI
+        run: |
+          # Download and install Bitwarden CLI
+          wget https://github.com/bitwarden/clients/releases/download/cli-v2024.9.0/bw-linux-2024.9.0.zip
+          unzip bw-linux-2024.9.0.zip
+          chmod +x bw
+          sudo mv bw /usr/local/bin/
+          bw --version
+
+      - name: Login to Bitwarden
+        env:
+          BW_CLIENTID: ${{ secrets.BW_CLIENTID }}
+          BW_CLIENTSECRET: ${{ secrets.BW_CLIENTSECRET }}
+          BW_PASSWORD: ${{ secrets.BW_PASSWORD }}
+        run: |
+          # Login using machine account or user credentials
+          if [ -n "$BW_CLIENTID" ] && [ -n "$BW_CLIENTSECRET" ]; then
+            echo "Logging in with machine account..."
+            export BW_SESSION=$(bw login --apikey --raw)
+          elif [ -n "$BW_PASSWORD" ]; then
+            echo "Logging in with user password..."
+            export BW_SESSION=$(bw login --raw)
+          else
+            echo "Error: No Bitwarden credentials provided"
+            exit 1
+          fi
+          
+          # Unlock the vault
+          if [ -n "$BW_PASSWORD" ]; then
+            export BW_SESSION=$(bw unlock "$BW_PASSWORD" --raw)
+          fi
+          
+          echo "BW_SESSION=$BW_SESSION" >> $GITHUB_ENV
+          bw sync
+
+      - name: Fetch secrets from Bitwarden and create .env file
+        env:
+          BW_SESSION: ${{ env.BW_SESSION }}
+        run: |
+          # Create .env file from secrets stored in Bitwarden
+          # This script searches for secrets in Bitwarden vault using various search patterns
+          
+          # Function to search for a secret in Bitwarden
+          get_secret() {
+            local secret_name=$1
+            local search_patterns=("$secret_name" "user.account.$secret_name" "user.secret.$secret_name" "machine.account.$secret_name")
+            
+            for pattern in "${search_patterns[@]}"; do
+              # Try to get the item
+              item=$(bw get item "$pattern" 2>/dev/null || echo "")
+              if [ -n "$item" ]; then
+                # Try to get password field
+                value=$(echo "$item" | jq -r '.login.password // .notes // empty' 2>/dev/null)
+                if [ -n "$value" ] && [ "$value" != "null" ]; then
+                  echo "$value"
+                  return 0
+                fi
+              fi
+            done
+            
+            echo ""
+            return 1
+          }
+          
+          # Start with the .env.example as a template
+          cp .env.example .env
+          
+          # Required N8N secrets
+          echo "Fetching N8N secrets..."
+          N8N_ENCRYPTION_KEY=$(get_secret "N8N_ENCRYPTION_KEY")
+          N8N_USER_MANAGEMENT_JWT_SECRET=$(get_secret "N8N_USER_MANAGEMENT_JWT_SECRET")
+          
+          # Required Supabase secrets
+          echo "Fetching Supabase secrets..."
+          POSTGRES_PASSWORD=$(get_secret "POSTGRES_PASSWORD")
+          JWT_SECRET=$(get_secret "JWT_SECRET")
+          ANON_KEY=$(get_secret "ANON_KEY")
+          SERVICE_ROLE_KEY=$(get_secret "SERVICE_ROLE_KEY")
+          DASHBOARD_USERNAME=$(get_secret "DASHBOARD_USERNAME")
+          DASHBOARD_PASSWORD=$(get_secret "DASHBOARD_PASSWORD")
+          POOLER_TENANT_ID=$(get_secret "POOLER_TENANT_ID")
+          
+          # Required Neo4j secrets
+          echo "Fetching Neo4j secrets..."
+          NEO4J_AUTH=$(get_secret "NEO4J_AUTH")
+          
+          # Required Langfuse secrets
+          echo "Fetching Langfuse secrets..."
+          CLICKHOUSE_PASSWORD=$(get_secret "CLICKHOUSE_PASSWORD")
+          MINIO_ROOT_PASSWORD=$(get_secret "MINIO_ROOT_PASSWORD")
+          LANGFUSE_SALT=$(get_secret "LANGFUSE_SALT")
+          NEXTAUTH_SECRET=$(get_secret "NEXTAUTH_SECRET")
+          ENCRYPTION_KEY=$(get_secret "ENCRYPTION_KEY")
+          
+          # Optional secrets for production deployment
+          N8N_HOSTNAME=$(get_secret "N8N_HOSTNAME" || echo "")
+          WEBUI_HOSTNAME=$(get_secret "WEBUI_HOSTNAME" || echo "")
+          FLOWISE_HOSTNAME=$(get_secret "FLOWISE_HOSTNAME" || echo "")
+          SUPABASE_HOSTNAME=$(get_secret "SUPABASE_HOSTNAME" || echo "")
+          OLLAMA_HOSTNAME=$(get_secret "OLLAMA_HOSTNAME" || echo "")
+          SEARXNG_HOSTNAME=$(get_secret "SEARXNG_HOSTNAME" || echo "")
+          NEO4J_HOSTNAME=$(get_secret "NEO4J_HOSTNAME" || echo "")
+          LETSENCRYPT_EMAIL=$(get_secret "LETSENCRYPT_EMAIL" || echo "")
+          
+          # Additional optional secrets
+          SECRET_KEY_BASE=$(get_secret "SECRET_KEY_BASE" || echo "")
+          VAULT_ENC_KEY=$(get_secret "VAULT_ENC_KEY" || echo "")
+          
+          # Replace values in .env file
+          echo "Updating .env file with fetched secrets..."
+          
+          # Required secrets
+          [ -n "$N8N_ENCRYPTION_KEY" ] && sed -i "s|^N8N_ENCRYPTION_KEY=.*|N8N_ENCRYPTION_KEY=$N8N_ENCRYPTION_KEY|" .env
+          [ -n "$N8N_USER_MANAGEMENT_JWT_SECRET" ] && sed -i "s|^N8N_USER_MANAGEMENT_JWT_SECRET=.*|N8N_USER_MANAGEMENT_JWT_SECRET=$N8N_USER_MANAGEMENT_JWT_SECRET|" .env
+          [ -n "$POSTGRES_PASSWORD" ] && sed -i "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$POSTGRES_PASSWORD|" .env
+          [ -n "$JWT_SECRET" ] && sed -i "s|^JWT_SECRET=.*|JWT_SECRET=$JWT_SECRET|" .env
+          [ -n "$ANON_KEY" ] && sed -i "s|^ANON_KEY=.*|ANON_KEY=$ANON_KEY|" .env
+          [ -n "$SERVICE_ROLE_KEY" ] && sed -i "s|^SERVICE_ROLE_KEY=.*|SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY|" .env
+          [ -n "$DASHBOARD_USERNAME" ] && sed -i "s|^DASHBOARD_USERNAME=.*|DASHBOARD_USERNAME=$DASHBOARD_USERNAME|" .env
+          [ -n "$DASHBOARD_PASSWORD" ] && sed -i "s|^DASHBOARD_PASSWORD=.*|DASHBOARD_PASSWORD=$DASHBOARD_PASSWORD|" .env
+          [ -n "$POOLER_TENANT_ID" ] && sed -i "s|^POOLER_TENANT_ID=.*|POOLER_TENANT_ID=$POOLER_TENANT_ID|" .env
+          [ -n "$NEO4J_AUTH" ] && sed -i "s|^NEO4J_AUTH=.*|NEO4J_AUTH=$NEO4J_AUTH|" .env
+          [ -n "$CLICKHOUSE_PASSWORD" ] && sed -i "s|^CLICKHOUSE_PASSWORD=.*|CLICKHOUSE_PASSWORD=$CLICKHOUSE_PASSWORD|" .env
+          [ -n "$MINIO_ROOT_PASSWORD" ] && sed -i "s|^MINIO_ROOT_PASSWORD=.*|MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD|" .env
+          [ -n "$LANGFUSE_SALT" ] && sed -i "s|^LANGFUSE_SALT=.*|LANGFUSE_SALT=$LANGFUSE_SALT|" .env
+          [ -n "$NEXTAUTH_SECRET" ] && sed -i "s|^NEXTAUTH_SECRET=.*|NEXTAUTH_SECRET=$NEXTAUTH_SECRET|" .env
+          [ -n "$ENCRYPTION_KEY" ] && sed -i "s|^ENCRYPTION_KEY=.*|ENCRYPTION_KEY=$ENCRYPTION_KEY|" .env
+          
+          # Optional production secrets (uncomment if provided)
+          if [ -n "$N8N_HOSTNAME" ]; then
+            sed -i "s|^# N8N_HOSTNAME=.*|N8N_HOSTNAME=$N8N_HOSTNAME|" .env
+          fi
+          if [ -n "$WEBUI_HOSTNAME" ]; then
+            sed -i "s|^# WEBUI_HOSTNAME=.*|WEBUI_HOSTNAME=$WEBUI_HOSTNAME|" .env
+          fi
+          if [ -n "$FLOWISE_HOSTNAME" ]; then
+            sed -i "s|^# FLOWISE_HOSTNAME=.*|FLOWISE_HOSTNAME=$FLOWISE_HOSTNAME|" .env
+          fi
+          if [ -n "$SUPABASE_HOSTNAME" ]; then
+            sed -i "s|^# SUPABASE_HOSTNAME=.*|SUPABASE_HOSTNAME=$SUPABASE_HOSTNAME|" .env
+          fi
+          if [ -n "$OLLAMA_HOSTNAME" ]; then
+            sed -i "s|^# OLLAMA_HOSTNAME=.*|OLLAMA_HOSTNAME=$OLLAMA_HOSTNAME|" .env
+          fi
+          if [ -n "$SEARXNG_HOSTNAME" ]; then
+            sed -i "s|^# SEARXNG_HOSTNAME=.*|SEARXNG_HOSTNAME=$SEARXNG_HOSTNAME|" .env
+          fi
+          if [ -n "$NEO4J_HOSTNAME" ]; then
+            sed -i "s|^# NEO4J_HOSTNAME=.*|NEO4J_HOSTNAME=$NEO4J_HOSTNAME|" .env
+          fi
+          if [ -n "$LETSENCRYPT_EMAIL" ]; then
+            sed -i "s|^# LETSENCRYPT_EMAIL=.*|LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL|" .env
+          fi
+          
+          # Additional optional secrets
+          [ -n "$SECRET_KEY_BASE" ] && sed -i "s|^SECRET_KEY_BASE=.*|SECRET_KEY_BASE=$SECRET_KEY_BASE|" .env
+          [ -n "$VAULT_ENC_KEY" ] && sed -i "s|^VAULT_ENC_KEY=.*|VAULT_ENC_KEY=$VAULT_ENC_KEY|" .env
+          
+          echo "✓ .env file created successfully with secrets from Bitwarden"
+
+      - name: Verify .env file
+        run: |
+          echo "Verifying that required secrets are set..."
+          
+          # Check for required secrets
+          required_secrets=(
+            "N8N_ENCRYPTION_KEY"
+            "N8N_USER_MANAGEMENT_JWT_SECRET"
+            "POSTGRES_PASSWORD"
+            "JWT_SECRET"
+            "ANON_KEY"
+            "SERVICE_ROLE_KEY"
+            "DASHBOARD_USERNAME"
+            "DASHBOARD_PASSWORD"
+            "POOLER_TENANT_ID"
+            "NEO4J_AUTH"
+            "CLICKHOUSE_PASSWORD"
+            "MINIO_ROOT_PASSWORD"
+            "LANGFUSE_SALT"
+            "NEXTAUTH_SECRET"
+            "ENCRYPTION_KEY"
+          )
+          
+          missing_secrets=()
+          
+          for secret in "${required_secrets[@]}"; do
+            value=$(grep "^${secret}=" .env | cut -d= -f2-)
+            if [ -z "$value" ] || [[ "$value" =~ ^(super-secret|your-|even-more|generate-with) ]]; then
+              missing_secrets+=("$secret")
+            fi
+          done
+          
+          if [ ${#missing_secrets[@]} -gt 0 ]; then
+            echo "❌ The following required secrets are missing or using example values:"
+            printf '%s\n' "${missing_secrets[@]}"
+            echo ""
+            echo "Please ensure these secrets are stored in your Bitwarden vault with one of these naming patterns:"
+            echo "  - Exact name (e.g., 'N8N_ENCRYPTION_KEY')"
+            echo "  - user.account.<name> (e.g., 'user.account.N8N_ENCRYPTION_KEY')"
+            echo "  - user.secret.<name> (e.g., 'user.secret.N8N_ENCRYPTION_KEY')"
+            echo "  - machine.account.<name> (e.g., 'machine.account.N8N_ENCRYPTION_KEY')"
+            exit 1
+          fi
+          
+          echo "✓ All required secrets are set"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Deploy services
+        run: |
+          python start_services.py --profile ${{ inputs.profile }} --environment ${{ inputs.environment }}
+          
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for services to start..."
+          sleep 30
+          
+          # Check if n8n is accessible
+          for i in {1..10}; do
+            if curl -f http://localhost:5678 >/dev/null 2>&1; then
+              echo "✓ n8n is ready"
+              break
+            fi
+            echo "Waiting for n8n... ($i/10)"
+            sleep 10
+          done
+
+      - name: Logout from Bitwarden
+        if: always()
+        run: |
+          bw logout || true

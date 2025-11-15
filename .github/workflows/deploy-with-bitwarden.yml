@@ -1,4 +1,6 @@
 name: Deploy with Bitwarden Secrets
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

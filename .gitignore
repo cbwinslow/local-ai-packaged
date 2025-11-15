@@ -11,4 +11,5 @@ searxng/settings.yml
 searxng/uwsgi*
 
 # Temporary secret files
-/tmp/local-ai-secrets-*.txt
+/tmp/local-ai-secrets-*.txt__pycache__/
+*.pyc

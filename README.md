@@ -74,6 +74,26 @@ cd local-ai-packaged
 
 Before running the services, you need to set up your environment variables for Supabase following their [self-hosting guide](https://supabase.com/docs/guides/self-hosting/docker#securing-your-services).
 
+### Option 1: Using Bitwarden (Recommended)
+
+If you use Bitwarden to manage secrets, you can automatically fetch and configure all required secrets:
+
+```bash
+# Using the bash script
+./setup_bitwarden_secrets.sh
+
+# Or using the Python script
+python setup_bitwarden_secrets.py
+```
+
+See [BITWARDEN_SETUP.md](BITWARDEN_SETUP.md) for detailed instructions on setting up Bitwarden integration, including:
+- How to store secrets in Bitwarden
+- Local development setup
+- GitHub Actions deployment
+- Troubleshooting
+
+### Option 2: Manual Setup
+
 1. Make a copy of `.env.example` and rename it to `.env` in the root directory of the project
 2. Set the following required environment variables:
    ```bash

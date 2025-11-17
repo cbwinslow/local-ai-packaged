@@ -1,0 +1,60 @@
+tunnel: local-ai-tunnel
+credentials-file: /root/.cloudflared/921d7ec0-08a3-4bb5-a0fe-959fcef03629.json
+
+ingress:
+  # Route n8n service (internal port 5678)
+  - hostname: n8n.cloudcurio.cc
+    service: http://n8n:5678
+    originRequest:
+      noTLSVerify: true
+
+  # Route Open WebUI service (internal port 8080)  
+  - hostname: openwebui.cloudcurio.cc
+    service: http://open-webui:8080
+    originRequest:
+      noTLSVerify: true
+
+  # Route Flowise service (internal port 3001)
+  - hostname: flowise.cloudcurio.cc
+    service: http://flowise:3001
+    originRequest:
+      noTLSVerify: true
+
+  # Route Ollama API (internal port 11434)
+  - hostname: ollama.cloudcurio.cc
+    service: http://ollama:11434
+    originRequest:
+      noTLSVerify: true
+
+  # Route Neo4j service (internal port 7474)
+  - hostname: neo4j.cloudcurio.cc
+    service: http://localai-neo4j-1:7474
+    originRequest:
+      noTLSVerify: true
+
+  # Route Qdrant service (internal port 6333)
+  - hostname: qdrant.cloudcurio.cc
+    service: http://qdrant:6333
+    originRequest:
+      noTLSVerify: true
+
+  # Route SearXNG service (internal port 8080)
+  - hostname: searxng.cloudcurio.cc
+    service: http://searxng:8080
+    originRequest:
+      noTLSVerify: true
+
+  # Route Langfuse service (when available, internal port 3000)
+  - hostname: langfuse.cloudcurio.cc
+    service: http://langfuse-web:3000
+    originRequest:
+      noTLSVerify: true
+
+  # Route Supabase Studio
+  - hostname: supabase.cloudcurio.cc
+    service: http://supabase-studio:3000
+    originRequest:
+      noTLSVerify: true
+
+  # Default catch-all route
+  - service: http_status:404

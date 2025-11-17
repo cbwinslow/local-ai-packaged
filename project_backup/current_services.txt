@@ -1,0 +1,28 @@
+n8n                              n8nio/n8n:latest                               Up About an hour
+open-webui                       ghcr.io/open-webui/open-webui:main             Up About an hour (healthy)
+localai-clickhouse-1             clickhouse/clickhouse-server                   Up About an hour (healthy)
+localai-minio-1                  minio/minio                                    Up About an hour (healthy)
+ollama                           ollama/ollama:latest                           Up About an hour
+flowise                          flowiseai/flowise                              Up About an hour
+localai-postgres-1               postgres:17                                    Up About an hour (healthy)
+redis                            valkey/valkey:8-alpine                         Up About an hour (healthy)
+searxng                          searxng/searxng:latest                         Up About an hour
+qdrant                           qdrant/qdrant                                  Up About an hour
+localai-neo4j-1                  neo4j:latest                                   Up About an hour
+supabase-storage                 supabase/storage-api:v1.29.0                   Up 2 hours (healthy)
+realtime-dev.supabase-realtime   supabase/realtime:v2.63.0                      Up 2 hours (unhealthy)
+supabase-meta                    supabase/postgres-meta:v0.93.1                 Up 2 hours (healthy)
+supabase-auth                    supabase/gotrue:v2.182.1                       Up 2 hours (healthy)
+supabase-studio                  supabase/studio:2025.11.10-sha-5291fe3         Up 2 hours (healthy)
+supabase-edge-functions          supabase/edge-runtime:v1.69.23                 Up 2 hours
+supabase-rest                    postgrest/postgrest:v13.0.7                    Up 2 hours
+supabase-analytics               supabase/logflare:1.22.6                       Up 2 hours (healthy)
+supabase-db                      supabase/postgres:15.8.1.085                   Up 2 hours (healthy)
+supabase-vector                  timberio/vector:0.28.1-alpine                  Up 2 hours (healthy)
+supabase-imgproxy                darthsim/imgproxy:v3.8.0                       Up 2 hours (healthy)
+openwebui-local                  ghcr.io/open-webui/open-webui:main             Up 5 days (healthy)
+sonarqube-db                     postgres:13                                    Up 5 days
+librechat-redis                  redis:latest                                   Up 5 days
+coolify-db                       postgres:15-alpine                             Up 5 days (healthy)
+coolify-redis                    redis:7-alpine                                 Up 5 days
+guacamole_postgres               postgres:16-alpine                             Up 5 days

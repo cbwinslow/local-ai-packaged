@@ -1,0 +1,9 @@
+Local AI Packaged Project Backup
+Created on: November 15, 2025
+
+This backup contains:
+- .env configuration file with secrets
+- docker-compose.yml orchestration file  
+- Caddyfile reverse proxy configuration
+- Service configuration directories (n8n, neo4j, searxng)
+- Current running services status
